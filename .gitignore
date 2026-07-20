@@ -40,3 +40,13 @@ skills-lock.json
 
 # OS generated files
 Thumbs.db
+
+# Business Logic Documentation
+20_ideas_implementacion.md
+business_logic.txt
+
+# Plans
+Plan-AmList.md
+README-CRITERIOS.md
+REFACTOR_PLAN.md
+Building AMlist SPA Application.md

@@ -77,8 +77,10 @@ function lsSet(key, data) {
 function mapAiringStatus(status) {
   if (!status) return 'unknown';
   const s = status.toLowerCase();
-  if (s.includes('airing') || s.includes('currently')) return 'airing';
+  // 'finished'/'complete' must be checked before 'airing' because
+  // Jikan sends 'Finished Airing' for ended series, which contains 'airing'.
   if (s.includes('finished') || s.includes('complete')) return 'complete';
+  if (s.includes('airing') || s.includes('currently')) return 'airing';
   if (s.includes('upcoming') || s.includes('not yet')) return 'upcoming';
   return 'unknown';
 }
