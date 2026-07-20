@@ -1,0 +1,60 @@
+.import-btn-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.import-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0.5rem 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.12s;
+}
+
+.import-btn:hover:not(:disabled) {
+  background: var(--bg);
+  border-color: var(--accent-visto);
+  transform: translateY(-1px);
+}
+
+.import-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.import-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+
+
+.import-btn__error {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 0.3rem;
+  font-size: 0.7rem;
+  color: #ef4444;
+  white-space: nowrap;
+  background: var(--surface);
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  z-index: 10;
+}
+
+/* responsive hiding for text */
+@media (max-width: 767px) {
+  .app-header__actions .import-btn__text {
+    display: none;
+  }
+}

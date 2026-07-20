@@ -1,0 +1,296 @@
+/* ── App Shell Layout ─────────────────────────────────────────────────────── */
+.app-shell {
+  display: flex;
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--text-primary);
+}
+
+/* ── Top header (mobile-first, hidden on wide screens) ───────────────────── */
+.app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 1rem;
+  z-index: 200;
+}
+
+.app-header__menu-btn {
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.35rem;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+
+.app-header__menu-btn:hover { background: var(--border); }
+.app-header__menu-btn:focus-visible {
+  outline: 2px solid var(--accent-visto);
+  outline-offset: 2px;
+}
+
+.app-header__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.app-header__logo {
+  width: 26px;
+  height: 26px;
+}
+
+.app-header__name {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--accent-visto);
+  letter-spacing: -0.03em;
+}
+
+.app-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ── Sidebar overlay (mobile) ─────────────────────────────────────────────── */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 250;
+  animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; } to { opacity: 1; }
+}
+
+/* ── Sidebar ──────────────────────────────────────────────────────────────── */
+.app-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 260px;
+  height: 100dvh;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  z-index: 300;
+  transform: translateX(-100%);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+}
+
+.app-sidebar--open {
+  transform: translateX(0);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+}
+
+.app-sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 1.25rem 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.app-sidebar__logo {
+  width: 32px;
+  height: 32px;
+}
+
+.app-sidebar__name {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--accent-visto);
+  letter-spacing: -0.03em;
+}
+
+.app-sidebar__nav {
+  list-style: none;
+  margin: 0;
+  padding: 0.75rem 0;
+  flex: 1;
+}
+
+.app-sidebar__link {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 0.65rem 1.25rem;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 0.5rem;
+  margin: 0.2rem 0.5rem;
+  width: calc(100% - 1rem);
+}
+
+.app-sidebar__link:hover {
+  background: var(--bg);
+  color: var(--text-primary);
+  transform: translateX(4px);
+}
+
+.app-sidebar__link--active {
+  background: rgba(16, 185, 155, 0.1);
+  color: var(--accent-visto);
+  font-weight: 700;
+  border-right: 3px solid var(--accent-visto);
+}
+
+.app-sidebar__link:focus-visible {
+  outline: 2px solid var(--accent-visto);
+  outline-offset: -2px;
+}
+
+.app-sidebar__footer {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.app-sidebar__historial-btn {
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 0.6rem;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.app-sidebar__historial-btn:hover {
+  border-color: var(--accent-visto);
+  background: rgba(16, 185, 155, 0.06);
+}
+
+.app-sidebar__historial-btn:focus-visible {
+  outline: 2px solid var(--accent-visto);
+  outline-offset: 2px;
+}
+
+.app-sidebar__theme-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.app-sidebar__theme-label {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+/* ── Main content area ─────────────────────────────────────────────────────── */
+.app-main {
+  flex: 1;
+  padding-top: 56px; /* header height */
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* ── Desktop: floating sidebar ────────────────────────────────────────────── */
+@media (min-width: 768px) {
+  .app-header__menu-btn { display: none; }
+  .app-header {
+    left: 0;
+    padding-left: 290px; /* 260 width + 20 gap + extra padding */
+  }
+
+  .app-sidebar {
+    position: fixed;
+    top: 50%;
+    left: 20px;
+    height: auto;
+    max-height: 90vh;
+    transform: translateY(-50%);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border);
+    border-radius: 1.25rem;
+    animation: sidebarFloatIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes sidebarFloatIn {
+    from {
+      opacity: 0;
+      transform: translate(-20px, -50%);
+    }
+    to {
+      opacity: 1;
+      transform: translate(0, -50%);
+    }
+  }
+
+  .sidebar-overlay { display: none !important; }
+
+  .app-main {
+    margin-left: 280px;
+    padding-top: 56px;
+  }
+
+  /* Hide FAB on desktop — the add button lives in the page header */
+  .fab-mobile-only { display: none; }
+}
+
+/* ── Footer ─────────────────────────────────────────────────────── */
+.app-footer {
+  text-align: center;
+  padding: 2rem 1rem;
+  margin-top: auto;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.app-footer p {
+  margin: 0;
+}
+
+.app-footer a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.app-footer a:hover {
+  color: var(--text-primary);
+}
+
+.app-sidebar__tools {
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+

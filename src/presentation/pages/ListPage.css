@@ -1,0 +1,132 @@
+/* ListPage shared styles */
+.list-page {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  gap: 1rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────────────── */
+.list-page__header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.list-page__header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.list-page__title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.03em;
+}
+
+.list-page__subtitle {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.list-page__add-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--accent-visto);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 0.55rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s, transform 0.12s, box-shadow 0.15s;
+  box-shadow: 0 2px 8px rgba(16,185,129,0.25);
+}
+
+.list-page__add-btn:hover {
+  background: var(--accent-completado);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(139,92,246,0.3);
+}
+
+.list-page__toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.8rem;
+}
+
+.list-page__sort-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.list-page__sort-select {
+  background: var(--surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.list-page__sort-select:focus {
+  border-color: var(--accent-visto);
+}
+
+
+.list-page__add-btn:active {
+  transform: translateY(0);
+}
+
+/* ── Search ─────────────────────────────────────────────────────────────────── */
+.list-page__search {
+  position: relative;
+}
+
+/* ── List Layout ───────────────────────────────────────────────────────────── */
+.list-page__grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* ── Empty state ─────────────────────────────────────────────────────────────── */
+.list-page__empty {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 3rem 1rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.list-page__empty span {
+  font-size: 2.5rem;
+}
+
+.list-page__empty p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.list-page__empty-hint {
+  font-size: 0.78rem !important;
+  opacity: 0.7;
+}

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Background circle -->
+  <circle cx="32" cy="32" r="30" fill="#162425"/>
+  <!-- Teal accent ring -->
+  <circle cx="32" cy="32" r="30" fill="none" stroke="#10B99B" stroke-width="3"/>
+  <!-- "AM" stylized text -->
+  <text x="32" y="28" text-anchor="middle" fill="#10B99B"
+        font-family="system-ui, sans-serif" font-size="16" font-weight="800" letter-spacing="-1">AM</text>
+  <!-- "list" text -->
+  <text x="32" y="44" text-anchor="middle" fill="#9333EA"
+        font-family="system-ui, sans-serif" font-size="11" font-weight="700" letter-spacing="2">LIST</text>
+  <!-- Decorative line -->
+  <line x1="12" y1="32" x2="52" y2="32" stroke="#30484A" stroke-width="1"/>
+</svg>

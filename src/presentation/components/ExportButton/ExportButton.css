@@ -1,0 +1,29 @@
+.export-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.9rem;
+  background: var(--accent-visto);
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+  white-space: nowrap;
+}
+
+.export-btn:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+.export-btn:focus-visible {
+  outline: 2px solid var(--accent-visto);
+  outline-offset: 2px;
+}
+
+.export-btn:active {
+  transform: translateY(0);
+}

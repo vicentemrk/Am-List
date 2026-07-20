@@ -1,0 +1,289 @@
+.item-card {
+  display: flex;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.2s;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+}
+
+.item-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--accent-visto);
+}
+
+/* ── thumbnail ────────────────────────────────────────────────────────────── */
+.item-card__thumb-wrap {
+  position: relative;
+  width: 140px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--border);
+}
+
+.item-card__thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.item-card__thumb--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  color: var(--text-muted);
+}
+
+.item-card__fav {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s, color 0.2s;
+}
+
+.item-card__fav:hover {
+  background: rgba(0, 0, 0, 0.7);
+  transform: scale(1.1);
+}
+
+.item-card__fav--active {
+  background: rgba(250, 204, 21, 0.9); /* yellow-400 */
+  color: #000;
+  border-color: rgba(250, 204, 21, 1);
+}
+
+.item-card__fav--active:hover {
+  background: rgba(253, 224, 71, 0.9);
+}
+
+/* ── info area ────────────────────────────────────────────────────────────── */
+.item-card__info {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  flex: 1;
+  min-width: 0;
+  gap: 0.5rem;
+}
+
+.item-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  flex-wrap: wrap;
+}
+
+.item-card__badge {
+  padding: 0.15rem 0.4rem;
+  border-radius: var(--radius-sm);
+  background: var(--border);
+  color: var(--text-primary);
+}
+
+.badge--airing { background: rgba(16, 185, 129, 0.15); color: #059669; }
+.badge--complete { background: rgba(59, 130, 246, 0.15); color: #2563eb; }
+.badge--upcoming { background: rgba(245, 158, 11, 0.15); color: #d97706; }
+
+.item-card__type {
+  color: var(--text-muted);
+}
+
+.item-card__scores-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.item-card__score {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  color: #f59e0b; /* Gold for API */
+}
+
+.item-card__score--user {
+  color: #a855f7; /* Purple for User */
+}
+
+.item-card__title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── sub-info (genres, synopsis) ─────────────────────────────────────────── */
+.item-card__subinfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.item-card__genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.item-card__genre-pill {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: var(--bg);
+  padding: 0.1rem 0.4rem;
+  border-radius: 0.3rem;
+  border: 1px solid var(--border);
+  text-transform: uppercase;
+}
+
+.item-card__sinopsis {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.item-card__sinopsis-toggle {
+  background: none;
+  border: none;
+  color: var(--accent-visto);
+  font-weight: 600;
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 0.2rem;
+}
+
+.item-card__sinopsis-toggle:hover {
+  text-decoration: underline;
+}
+
+/* ── user tags display ─────────────────────────────────────────────────────── */
+.item-card__tags-display {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.2rem;
+}
+
+.item-card__tag-pill {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  padding: 0.15rem 0.4rem;
+  border-radius: 0.4rem;
+}
+
+/* ── footer row (progress & actions) ──────────────────────────────────────── */
+.item-card__footer-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-top: auto;
+  gap: 1rem;
+}
+
+/* ── progress display ─────────────────────────────────────────────────────── */
+.item-card__progress-display {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex: 1;
+}
+
+.item-card__progress-bar-wrap {
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.item-card__progress-bar {
+  height: 100%;
+  background: var(--accent-visto);
+  transition: width 0.3s ease;
+}
+
+.item-card__progress-text {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+/* ── actions ──────────────────────────────────────────────────────────────── */
+.item-card__actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.item-card__action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.item-card__action-btn:hover {
+  background: var(--bg);
+  color: var(--text-primary);
+  border-color: var(--text-muted);
+  transform: translateY(-2px);
+}
+
+.item-card__action-btn--remove:hover {
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.05);
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+@media (max-width: 500px) {
+  .item-card {
+    flex-direction: column;
+  }
+  .item-card__thumb-wrap {
+    width: 100%;
+    height: 180px;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .item-card__thumb {
+    object-position: center 20%;
+  }
+}
