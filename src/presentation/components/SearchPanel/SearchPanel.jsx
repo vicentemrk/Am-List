@@ -63,7 +63,7 @@ export function SearchPanel({ mediaType, onAdd, existingIds }) {
       {loading && (
         <div className="search-panel__status" aria-live="polite" aria-label="Buscando…">
           <span className="search-panel__spinner" aria-hidden="true" />
-          <span>Buscando en Jikan…</span>
+          <span>Buscando....</span>
         </div>
       )}
 
