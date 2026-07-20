@@ -5,7 +5,7 @@
 import React, { useEffect, useState } from 'react';
 import { validarProgreso } from '../../../domain/validators.js';
 import { ESTADOS_USUARIO, SCORE_RANGE } from '../../../domain/itemSchema.js';
-import { X, Plus, Tv, BookOpen } from 'lucide-react';
+import { X, Plus, Tv, BookOpen, Star } from 'lucide-react';
 import './EditModal.css';
 
 const MAX_TAGS = 5;
