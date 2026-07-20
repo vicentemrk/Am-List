@@ -10,6 +10,7 @@ import { HistorialModal } from '../HistorialModal/HistorialModal.jsx';
 import { AddModal } from '../AddModal/AddModal.jsx';
 import { FloatingActionButton } from '../FloatingActionButton/FloatingActionButton.jsx';
 import { Menu, History, Code } from 'lucide-react';
+import faviconUrl from '/favicon.svg';
 import './AppShell.css';
 
 const NAV_ITEMS = [
@@ -45,7 +46,7 @@ export function AppShell({ theme, onToggleTheme, items, children, activePage, on
         </button>
 
         <div className="app-header__brand">
-          <img src="/favicon.svg" alt="AMlist logo" className="app-header__logo" aria-hidden="true" />
+          <img src={faviconUrl} alt="AMlist logo" className="app-header__logo" aria-hidden="true" />
           <span className="app-header__name">AMlist</span>
         </div>
 
@@ -71,7 +72,7 @@ export function AppShell({ theme, onToggleTheme, items, children, activePage, on
         aria-label="Navegación principal"
       >
         <div className="app-sidebar__brand">
-          <img src="/favicon.svg" alt="" className="app-sidebar__logo" aria-hidden="true" />
+          <img src={faviconUrl} alt="" className="app-sidebar__logo" aria-hidden="true" />
           <span className="app-sidebar__name">AMlist</span>
         </div>
 
