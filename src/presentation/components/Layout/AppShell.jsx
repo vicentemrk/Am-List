@@ -121,9 +121,9 @@ export function AppShell({ theme, onToggleTheme, items, children, activePage, on
         {/* ── Footer ─────────────────────────────────────────────────────── */}
         <footer className="app-footer">
           <p>
-            Hecho con ❤️ para AMlist. 
+            Hecho por <a href="https://github.com/vicentemrk" target="_blank" rel="noreferrer" aria-label="GitHub">vicentemrk</a>  AMlist. 
           </p>
-          <a href="https://github.com/Antigravity-ide" target="_blank" rel="noreferrer" aria-label="GitHub">
+          <a href="https://github.com/vicentemrk/Am-List" target="_blank" rel="noreferrer" aria-label="GitHub">
             <Code size={16} /> GitHub
           </a>
         </footer>
