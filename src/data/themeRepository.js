@@ -17,7 +17,8 @@ export function getTheme() {
   } catch {
     // localStorage unavailable
   }
-  return 'light';
+  // Respect OS preference; default to dark if no preference set
+  return window.matchMedia?.('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
 }
 
 /**

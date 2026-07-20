@@ -3,7 +3,7 @@
  * Displays all anime items, split into the 8 sections via SectionTabs.
  */
 import React, { useState, useMemo } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, Tv } from 'lucide-react';
 import { SectionTabs } from '../components/SectionTabs/SectionTabs.jsx';
 import { ItemCard } from '../components/ItemCard/ItemCard.jsx';
 import { EditModal } from '../components/EditModal/EditModal.jsx';
@@ -101,7 +101,8 @@ export function AnimeListPage({ onUpdate, onRemove, getFiltered, onOpenAdd }) {
       >
         {visibleItems.length === 0 ? (
           <div className="list-page__empty">
-            <p>No hay animes en esta sección todavía.</p>
+            <Tv size={64} className="list-page__empty-icon" aria-hidden="true" />
+            <p className="list-page__empty-title">No hay animes aquí todavía</p>
             <p className="list-page__empty-hint">Busca uno arriba y agrégalo a tu lista.</p>
           </div>
         ) : (

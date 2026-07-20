@@ -15,6 +15,10 @@
   height: 56px;
   background: var(--surface);
   border-bottom: 1px solid var(--border);
+  /* Skeuomorphism: subtle inner top highlight + directional shadow */
+  box-shadow: 0 1px 0 var(--border),
+              inset 0 1px 0 rgba(255,255,255,0.06),
+              0 2px 8px rgba(0,0,0,0.12);
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -153,7 +157,7 @@
 }
 
 .app-sidebar__link--active {
-  background: rgba(16, 185, 155, 0.1);
+  background: color-mix(in srgb, var(--accent-visto) 10%, transparent);
   color: var(--accent-visto);
   font-weight: 700;
   border-right: 3px solid var(--accent-visto);
@@ -230,7 +234,10 @@
     height: auto;
     max-height: 90vh;
     transform: translateY(-50%);
-    box-shadow: var(--shadow-md);
+    /* Skeuomorphism: elevated panel with directional shadow */
+    box-shadow: 4px 4px 24px rgba(0,0,0,0.35),
+                -1px -1px 0 rgba(255,255,255,0.04),
+                inset 0 1px 0 rgba(255,255,255,0.06);
     border: 1px solid var(--border);
     border-radius: 1.25rem;
     animation: sidebarFloatIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;

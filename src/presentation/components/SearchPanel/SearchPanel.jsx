@@ -38,7 +38,7 @@ export function SearchPanel({ mediaType, onAdd, existingIds }) {
   };
 
   return (
-    <section className="search-panel" aria-label="Buscar en Jikan">
+    <section className="search-panel" aria-label="Que quieres buscar?">
       <div className="search-panel__bar">
         <input
           id="search-input"

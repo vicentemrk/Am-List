@@ -40,7 +40,7 @@
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  background: var(--accent-visto);
+  background: var(--accent-completado);
   color: #fff;
   border: none;
   border-radius: var(--radius-md);
@@ -49,14 +49,17 @@
   font-weight: 600;
   cursor: pointer;
   flex-shrink: 0;
-  transition: background 0.15s, transform 0.12s, box-shadow 0.15s;
-  box-shadow: 0 2px 8px rgba(16,185,129,0.25);
+  transition: filter 0.15s, transform 0.12s, box-shadow 0.15s;
+  /* Skeuomorphism: press-depth on active */
+  box-shadow: 0 3px 10px rgba(86,44,167,0.35),
+              inset 0 1px 0 rgba(255,255,255,0.2);
 }
 
 .list-page__add-btn:hover {
-  background: var(--accent-completado);
+  filter: brightness(1.1);
   transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(139,92,246,0.3);
+  box-shadow: 0 6px 18px rgba(86,44,167,0.45),
+              inset 0 1px 0 rgba(255,255,255,0.2);
 }
 
 .list-page__toolbar {
@@ -111,22 +114,31 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.4rem;
-  padding: 3rem 1rem;
+  gap: 0.75rem;
+  padding: 4rem 1rem;
   color: var(--text-muted);
   text-align: center;
 }
 
-.list-page__empty span {
-  font-size: 2.5rem;
+.list-page__empty-icon {
+  opacity: 0.18;
+  color: var(--accent-visto);
+  margin-bottom: 0.5rem;
+}
+
+.list-page__empty-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
 .list-page__empty p {
   margin: 0;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
 }
 
 .list-page__empty-hint {
   font-size: 0.78rem !important;
-  opacity: 0.7;
+  opacity: 0.65;
 }

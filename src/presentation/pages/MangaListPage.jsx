@@ -3,7 +3,7 @@
  * Mirrors AnimeListPage but filtered to manga.
  */
 import React, { useState, useMemo } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, BookOpen } from 'lucide-react';
 import { SectionTabs } from '../components/SectionTabs/SectionTabs.jsx';
 import { ItemCard } from '../components/ItemCard/ItemCard.jsx';
 import { EditModal } from '../components/EditModal/EditModal.jsx';
@@ -101,7 +101,8 @@ export function MangaListPage({ onUpdate, onRemove, getFiltered, onOpenAdd }) {
       >
         {visibleItems.length === 0 ? (
           <div className="list-page__empty">
-            <p>No hay mangas en esta sección todavía.</p>
+            <BookOpen size={64} className="list-page__empty-icon" aria-hidden="true" />
+            <p className="list-page__empty-title">No hay mangas aquí todavía</p>
             <p className="list-page__empty-hint">Busca uno arriba y agrégalo a tu lista.</p>
           </div>
         ) : (

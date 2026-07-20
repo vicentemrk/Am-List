@@ -1,18 +1,19 @@
 .item-card {
   display: flex;
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: var(--border-skeu);
   border-radius: var(--radius-lg);
   overflow: hidden;
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
               box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
               border-color 0.2s;
+  /* Skeuomorphism: raised card with top-light */
   box-shadow: var(--shadow-sm);
   position: relative;
 }
 
 .item-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
   box-shadow: var(--shadow-md);
   border-color: var(--accent-visto);
 }
@@ -100,9 +101,9 @@
   color: var(--text-primary);
 }
 
-.badge--airing { background: rgba(16, 185, 129, 0.15); color: #059669; }
-.badge--complete { background: rgba(59, 130, 246, 0.15); color: #2563eb; }
-.badge--upcoming { background: rgba(245, 158, 11, 0.15); color: #d97706; }
+.badge--airing   { background: color-mix(in srgb, var(--accent-visto) 15%, transparent);     color: var(--accent-visto);     }
+.badge--complete  { background: color-mix(in srgb, var(--accent-completado) 15%, transparent); color: var(--accent-completado); }
+.badge--upcoming  { background: color-mix(in srgb, var(--accent-warning) 15%, transparent);    color: var(--accent-warning);   }
 
 .item-card__type {
   color: var(--text-muted);
@@ -229,8 +230,14 @@
 
 .item-card__progress-bar {
   height: 100%;
-  background: var(--accent-visto);
-  transition: width 0.3s ease;
+  /* Gradient progress bar for skeuomorphism depth */
+  background: linear-gradient(
+    to right,
+    var(--accent-visto),
+    color-mix(in srgb, var(--accent-visto) 70%, var(--accent-completado))
+  );
+  box-shadow: 0 0 6px color-mix(in srgb, var(--accent-visto) 50%, transparent);
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .item-card__progress-text {
@@ -256,6 +263,8 @@
   background: var(--surface);
   color: var(--text-muted);
   cursor: pointer;
+  /* Skeuomorphism: raised button */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.06);
   transition: all 0.2s;
 }
 
@@ -264,6 +273,12 @@
   color: var(--text-primary);
   border-color: var(--text-muted);
   transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+.item-card__action-btn:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-press);
 }
 
 .item-card__action-btn--remove:hover {

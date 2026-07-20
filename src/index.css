@@ -6,40 +6,57 @@
 /* ── Google Fonts ────────────────────────────────────────────────────────── */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-/* ── Design Tokens (Eye Care & Premium) ──────────────────────────────────── */
+/* ── Design Tokens — Ocean/Cyan palette ────────────────────────────────── */
 :root {
-  /* Eye Care Light Mode: Soft paper tones, no pure whites */
-  --bg: #F5F3F0;
-  --surface: #FCFBF9;
-  --text-primary: #2D3748;
-  --text-muted: #718096;
-  --accent-visto: #10B981;
-  --accent-completado: #8B5CF6;
-  --border: #E2E8F0;
+  /* Light mode — crisp arctic */
+  --bg:               #EFF5F7;
+  --surface:          #FFFFFF;
+  --text-primary:     #0A1B1F;
+  --text-muted:       #5E7A81;
+  --accent-visto:     #00D5FF;   /* cyan — highlights, borders, underlines, icons */
+  --accent-completado:#562ca7;   /* purple — CTA buttons, primary actions */
+  --border:           #D0DFE3;
+
+  /* Skeuomorphism light tokens — directional shadows */
+  --shadow-sm:  0 1px 3px rgba(10,27,31,0.08), 0 1px 2px rgba(10,27,31,0.05),
+                inset 0 1px 0 rgba(255,255,255,0.9);
+  --shadow-md:  0 4px 12px rgba(10,27,31,0.10), 0 2px 4px rgba(10,27,31,0.06),
+                inset 0 1px 0 rgba(255,255,255,0.8);
+  --shadow-press: inset 0 2px 4px rgba(10,27,31,0.15);
+  --border-skeu: 1px solid #D0DFE3;
 
   /* Semantic extras */
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
-  --radius-sm: 0.5rem;
-  --radius-md: 0.875rem;
-  --radius-lg: 1.25rem;
+  --accent-danger:   #E53E3E;
+  --accent-warning:  #D97706;
+  --radius-sm:  0.5rem;
+  --radius-md:  0.875rem;
+  --radius-lg:  1.25rem;
   --font: 'Inter', system-ui, sans-serif;
 }
 
 [data-theme='dark'] {
-  /* Premium Dark Mode: Deep navy and slate tones */
-  --bg: #0F172A;
-  --surface: #1E293B;
-  --text-primary: #F1F5F9;
-  --text-muted: #94A3B8;
-  --accent-visto: #34D399;
-  --accent-completado: #A78BFA;
-  --border: #334155;
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
-  --radius-sm: 0.5rem;
-  --radius-md: 0.875rem;
-  --radius-lg: 1.25rem;
+  /* Dark mode — deep navy ocean */
+  --bg:               #0A1B1F;
+  --surface:          #14282D;
+  --text-primary:     #E2ECF0;
+  --text-muted:       #829DA3;
+  --accent-visto:     #00E9FF;   /* brighter cyan for dark bg */
+  --accent-completado:#a278f3;   /* lighter purple for dark bg */
+  --border:           #223B41;
+
+  /* Skeuomorphism dark tokens — light comes from top-left */
+  --shadow-sm:  0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.3),
+                inset 0 1px 0 rgba(255,255,255,0.04);
+  --shadow-md:  0 6px 20px rgba(0,0,0,0.5), 0 2px 6px rgba(0,0,0,0.35),
+                inset 0 1px 0 rgba(255,255,255,0.06);
+  --shadow-press: inset 0 2px 6px rgba(0,0,0,0.5);
+  --border-skeu: 1px solid #223B41;
+
+  --accent-danger:   #FC8181;
+  --accent-warning:  #F6AD55;
+  --radius-sm:  0.5rem;
+  --radius-md:  0.875rem;
+  --radius-lg:  1.25rem;
   --font: 'Inter', system-ui, sans-serif;
 }
 

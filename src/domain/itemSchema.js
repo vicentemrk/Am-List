@@ -23,7 +23,7 @@ export const SECCIONES = /** @type {const} */ ([
   'dropeado',
 ]);
 
-/** Human-readable labels for each section */
+/** Human-readable labels for each section (full, used in aria-label) */
 export const SECCION_LABELS = {
   all:        'Lista completa',
   completado: 'Completados',
@@ -34,6 +34,19 @@ export const SECCION_LABELS = {
   finalizado: 'Finalizados',
   pausado:    'Pausados',
   dropeado:   'Dropeados / Abandonados',
+};
+
+/** Short labels for visual display in tabs */
+export const SECCION_LABELS_SHORT = {
+  all:        'Todo',
+  completado: 'Completados',
+  por_ver:    'Por ver',
+  favorito:   'Favoritos',
+  en_curso:   'En curso',
+  en_emision: 'En emisión',
+  finalizado: 'Finalizados',
+  pausado:    'Pausados',
+  dropeado:   'Dropeados',
 };
 
 /**
