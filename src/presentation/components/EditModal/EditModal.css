@@ -180,6 +180,13 @@
   border-color: var(--accent-visto);
 }
 
+.edit-modal__textarea {
+  resize: vertical;
+  min-height: 80px;
+  max-height: 200px;
+  font-family: inherit;
+}
+
 .edit-modal__progress-inputs {
   display: flex;
   align-items: center;

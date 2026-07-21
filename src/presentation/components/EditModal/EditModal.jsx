@@ -171,6 +171,21 @@ export function EditModal({ item, onClose, onUpdate }) {
 
           <div className="edit-modal__divider" />
 
+          {/* Personal Description */}
+          <div className="edit-modal__control-group">
+            <label className="edit-modal__label" htmlFor={`modal-desc-${item.id}`}>Descripción Personal</label>
+            <textarea
+              id={`modal-desc-${item.id}`}
+              className="edit-modal__input edit-modal__textarea"
+              value={item.descripcionPersonal || ''}
+              onChange={(e) => onUpdate(item.id, { descripcionPersonal: e.target.value })}
+              placeholder="¿Qué te pareció?"
+              rows={3}
+            />
+          </div>
+
+          <div className="edit-modal__divider" />
+
           {/* Tags */}
           <div className="edit-modal__tags-editor">
             <label className="edit-modal__label">Etiquetas Personales</label>

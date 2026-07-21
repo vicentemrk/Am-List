@@ -44,6 +44,21 @@
   font-weight: 700;
 }
 
+.add-modal__controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.add-modal__multiple-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
 .add-modal__close {
   background: none;
   border: 1.5px solid var(--border);

@@ -70,6 +70,8 @@ export const DEFAULT_ITEM = {
     maximo: null,
   },
   tags:          [],
+  descripcionPersonal: '',
+  ordenManual:   0,
   creadoEn:      '',
   actualizadoEn: '',
 };

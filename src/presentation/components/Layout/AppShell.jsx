@@ -146,9 +146,7 @@ export function AppShell({ theme, onToggleTheme, items, children, activePage, on
         onClose={() => setAddModalOpen(false)}
         mediaType={activePage}
         onAdd={(item) => {
-          const res = onAdd(item);
-          if (res?.success !== false) setAddModalOpen(false);
-          return res;
+          return onAdd(item);
         }}
         existingIds={new Set(items.filter(i => i.mediaType === activePage).map(i => i.id))}
       />

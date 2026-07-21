@@ -112,8 +112,15 @@ export function ItemCard({ item, onUpdate, onRemove, onEdit }) {
           </div>
         )}
 
-        <div className="item-card__footer-row">
-          {/* ── progress bar ─────────────────────────────────────────────── */}
+        {item.descripcionPersonal && (
+          <div className="item-card__personal-desc">
+            <p>{item.descripcionPersonal}</p>
+          </div>
+        )}
+      </div>
+
+      <div className="item-card__right-col">
+        {/* ── progress bar ─────────────────────────────────────────────── */}
           <div className="item-card__progress-display">
             <div
               className="item-card__progress-bar-wrap"

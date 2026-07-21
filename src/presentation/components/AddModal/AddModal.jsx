@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SearchPanel } from '../SearchPanel/SearchPanel.jsx';
 import './AddModal.css';
 
 export function AddModal({ isOpen, onClose, mediaType, onAdd, existingIds }) {
+  const [isMultiple, setIsMultiple] = useState(false);
   // Close on Escape key
   useEffect(() => {
     if (!isOpen) return;
@@ -10,6 +11,14 @@ export function AddModal({ isOpen, onClose, mediaType, onAdd, existingIds }) {
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
   }, [isOpen, onClose]);
+
+  const handleAdd = (item) => {
+    const res = onAdd(item);
+    if (res?.success !== false && !isMultiple) {
+      onClose();
+    }
+    return res;
+  };
 
   if (!isOpen) return null;
 
@@ -26,15 +35,25 @@ export function AddModal({ isOpen, onClose, mediaType, onAdd, existingIds }) {
           <h2 className="add-modal__title">
             Buscar y Agregar {mediaType === 'anime' ? 'Anime' : 'Manga'}
           </h2>
-          <button
-            className="add-modal__close"
-            onClick={onClose}
-            aria-label="Cerrar ventana de búsqueda"
-          >✕</button>
+          <div className="add-modal__controls">
+            <label className="add-modal__multiple-label">
+              <input 
+                type="checkbox" 
+                checked={isMultiple} 
+                onChange={(e) => setIsMultiple(e.target.checked)} 
+              />
+              Agregar múltiples
+            </label>
+            <button
+              className="add-modal__close"
+              onClick={onClose}
+              aria-label="Cerrar ventana de búsqueda"
+            >✕</button>
+          </div>
         </header>
 
         <div className="add-modal__body">
-          <SearchPanel mediaType={mediaType} onAdd={onAdd} existingIds={existingIds} />
+          <SearchPanel mediaType={mediaType} onAdd={handleAdd} existingIds={existingIds} />
         </div>
       </div>
     </div>
