@@ -1,16 +1,16 @@
 /**
  * presentation/hooks/useSearch.js
- * Orchestrates Jikan search with debounce + AbortController.
+ * Orchestrates search with debounce + AbortController.
  *
  * - Debounces the query by 500ms to avoid hammering the API on every keystroke.
  * - Aborts obsolete in-flight requests when a new search starts.
  * - Exposes { results, loading, error, retry } to components.
- * - Never touches fetch or localStorage directly — delegates to jikanClient.
+ * - Never touches fetch or localStorage directly — delegates to apiClient.
  */
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useDebounce } from './useDebounce.js';
-import { searchAnime, searchManga, JikanApiError } from '../../data/apiClient.js';
+import { searchAnime, searchManga, ApiError } from '../../data/apiClient.js';
 
 /**
  * @param {string} query           Raw search input
@@ -50,9 +50,9 @@ export function useSearch(query, mediaType = 'anime') {
       }
     } catch (err) {
       if (signal.aborted) return; // stale request — ignore silently
-      if (err instanceof JikanApiError && err.code === 'CANCELLED') return;
-      setError(err instanceof JikanApiError ? err.message : 'Error inesperado en la búsqueda.');
-      setErrorCode(err instanceof JikanApiError ? err.code : 'UNKNOWN');
+      if (err instanceof ApiError && err.code === 'CANCELLED') return;
+      setError(err instanceof ApiError ? err.message : 'Error inesperado en la búsqueda.');
+      setErrorCode(err instanceof ApiError ? err.code : 'UNKNOWN');
     } finally {
       if (!signal.aborted) setLoading(false);
     }

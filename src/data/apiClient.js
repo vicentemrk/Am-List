@@ -3,7 +3,6 @@
  * Multi-API client with automatic fallback: Jikan -> AniList -> Kitsu.
  */
 
-const JIKAN_BASE_URL = 'https://api.jikan.moe/v4';
 const ANILIST_BASE_URL = 'https://graphql.anilist.co';
 const KITSU_BASE_URL = 'https://kitsu.io/api/edge';
 const TIMEOUT_MS = 12_000;
@@ -13,10 +12,10 @@ const LS_CACHE_KEY = 'amlist_search_cache';
 
 // ─── typed error ──────────────────────────────────────────────────────────────
 
-export class JikanApiError extends Error {
+export class ApiError extends Error {
   constructor(message, code) {
     super(message);
-    this.name = 'JikanApiError';
+    this.name = 'ApiError';
     this.code = code;
   }
 }
@@ -72,63 +71,7 @@ function lsSet(key, data) {
   }
 }
 
-// ─── Jikan normalization ───────────────────────────────────────────────────────
 
-function mapAiringStatus(status) {
-  if (!status) return 'unknown';
-  const s = status.toLowerCase();
-  // 'finished'/'complete' must be checked before 'airing' because
-  // Jikan sends 'Finished Airing' for ended series, which contains 'airing'.
-  if (s.includes('finished') || s.includes('complete')) return 'complete';
-  if (s.includes('airing') || s.includes('currently')) return 'airing';
-  if (s.includes('upcoming') || s.includes('not yet')) return 'upcoming';
-  return 'unknown';
-}
-
-function mapPublishingStatus(status) {
-  if (!status) return 'unknown';
-  const s = status.toLowerCase();
-  if (s.includes('publishing')) return 'airing';
-  if (s.includes('finished')) return 'complete';
-  if (s.includes('not yet')) return 'upcoming';
-  return 'unknown';
-}
-
-function normalizeJikanAnime(raw) {
-  return {
-    malId:         raw.mal_id, // Important: id will be `anime_${malId}`
-    mediaType:     'anime',
-    titulo:        raw.title_english || raw.title || '',
-    imagen:        raw.images?.jpg?.image_url || raw.images?.webp?.image_url || '',
-    estadoEmision: mapAiringStatus(raw.status),
-    progreso: {
-      actual: 0,
-      maximo: raw.episodes ?? null,
-    },
-    sinopsis:  raw.synopsis || '',
-    score:     raw.score ?? null,
-    genres:    (raw.genres || []).map((g) => g.name),
-    source:    'Jikan'
-  };
-}
-
-function normalizeJikanManga(raw) {
-  return {
-    malId:         raw.mal_id,
-    mediaType:     'manga',
-    titulo:        raw.title_english || raw.title || '',
-    imagen:        raw.images?.jpg?.image_url || raw.images?.webp?.image_url || '',
-    estadoEmision: mapPublishingStatus(raw.status),
-    progreso: {
-      actual: 0,
-      maximo: raw.chapters ?? null,
-    },
-    sinopsis:  raw.synopsis || '',
-    score:     raw.score ?? null,
-    genres:    (raw.genres || []).map((g) => g.name),
-    source:    'Jikan'
-  };
-}
 
 // ─── AniList normalization ─────────────────────────────────────────────────────
 
@@ -183,31 +126,14 @@ async function fetchWithTimeout(url, options, externalSignal) {
   } catch (err) {
     if (err.name === 'AbortError') {
       if (externalSignal?.aborted) {
-        throw new JikanApiError('Búsqueda cancelada.', 'CANCELLED');
+        throw new ApiError('Búsqueda cancelada.', 'CANCELLED');
       }
-      throw new JikanApiError('La solicitud tardó demasiado.', 'TIMEOUT');
+      throw new ApiError('La solicitud tardó demasiado.', 'TIMEOUT');
     }
-    throw new JikanApiError('Error de red.', 'NETWORK');
+    throw new ApiError('Error de red.', 'NETWORK');
   } finally {
     clearTimeout(timer);
   }
-}
-
-async function searchJikan(q, type, signal) {
-  const url = `${JIKAN_BASE_URL}/${type}?q=${encodeURIComponent(q)}&limit=10&sfw=true`;
-  const response = await fetchWithTimeout(url, {}, signal);
-  
-  if (response.status === 429) {
-    throw new Error('Jikan Rate Limit'); // Will trigger fallback
-  }
-  if (!response.ok) {
-    throw new Error('Jikan Error');
-  }
-
-  const json = await response.json();
-  if (!json || !Array.isArray(json.data)) return [];
-
-  return json.data.map(type === 'anime' ? normalizeJikanAnime : normalizeJikanManga);
 }
 
 async function searchAniList(q, type, signal) {
@@ -245,7 +171,7 @@ async function searchAniList(q, type, signal) {
   }, signal);
 
   if (!response.ok) {
-    throw new JikanApiError(`AniList Error HTTP ${response.status}`, response.status);
+    throw new ApiError(`AniList Error HTTP ${response.status}`, response.status);
   }
 
   const json = await response.json();
@@ -295,13 +221,61 @@ async function searchKitsu(q, type, signal) {
   }, signal);
 
   if (!response.ok) {
-    throw new JikanApiError(`Kitsu Error HTTP ${response.status}`, response.status);
+    throw new ApiError(`Kitsu Error HTTP ${response.status}`, response.status);
   }
 
   const json = await response.json();
   if (!json || !Array.isArray(json.data)) return [];
 
   return json.data.map(item => normalizeKitsu(item, type));
+}
+
+// ─── MangaDex normalization (Manga Only) ──────────────────────────────────────
+
+function mapMangaDexStatus(status) {
+  if (!status) return 'unknown';
+  if (status === 'ongoing') return 'airing';
+  if (status === 'completed') return 'complete';
+  return 'unknown';
+}
+
+function normalizeMangaDex(raw) {
+  const attrs = raw.attributes || {};
+  const coverRel = (raw.relationships || []).find(r => r.type === 'cover_art');
+  const coverFileName = coverRel?.attributes?.fileName;
+  const imagen = coverFileName ? `https://uploads.mangadex.org/covers/${raw.id}/${coverFileName}.256.jpg` : '';
+  
+  const tags = (attrs.tags || []).map(t => t.attributes?.name?.en).filter(Boolean);
+
+  return {
+    malId:         `md_${raw.id}`,
+    mediaType:     'manga',
+    titulo:        attrs.title?.en || attrs.title?.['ja-ro'] || Object.values(attrs.title || {})[0] || '',
+    imagen:        imagen,
+    estadoEmision: mapMangaDexStatus(attrs.status),
+    progreso: {
+      actual: 0,
+      maximo: attrs.lastChapter ? parseInt(attrs.lastChapter, 10) : null,
+    },
+    sinopsis:  attrs.description?.en || Object.values(attrs.description || {})[0] || '',
+    score:     null, // MangaDex stats need separate API call
+    genres:    tags,
+    source:    'MangaDex'
+  };
+}
+
+async function searchMangaDex(q, signal) {
+  const url = `https://api.mangadex.org/manga?title=${encodeURIComponent(q)}&limit=10&includes[]=cover_art`;
+  const response = await fetchWithTimeout(url, {}, signal);
+
+  if (!response.ok) {
+    throw new ApiError(`MangaDex Error HTTP ${response.status}`, response.status);
+  }
+
+  const json = await response.json();
+  if (!json || !Array.isArray(json.data)) return [];
+
+  return json.data.map(normalizeMangaDex);
 }
 
 // ─── Multi-API Orchestrator ───────────────────────────────────────────────────
@@ -314,17 +288,20 @@ async function searchWithFallback(q, type, signal) {
   if (cached) return cached;
 
   let results = [];
-  try {
-    results = await searchJikan(q, type, signal);
-  } catch (err) {
-    if (err instanceof JikanApiError && err.code === 'CANCELLED') throw err;
+
+  if (type === 'manga') {
+    try {
+      results = await searchMangaDex(q, signal);
+    } catch (err) {
+      if (err instanceof ApiError && err.code === 'CANCELLED') throw err;
+    }
   }
 
   if (results.length === 0 && !signal?.aborted) {
     try {
       results = await searchAniList(q, type, signal);
     } catch (err) {
-      if (err instanceof JikanApiError && err.code === 'CANCELLED') throw err;
+      if (err instanceof ApiError && err.code === 'CANCELLED') throw err;
     }
   }
 
@@ -332,8 +309,8 @@ async function searchWithFallback(q, type, signal) {
     try {
       results = await searchKitsu(q, type, signal);
     } catch (err) {
-      if (err instanceof JikanApiError && err.code === 'CANCELLED') throw err;
-      throw new JikanApiError('Todas las APIs fallaron o no hay resultados.', 'NETWORK');
+      if (err instanceof ApiError && err.code === 'CANCELLED') throw err;
+      throw new ApiError('Todas las APIs fallaron o no hay resultados.', 'NETWORK');
     }
   }
 

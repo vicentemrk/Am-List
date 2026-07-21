@@ -124,10 +124,9 @@ export function ItemCard({ item, onUpdate, onRemove, onEdit, isDraggable }) {
             <p>{item.descripcionPersonal}</p>
           </div>
         )}
-      </div>
 
-      <div className="item-card__right-col">
-        {/* ── progress bar ─────────────────────────────────────────────── */}
+        {/* ── footer row (progress & actions) ──────────────────────────────────────── */}
+        <div className="item-card__footer-row">
           <div className="item-card__progress-display">
             <div
               className="item-card__progress-bar-wrap"
@@ -147,7 +146,6 @@ export function ItemCard({ item, onUpdate, onRemove, onEdit, isDraggable }) {
             </span>
           </div>
 
-          {/* ── actions section ──────────────────────────────────────────────── */}
           <div className="item-card__actions">
             <button
               className="item-card__action-btn item-card__action-btn--edit"
@@ -166,6 +164,7 @@ export function ItemCard({ item, onUpdate, onRemove, onEdit, isDraggable }) {
               <Trash2 size={18} />
             </button>
           </div>
+        </div>
       </div>
     </article>
   );

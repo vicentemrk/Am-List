@@ -10,23 +10,23 @@
  */
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { JikanApiError, searchAnime, searchManga } from './apiClient.js';
+import { ApiError, searchAnime, searchManga } from './apiClient.js';
 
 // ─── helpers para construir respuestas fake de fetch ──────────────────────────
 
-function makeJikanAnimeResponse(overrides = {}) {
+function makeMangaDexResponse(overrides = {}) {
   return {
     data: [
       {
-        mal_id: 1,
-        title: 'Naruto',
-        title_english: 'Naruto',
-        images: { jpg: { image_url: 'https://example.com/naruto.jpg' } },
-        status: 'Finished Airing',
-        episodes: 220,
-        synopsis: 'A ninja story.',
-        score: 7.98,
-        genres: [{ name: 'Action' }, { name: 'Adventure' }],
+        id: '1',
+        attributes: {
+          title: { en: 'Naruto' },
+          status: 'completed',
+          lastChapter: '700',
+          description: { en: 'A ninja story.' },
+          tags: [{ attributes: { name: { en: 'Action' } } }, { attributes: { name: { en: 'Adventure' } } }]
+        },
+        relationships: [{ type: 'cover_art', attributes: { fileName: 'cover.jpg' } }],
         ...overrides,
       },
     ],
@@ -118,44 +118,29 @@ beforeEach(() => {
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
 describe('searchAnime', () => {
-  it('retorna resultados normalizados de Jikan cuando responde con éxito', async () => {
-    vi.stubGlobal('fetch', () => okFetch(makeJikanAnimeResponse()));
+  it('retorna resultados normalizados de AniList cuando responde con éxito', async () => {
+    vi.stubGlobal('fetch', () => okFetch(makeAniListResponse()));
 
-    const results = await searchAnime('naruto-jikan-ok');
+    const results = await searchAnime('naruto-anilist-ok');
 
     expect(results).toHaveLength(1);
     expect(results[0]).toMatchObject({
-      malId: 1,
+      malId: 20,
       mediaType: 'anime',
       titulo: 'Naruto',
       estadoEmision: 'complete',
       progreso: { actual: 0, maximo: 220 },
-      score: 7.98,
-      genres: ['Action', 'Adventure'],
-      source: 'Jikan',
+      score: '7.90',
+      genres: ['Action'],
+      source: 'AniList',
     });
   });
 
-  it('hace fallback a AniList si Jikan responde con 429 (rate limit)', async () => {
+  it('hace fallback a Kitsu si AniList responde con 503 (error)', async () => {
     vi.stubGlobal('fetch', vi
       .fn()
-      .mockResolvedValueOnce({ ok: false, status: 429, json: () => Promise.resolve({}) })
-      .mockResolvedValueOnce({ ok: true, status: 200, json: () => Promise.resolve(makeAniListResponse()) })
-    );
-
-    const results = await searchAnime('naruto-fallback-anilist');
-
-    expect(results).toHaveLength(1);
-    expect(results[0].source).toBe('AniList');
-    expect(results[0].titulo).toBe('Naruto');
-  });
-
-  it('hace fallback a Kitsu si Jikan y AniList fallan', async () => {
-    vi.stubGlobal('fetch', vi
-      .fn()
-      .mockResolvedValueOnce({ ok: false, status: 500, json: () => Promise.resolve({}) }) // Jikan falla
-      .mockResolvedValueOnce({ ok: false, status: 503, json: () => Promise.resolve({}) }) // AniList falla
-      .mockResolvedValueOnce({ ok: true, status: 200, json: () => Promise.resolve(makeKitsuAnimeResponse()) }) // Kitsu OK
+      .mockResolvedValueOnce({ ok: false, status: 503, json: () => Promise.resolve({}) })
+      .mockResolvedValueOnce({ ok: true, status: 200, json: () => Promise.resolve(makeKitsuAnimeResponse()) })
     );
 
     const results = await searchAnime('naruto-fallback-kitsu');
@@ -176,7 +161,7 @@ describe('searchAnime', () => {
   });
 
   it('retorna resultados del caché en memoria sin hacer otro fetch en la misma query', async () => {
-    const fetchSpy = vi.fn(() => okFetch(makeJikanAnimeResponse()));
+    const fetchSpy = vi.fn(() => okFetch(makeAniListResponse()));
     vi.stubGlobal('fetch', fetchSpy);
 
     // Primera llamada — va a la red
@@ -190,48 +175,31 @@ describe('searchAnime', () => {
     expect(cached[0].titulo).toBe('Naruto');
   });
 
-  it('lanza JikanApiError si las 3 APIs fallan y no hay resultados', async () => {
+  it('lanza ApiError si las APIs fallan y no hay resultados', async () => {
     vi.stubGlobal('fetch', vi
       .fn()
       .mockResolvedValueOnce({ ok: false, status: 500, json: () => Promise.resolve({}) })
       .mockResolvedValueOnce({ ok: false, status: 500, json: () => Promise.resolve({}) })
-      .mockResolvedValueOnce({ ok: false, status: 500, json: () => Promise.resolve({}) })
     );
 
-    await expect(searchAnime('naruto-all-fail')).rejects.toBeInstanceOf(JikanApiError);
+    await expect(searchAnime('naruto-all-fail')).rejects.toBeInstanceOf(ApiError);
   });
 });
 
 describe('searchManga', () => {
-  it('retorna resultados normalizados de Jikan para manga con éxito', async () => {
-    vi.stubGlobal('fetch', () =>
-      okFetch({
-        data: [
-          {
-            mal_id: 11,
-            title: 'Berserk',
-            title_english: 'Berserk',
-            images: { jpg: { image_url: 'https://example.com/berserk.jpg' } },
-            status: 'Publishing',
-            chapters: null,
-            synopsis: 'Dark fantasy.',
-            score: 9.47,
-            genres: [{ name: 'Action' }, { name: 'Fantasy' }],
-          },
-        ],
-      })
-    );
+  it('retorna resultados normalizados de MangaDex para manga con éxito', async () => {
+    vi.stubGlobal('fetch', () => okFetch(makeMangaDexResponse()));
 
-    const results = await searchManga('berserk-manga-ok');
+    const results = await searchManga('naruto-mangadex-ok');
 
     expect(results).toHaveLength(1);
     expect(results[0]).toMatchObject({
-      malId: 11,
+      malId: 'md_1',
       mediaType: 'manga',
-      titulo: 'Berserk',
-      estadoEmision: 'airing',
-      progreso: { actual: 0, maximo: null },
-      source: 'Jikan',
+      titulo: 'Naruto',
+      estadoEmision: 'complete',
+      progreso: { actual: 0, maximo: 700 },
+      source: 'MangaDex',
     });
   });
 });

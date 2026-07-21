@@ -122,13 +122,13 @@ export function AppShell({ theme, onToggleTheme, items, children, activePage, on
         {/* ── Footer ─────────────────────────────────────────────────────── */}
         <footer className="app-footer">
           <p>
-            Hecho por <a href="https://github.com/vicentemrk" target="_blank" rel="noreferrer" aria-label="GitHub">vicentemrk</a> para AMlist. 
+            Hecho por <a href="https://github.com/vicentemrk" target="_blank" rel="noreferrer" aria-label="GitHub">vicentemrk</a>. 
           </p>
           <div className="app-footer__credits">
             Datos proveídos por: 
-            <a href="https://jikan.moe/" target="_blank" rel="noreferrer">Jikan API</a>, 
-            <a href="https://anilist.co/" target="_blank" rel="noreferrer">AniList</a> y 
-            <a href="https://kitsu.io/" target="_blank" rel="noreferrer">Kitsu</a>
+            <a href="https://anilist.co/" target="_blank" rel="noreferrer"> AniList</a>, 
+            <a href="https://kitsu.io/" target="_blank" rel="noreferrer"> Kitsu</a> y
+            <a href="https://mangadex.org/" target="_blank" rel="noreferrer"> MangaDex</a>
           </div>
           <a href="https://github.com/vicentemrk/Am-List" target="_blank" rel="noreferrer" aria-label="GitHub">
             <Code size={16} /> GitHub
