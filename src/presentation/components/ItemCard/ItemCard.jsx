@@ -159,7 +159,6 @@ export function ItemCard({ item, onUpdate, onRemove, onEdit }) {
               <Trash2 size={18} />
             </button>
           </div>
-        </div>
       </div>
     </article>
   );
