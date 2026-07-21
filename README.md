@@ -10,7 +10,7 @@
 
 ## ¿Qué es AMlist?
 
-AMlist es una **Single Page Application (SPA)** para gestionar tus listas personales de anime y manga. Busca títulos usando las APIs de **AniList** y **MangaDex**, registra tu progreso, puntúa, marca favoritos y organiza todo en secciones — sin necesitar una cuenta ni un servidor.
+AMlist es una **Single Page Application (SPA)** para gestionar tus listas personales de anime, manga, manhwa y manhua. Busca títulos usando las APIs de **AniList**, **MangaDex** y **Kitsu**, registra tu progreso, puntúa, marca favoritos y organiza todo en secciones — sin necesitar una cuenta ni un servidor (por ahora).
 
 Todo se guarda directamente en tu navegador (`localStorage`).
 
@@ -29,34 +29,6 @@ Todo se guarda directamente en tu navegador (`localStorage`).
 - 📖 **Historial** — Registro cronológico de todos tus cambios
 - 🌙 **Tema claro / oscuro** — Diseño Eye Care (sin blancos ni negros puros)
 - 📱 **Mobile First** — Usable desde 360px de ancho
-
----
-
-## 🚀 Instalación y uso local
-
-**Requisitos:** Node.js 18+
-
-```bash
-# Clonar el repositorio
-git clone https://github.com/vicentemrk/AmList.git
-cd AmList
-
-# Instalar dependencias
-npm install
-
-# Iniciar el servidor de desarrollo
-npm run dev
-```
-
-Abre [http://localhost:5173](http://localhost:5173) en tu navegador.
-
-```bash
-# Compilar para producción
-npm run build
-
-# Ejecutar tests
-npm run test
-```
 
 ---
 
@@ -80,51 +52,34 @@ npm run test
 
 ---
 
-## 🗂️ Estructura del proyecto
-
-```
-src/
-├── domain/          # Lógica pura de negocio (sin React, sin fetch, sin localStorage)
-│   ├── itemSchema.js
-│   ├── validators.js
-│   └── historial.js
-├── data/            # Acceso a efectos secundarios (API, localStorage)
-│   ├── apiClient.js
-│   ├── itemsRepository.js
-│   ├── historyRepository.js
-│   ├── themeRepository.js
-│   └── malImporter.js
-└── presentation/    # React: componentes, hooks y páginas
-    ├── App.jsx
-    ├── hooks/
-    ├── components/
-    └── pages/
-```
-
-La arquitectura sigue los principios de **Clean Architecture**: `presentation` → `data` → `domain`. La capa de dominio no depende de nada externo.
-
----
-
 ## 🔮 Próximas funciones (roadmap)
 
-Las siguientes funciones están planificadas para versiones futuras:
+Las siguientes funciones están planificadas y organizadas por prioridad:
 
-- **Vista de detalle** — Panel expansible al hacer clic en la portada (sinopsis completa, tráiler, etc.)
-- **Filtro por tags** — Filtrar tu lista usando tus propias etiquetas
-- **Múltiples listas** — Crear y gestionar varias listas personalizadas
-- **Dashboard de estadísticas** — Horas vistas, géneros favoritos, progreso general
-- **Sincronización en la nube** — Opcional, mediante Supabase (manteniendo modo offline)
-- **Importar desde AniList / Kitsu** — Además del XML de MyAnimeList ya disponible
+### 🟢 Próximo (v1.1)
+Funciones de alto impacto y menor complejidad:
 
----
+- **Filtro por tags** — Filtrar la lista usando tus propias etiquetas personales
+- **Vista de detalle** — Panel expandible al hacer clic en la portada (sinopsis completa, géneros, info extra)
 
-## 📄 Documentación
+### 🔵 Corto plazo (v1.2)
+Funciones que agregan valor significativo al uso diario:
 
-| Documento | Descripción |
-|---|---|
-| [`docs/PLAN_MAESTRO.md`](docs/PLAN_MAESTRO.md) | Arquitectura, modelo de datos y estado del proyecto |
-| [`docs/QA_CRITERIOS.md`](docs/QA_CRITERIOS.md) | Trazabilidad técnica y checklist de QA |
-| [`docs/ROADMAP.md`](docs/ROADMAP.md) | Funciones futuras y decisiones de arquitectura |
+- **Dashboard de estadísticas** — Total de horas vistas, géneros favoritos, progreso general y racha de actividad
+- **Listas personalizadas** — Crear, renombrar y eliminar múltiples listas además de Anime y Manga
+- **Importar desde AniList / Kitsu** — Además del importador de MyAnimeList XML ya disponible
+- **Changelog visible** — Historial de cambios entre versiones de la aplicación
+
+### 🟣 Mediano plazo (v2.0)
+Funciones que requieren cambios de arquitectura o mayor alcance:
+
+- **Cuentas de usuario** *(opcional)* — Sin cuenta la app sigue funcionando al 100%; la cuenta permite recuperar listas en otros dispositivos
+- **Sincronización en la nube** *(requiere cuenta)* — Local-first: funciona offline, sincroniza cuando hay conexión (Supabase)
+
+### ⚪ Mejoras visuales
+Pendientes de diseño:
+
+- **Nuevo logo AMlist** — Rediseño del ícono y branding general
 
 ---
 

@@ -4,12 +4,45 @@
 
 ---
 
-## Prioridad Alta
+## Fases del roadmap
 
-### 1. Vista de Detalle (Detail Modal / Drawer)
+| Feature | Fase | Prioridad |
+|---|---|---|
+| Filtro por tags | v1.1 — Próximo | 🟢 Alta |
+| Vista de detalle (modal/drawer) | v1.1 — Próximo | 🟢 Alta |
+| Dashboard de estadísticas | v1.2 — Corto plazo | 🔵 Media |
+| Listas personalizadas (crear/renombrar/eliminar) | v1.2 — Corto plazo | 🔵 Media |
+| Importación desde AniList / Kitsu | v1.2 — Corto plazo | 🔵 Media |
+| Changelog visible (historial de versiones) | v1.2 — Corto plazo | 🔵 Media |
+| Cuentas de usuario *(opcional)* | v2.0 — Mediano plazo | 🟣 Baja |
+| Sincronización en la nube (Supabase) | v2.0 — Mediano plazo | 🟣 Baja |
+| Arquitectura Hexagonal completa | v2.0 — Mediano plazo | 🟣 Baja |
+| Nuevo logo AMlist | Mejoras visuales | ⚪ Diseño |
+| Filtro por género | Post-MVP | ⚪ En espera |
+
+---
+
+## v1.1 — Próximo
+
+### 1. Filtro por tags
+
+**Estado:** Pendiente — entra en el MVP como último ítem pendiente
+
+Barra de herramientas secundaria debajo de las pestañas con un dropdown multi-select de tags activos. Al seleccionar uno o más tags, la lista se filtra en tiempo real.
+
+**Implicaciones técnicas:**
+- Nuevo estado `tagsFiltro: string[]` en `AnimeListPage` / `MangaListPage`
+- `filtrarPorSeccion` en `validators.js` ya recibe todos los ítems; se puede encadenar un `.filter()` adicional
+- Sin cambios en la arquitectura
+
+---
+
+### 2. Vista de Detalle (Detail Modal / Drawer)
+
 **Estado:** Pendiente Post-MVP (decidido en conversación 1)
 
 Actualmente toda la edición ocurre en `ItemCard` + `EditModal`. La idea es que al hacer clic en la portada del ítem se abra un panel de vista detallada tipo Netflix/AniList con:
+
 - Imagen grande de portada
 - Sinopsis completa (sin truncar)
 - Géneros como pills
