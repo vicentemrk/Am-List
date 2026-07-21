@@ -18,6 +18,21 @@
   border-color: var(--accent-visto);
 }
 
+.item-card__drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.2rem;
+  background: color-mix(in srgb, var(--surface) 90%, transparent);
+  color: var(--text-muted);
+  cursor: grab;
+  border-right: 1px solid var(--border);
+}
+
+.item-card__drag-handle:active {
+  cursor: grabbing;
+}
+
 /* ── thumbnail ────────────────────────────────────────────────────────────── */
 .item-card__thumb-wrap {
   position: relative;

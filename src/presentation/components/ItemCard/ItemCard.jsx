@@ -4,10 +4,10 @@
  * Editing is delegated to a detailed modal view.
  */
 import React, { useState } from 'react';
-import { Tv, BookOpen, Star, Trash2, Pencil } from 'lucide-react';
+import { Tv, BookOpen, Star, Trash2, Pencil, GripVertical } from 'lucide-react';
 import './ItemCard.css';
 
-export function ItemCard({ item, onUpdate, onRemove, onEdit }) {
+export function ItemCard({ item, onUpdate, onRemove, onEdit, isDraggable }) {
   const [sinopsisExpanded, setSinopsisExpanded] = useState(false);
 
   // ── display helpers ──────────────────────────────────────────────────────────
@@ -34,6 +34,13 @@ export function ItemCard({ item, onUpdate, onRemove, onEdit }) {
 
   return (
     <article className="item-card item-card--list" aria-label={item.titulo}>
+      {/* ── drag handle ───────────────────────────────────────────────────── */}
+      {isDraggable && (
+        <div className="item-card__drag-handle" aria-hidden="true">
+          <GripVertical size={20} />
+        </div>
+      )}
+
       {/* ── thumbnail ─────────────────────────────────────────────────────── */}
       <div className="item-card__thumb-wrap">
         {item.imagen ? (

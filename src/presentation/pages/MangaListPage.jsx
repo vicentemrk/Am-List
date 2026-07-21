@@ -177,6 +177,7 @@ export function MangaListPage({ onUpdate, onRemove, getFiltered, onOpenAdd }) {
                 onUpdate={onUpdate}
                 onRemove={onRemove}
                 onEdit={setEditingItem}
+                isDraggable={sortBy === 'manual'}
               />
             </div>
           ))
