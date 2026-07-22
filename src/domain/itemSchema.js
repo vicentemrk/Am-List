@@ -78,12 +78,19 @@ export const DEFAULT_ITEM = {
 
 /** Valid user status options */
 export const ESTADOS_USUARIO = [
-  { value: 'por_ver',    label: 'Por ver'   },
-  { value: 'en_curso',   label: 'En curso'  },
-  { value: 'pausado',    label: 'Pausado'   },
-  { value: 'completado', label: 'Completado'},
-  { value: 'finalizado', label: 'Finalizado'},
-  { value: 'dropeado',   label: 'Dropeado'  },
+  { value: 'por_ver',    label: 'Por ver'    },
+  { value: 'en_curso',   label: 'En curso'   },
+  { value: 'pausado',    label: 'Pausado'    },
+  { value: 'completado', label: 'Completado' },
+  { value: 'dropeado',   label: 'Dropeado'   },
+];
+
+/** Valid emission status options */
+export const ESTADOS_EMISION = [
+  { value: 'airing',   label: 'En emisión'   },
+  { value: 'complete', label: 'Finalizado'   },
+  { value: 'upcoming', label: 'Próximamente' },
+  { value: 'unknown',  label: 'Desconocido'  },
 ];
 
 /** Score range for the 1-10 selector */

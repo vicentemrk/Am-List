@@ -4,7 +4,7 @@
  */
 import React, { useEffect, useState } from 'react';
 import { validarProgreso } from '../../../domain/validators.js';
-import { ESTADOS_USUARIO, SCORE_RANGE } from '../../../domain/itemSchema.js';
+import { ESTADOS_USUARIO, ESTADOS_EMISION, SCORE_RANGE } from '../../../domain/itemSchema.js';
 import { X, Plus, Tv, BookOpen, Star } from 'lucide-react';
 import './EditModal.css';
 
@@ -49,6 +49,8 @@ export function EditModal({ item, onClose, onUpdate }) {
     }
     onUpdate(item.id, {
       estadoUsuario: draft.estadoUsuario,
+      estadoEmision: draft.estadoEmision,
+      favorito: draft.favorito,
       puntuacion: draft.puntuacion,
       progreso: draft.progreso,
       descripcionPersonal: draft.descripcionPersonal,
@@ -73,6 +75,15 @@ export function EditModal({ item, onClose, onUpdate }) {
   const handleStatus = (e) => {
     const val = e.target.value;
     setDraft((prev) => ({ ...prev, estadoUsuario: val }));
+  };
+
+  const handleEmisionStatus = (e) => {
+    const val = e.target.value;
+    setDraft((prev) => ({ ...prev, estadoEmision: val }));
+  };
+
+  const handleToggleFavorito = () => {
+    setDraft((prev) => ({ ...prev, favorito: !prev.favorito }));
   };
 
   const handleDescriptionChange = (e) => {
@@ -119,13 +130,23 @@ export function EditModal({ item, onClose, onUpdate }) {
         <div className="edit-modal__body">
           {/* Header Info */}
           <div className="edit-modal__info-row">
-            {draft.imagen ? (
-              <img src={draft.imagen} alt={`Portada de ${draft.titulo}`} className="edit-modal__thumb" />
-            ) : (
-              <div className="edit-modal__thumb edit-modal__thumb--placeholder">
-                {draft.mediaType === 'anime' ? <Tv size={32} /> : <BookOpen size={32} />}
-              </div>
-            )}
+            <div className="edit-modal__thumb-wrap">
+              {draft.imagen ? (
+                <img src={draft.imagen} alt={`Portada de ${draft.titulo}`} className="edit-modal__thumb" />
+              ) : (
+                <div className="edit-modal__thumb edit-modal__thumb--placeholder">
+                  {draft.mediaType === 'anime' ? <Tv size={32} /> : <BookOpen size={32} />}
+                </div>
+              )}
+              <button
+                className={`edit-modal__fav-btn${draft.favorito ? ' edit-modal__fav-btn--active' : ''}`}
+                onClick={handleToggleFavorito}
+                aria-label={draft.favorito ? 'Quitar de favoritos' : 'Marcar como favorito'}
+                title={draft.favorito ? 'Favorito' : 'Marcar como favorito'}
+              >
+                <Star size={18} fill={draft.favorito ? 'currentColor' : 'none'} />
+              </button>
+            </div>
             <div className="edit-modal__info-text">
               <h3 className="edit-modal__item-title">{draft.titulo}</h3>
               
@@ -153,7 +174,7 @@ export function EditModal({ item, onClose, onUpdate }) {
           {/* Controls */}
           <div className="edit-modal__controls">
             <div className="edit-modal__control-group">
-              <label className="edit-modal__label" htmlFor={`modal-status-${draft.id}`}>Estado</label>
+              <label className="edit-modal__label" htmlFor={`modal-status-${draft.id}`}>Estado (Usuario)</label>
               <select
                 id={`modal-status-${draft.id}`}
                 className="edit-modal__input"
@@ -161,6 +182,20 @@ export function EditModal({ item, onClose, onUpdate }) {
                 onChange={handleStatus}
               >
                 {ESTADOS_USUARIO.map((s) => (
+                  <option key={s.value} value={s.value}>{s.label}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="edit-modal__control-group">
+              <label className="edit-modal__label" htmlFor={`modal-emision-${draft.id}`}>Estado Emisión</label>
+              <select
+                id={`modal-emision-${draft.id}`}
+                className="edit-modal__input"
+                value={draft.estadoEmision || 'unknown'}
+                onChange={handleEmisionStatus}
+              >
+                {ESTADOS_EMISION.map((s) => (
                   <option key={s.value} value={s.value}>{s.label}</option>
                 ))}
               </select>
