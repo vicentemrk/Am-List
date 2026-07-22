@@ -1,9 +1,21 @@
 /**
  * data/malImporter.js
- * Lógica para leer y parsear un archivo XML exportado desde MyAnimeList.
+ * Lógica para leer y parsear un archivo XML exportado desde MyAnimeList con sanitización.
  */
 
 import { DEFAULT_ITEM } from '../domain/itemSchema.js';
+
+/**
+ * Sanitizes input strings from XML nodes.
+ * @param {string|null|undefined} str
+ * @returns {string}
+ */
+function sanitizeString(str) {
+  if (typeof str !== 'string') return '';
+  return str
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .trim();
+}
 
 /**
  * Convierte el texto de estado de MyAnimeList a nuestro estado interno.
@@ -47,26 +59,30 @@ export async function parseMalXml(file) {
         const animeNodes = xmlDoc.getElementsByTagName('anime');
         for (let i = 0; i < animeNodes.length; i++) {
           const node = animeNodes[i];
-          const malId = node.querySelector('series_animedb_id')?.textContent;
-          const titulo = node.querySelector('series_title')?.textContent;
+          const rawMalId = node.querySelector('series_animedb_id')?.textContent;
+          const rawTitle = node.querySelector('series_title')?.textContent;
+
+          const malId = sanitizeString(rawMalId);
+          const titulo = sanitizeString(rawTitle);
+
           if (!malId || !titulo) continue; // Skip if invalid
 
           const watched = parseInt(node.querySelector('my_watched_episodes')?.textContent || '0', 10);
           const total = parseInt(node.querySelector('series_episodes')?.textContent || '0', 10);
           const score = parseInt(node.querySelector('my_score')?.textContent || '0', 10);
-          const status = node.querySelector('my_status')?.textContent;
+          const status = sanitizeString(node.querySelector('my_status')?.textContent);
 
           items.push({
             ...DEFAULT_ITEM,
             id: `anime_${malId}`,
-            malId: malId,
+            malId: Number(malId) || 0,
             mediaType: 'anime',
             titulo: titulo,
-            puntuacion: score > 0 ? score : null,
+            puntuacion: score > 0 && score <= 10 ? score : null,
             estadoUsuario: mapMalStatus(status),
             progreso: {
-              actual: isNaN(watched) ? 0 : watched,
-              maximo: (isNaN(total) || total === 0) ? null : total,
+              actual: isNaN(watched) ? 0 : Math.max(0, watched),
+              maximo: (isNaN(total) || total <= 0) ? null : total,
             },
             creadoEn: new Date().toISOString(),
             actualizadoEn: new Date().toISOString(),

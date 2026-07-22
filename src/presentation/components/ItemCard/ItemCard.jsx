@@ -3,7 +3,7 @@
  * Displays a single tracked item in a list view format.
  * Editing is delegated to a detailed modal view.
  */
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { Tv, BookOpen, Star, Trash2, Pencil, GripVertical } from 'lucide-react';
 import './ItemCard.css';
 
@@ -20,7 +20,7 @@ function highlightMatch(text, query) {
   );
 }
 
-export function ItemCard({ item, onUpdate, onRemove, onEdit, isDraggable, searchQuery = '' }) {
+function ItemCardComponent({ item, onUpdate, onRemove, onEdit, isDraggable, searchQuery = '' }) {
   const [sinopsisExpanded, setSinopsisExpanded] = useState(false);
 
   // ── display helpers ──────────────────────────────────────────────────────────
@@ -182,3 +182,5 @@ export function ItemCard({ item, onUpdate, onRemove, onEdit, isDraggable, search
     </article>
   );
 }
+
+export const ItemCard = memo(ItemCardComponent);

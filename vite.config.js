@@ -5,4 +5,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   base: '/Am-List/', // GitHub Pages: vicentemrk.github.io/Am-List/
+  test: {
+    exclude: ['**/node_modules/**', '**/e2e/**'],
+  },
 })

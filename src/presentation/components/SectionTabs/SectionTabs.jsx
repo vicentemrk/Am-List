@@ -5,7 +5,7 @@
  *  - Desktop (≥768px): underline indicator tabs (Design C, animated)
  */
 import React, { useEffect, useRef, useState } from 'react';
-import { SECCIONES, SECCION_LABELS, SECCION_LABELS_SHORT } from '../../../domain/itemSchema.js';
+import { SECCIONES, SECCION_LABELS_SHORT } from '../../../domain/itemSchema.js';
 import './SectionTabs.css';
 
 export function SectionTabs({ activeSection, onSectionChange, counts }) {

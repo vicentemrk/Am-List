@@ -226,3 +226,18 @@
 .list-page__tag-clear-btn:hover {
   color: #ef4444;
 }
+
+/* ── Mobile Accessibility Sizing ───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .list-page__add-btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  .list-page__sort-select {
+    min-height: 44px;
+  }
+  .list-page__tag-filter-btn {
+    min-height: 36px;
+    padding: 0.35rem 0.75rem;
+  }
+}

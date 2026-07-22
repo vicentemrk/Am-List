@@ -84,14 +84,6 @@ function okFetch(body) {
   });
 }
 
-function errorFetch(status) {
-  return Promise.resolve({
-    ok: false,
-    status,
-    json: () => Promise.resolve({}),
-  });
-}
-
 // ─── Stub de localStorage (no existe en Node/Vitest) ─────────────────────────
 
 const localStorageStub = (() => {

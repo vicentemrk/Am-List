@@ -1,8 +1,20 @@
 /**
  * data/jsonImporter.js
- * Parses and validates AMlist JSON exports.
+ * Parses and validates AMlist JSON exports with security sanitization.
  */
 import { DEFAULT_ITEM } from '../domain/itemSchema.js';
+
+/**
+ * Sanitizes input strings to strip dangerous HTML tags and script injections.
+ * @param {string} str
+ * @returns {string}
+ */
+function sanitizeString(str) {
+  if (typeof str !== 'string') return '';
+  return str
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .trim();
+}
 
 /**
  * Parses JSON content (File object or JSON string) exported by AMlist.
@@ -50,13 +62,19 @@ export async function parseAmListJson(input) {
         id,
         malId,
         mediaType,
-        titulo: item.titulo || 'Sin título',
+        titulo: sanitizeString(item.titulo) || 'Sin título',
+        descripcionPersonal: sanitizeString(item.descripcionPersonal || ''),
+        sinopsis: sanitizeString(item.sinopsis || ''),
         progreso: {
           actual: Number(item.progreso?.actual) || 0,
           maximo: item.progreso?.maximo != null ? Number(item.progreso.maximo) : null,
         },
-        tags: Array.isArray(item.tags) ? item.tags : [],
-        genres: Array.isArray(item.genres) ? item.genres : [],
+        tags: Array.isArray(item.tags)
+          ? item.tags.map((t) => sanitizeString(t)).filter(Boolean).slice(0, 5)
+          : [],
+        genres: Array.isArray(item.genres)
+          ? item.genres.map((g) => sanitizeString(g)).filter(Boolean)
+          : [],
       };
     });
 
