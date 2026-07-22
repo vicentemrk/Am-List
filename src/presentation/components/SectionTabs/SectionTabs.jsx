@@ -13,28 +13,72 @@ export function SectionTabs({ activeSection, onSectionChange, counts }) {
   const activeRef  = useRef(null);
   const listRef    = useRef(null);
 
-  // Move the underline indicator to match the active tab (desktop only)
-  useEffect(() => {
-    const nav = navRef.current;
-    const tab = activeRef.current;
-    if (!nav || !tab) return;
+  const isMouseDownRef = useRef(false);
+  const startXRef = useRef(0);
+  const startScrollLeftRef = useRef(0);
+  const hasDraggedRef = useRef(false);
 
-    const update = () => {
+  // Keep the light indicator in sync with the active tab on resize, activeSection change, and SCROLL
+  useEffect(() => {
+    const nav  = navRef.current;
+    const list = listRef.current;
+    const tab  = activeRef.current;
+    if (!nav || !tab || !list) return;
+
+    const updateIndicator = () => {
       const navRect = nav.getBoundingClientRect();
       const tabRect = tab.getBoundingClientRect();
-      nav.style.setProperty('--indicator-left',  `${tabRect.left - navRect.left + nav.scrollLeft}px`);
+      nav.style.setProperty('--indicator-left',  `${tabRect.left - navRect.left}px`);
       nav.style.setProperty('--indicator-width', `${tabRect.width}px`);
     };
 
-    update();
-    const ro = new ResizeObserver(update);
+    updateIndicator();
+
+    const ro = new ResizeObserver(updateIndicator);
     ro.observe(nav);
-    return () => ro.disconnect();
+    ro.observe(list);
+    list.addEventListener('scroll', updateIndicator, { passive: true });
+    window.addEventListener('resize', updateIndicator);
+
+    return () => {
+      ro.disconnect();
+      list.removeEventListener('scroll', updateIndicator);
+      window.removeEventListener('resize', updateIndicator);
+    };
   }, [activeSection]);
 
-  const onWheel = (e) => {
+  // ── Drag to scroll handlers (using refs to avoid React re-renders) ─────────
+  const handleMouseDown = (e) => {
+    if (e.button !== 0 || !listRef.current) return;
+    isMouseDownRef.current = true;
+    hasDraggedRef.current = false;
+    startXRef.current = e.pageX - listRef.current.offsetLeft;
+    startScrollLeftRef.current = listRef.current.scrollLeft;
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isMouseDownRef.current || !listRef.current) return;
+    const x = e.pageX - listRef.current.offsetLeft;
+    const walk = x - startXRef.current;
+    if (Math.abs(walk) > 4) {
+      hasDraggedRef.current = true;
+      listRef.current.scrollLeft = startScrollLeftRef.current - walk;
+    }
+  };
+
+  const handleMouseUp = () => {
+    isMouseDownRef.current = false;
+  };
+
+  const handleWheel = (e) => {
     if (e.deltaY !== 0 && listRef.current) {
       listRef.current.scrollLeft += e.deltaY;
+    }
+  };
+
+  const handleTabClick = (sec) => {
+    if (!hasDraggedRef.current) {
+      onSectionChange(sec);
     }
   };
 
@@ -47,7 +91,11 @@ export function SectionTabs({ activeSection, onSectionChange, counts }) {
         className="section-tabs__list" 
         role="tablist"
         ref={listRef}
-        onWheel={onWheel}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+        onWheel={handleWheel}
       >
         {SECCIONES.map((sec) => {
           const isActive = activeSection === sec;
@@ -60,7 +108,7 @@ export function SectionTabs({ activeSection, onSectionChange, counts }) {
                 role="tab"
                 aria-selected={isActive}
                 aria-controls={`panel-${sec}`}
-                onClick={() => onSectionChange(sec)}
+                onClick={() => handleTabClick(sec)}
               >
                 <span className="section-tabs__label">{SECCION_LABELS_SHORT[sec]}</span>
                 {counts?.[sec] !== undefined && (
