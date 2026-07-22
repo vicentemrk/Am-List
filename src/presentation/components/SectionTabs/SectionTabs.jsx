@@ -4,7 +4,7 @@
  *  - Mobile  (<768px): horizontal scrollable pills (Design A, no color badges)
  *  - Desktop (≥768px): underline indicator tabs (Design C, animated)
  */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { SECCIONES, SECCION_LABELS_SHORT } from '../../../domain/itemSchema.js';
 import './SectionTabs.css';
 
@@ -12,9 +12,6 @@ export function SectionTabs({ activeSection, onSectionChange, counts }) {
   const navRef     = useRef(null);
   const activeRef  = useRef(null);
   const listRef    = useRef(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
 
   // Move the underline indicator to match the active tab (desktop only)
   useEffect(() => {
@@ -35,29 +32,8 @@ export function SectionTabs({ activeSection, onSectionChange, counts }) {
     return () => ro.disconnect();
   }, [activeSection]);
 
-  const onMouseDown = (e) => {
-    setIsDragging(true);
-    setStartX(e.pageX - listRef.current.offsetLeft);
-    setScrollLeft(listRef.current.scrollLeft);
-  };
-
-  const onMouseLeave = () => {
-    setIsDragging(false);
-  };
-
-  const onMouseUp = () => {
-    setIsDragging(false);
-  };
-
-  const onMouseMove = (e) => {
-    if (!isDragging) return;
-    const x = e.pageX - listRef.current.offsetLeft;
-    const walk = (x - startX) * 2;
-    listRef.current.scrollLeft = scrollLeft - walk;
-  };
-
   const onWheel = (e) => {
-    if (e.deltaY !== 0) {
+    if (e.deltaY !== 0 && listRef.current) {
       listRef.current.scrollLeft += e.deltaY;
     }
   };
@@ -68,13 +44,9 @@ export function SectionTabs({ activeSection, onSectionChange, counts }) {
       <span className="section-tabs__indicator" aria-hidden="true" />
 
       <ul 
-        className={`section-tabs__list ${isDragging ? 'section-tabs__list--dragging' : ''}`} 
+        className="section-tabs__list" 
         role="tablist"
         ref={listRef}
-        onMouseDown={onMouseDown}
-        onMouseLeave={onMouseLeave}
-        onMouseUp={onMouseUp}
-        onMouseMove={onMouseMove}
         onWheel={onWheel}
       >
         {SECCIONES.map((sec) => {

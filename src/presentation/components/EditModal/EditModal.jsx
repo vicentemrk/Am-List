@@ -4,7 +4,7 @@
  */
 import React, { useEffect, useState } from 'react';
 import { validarProgreso } from '../../../domain/validators.js';
-import { ESTADOS_USUARIO, ESTADOS_EMISION, SCORE_RANGE } from '../../../domain/itemSchema.js';
+import { ESTADOS_USUARIO, SCORE_RANGE } from '../../../domain/itemSchema.js';
 import { X, Plus, Tv, BookOpen, Star } from 'lucide-react';
 import './EditModal.css';
 
@@ -75,11 +75,6 @@ export function EditModal({ item, onClose, onUpdate }) {
   const handleStatus = (e) => {
     const val = e.target.value;
     setDraft((prev) => ({ ...prev, estadoUsuario: val }));
-  };
-
-  const handleEmisionStatus = (e) => {
-    const val = e.target.value;
-    setDraft((prev) => ({ ...prev, estadoEmision: val }));
   };
 
   const handleToggleFavorito = () => {
