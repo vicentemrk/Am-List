@@ -310,3 +310,44 @@
   font-size: 0.75rem;
   color: var(--text-muted);
 }
+
+.edit-modal__footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.edit-modal__btn {
+  padding: 0.5rem 1.25rem;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+}
+
+.edit-modal__btn--cancel {
+  background: transparent;
+  color: var(--text-muted);
+  border-color: var(--border);
+}
+
+.edit-modal__btn--cancel:hover {
+  background: var(--border);
+  color: var(--text-primary);
+}
+
+.edit-modal__btn--save {
+  background: var(--accent-visto, #3b82f6);
+  color: #ffffff;
+}
+
+.edit-modal__btn--save:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}

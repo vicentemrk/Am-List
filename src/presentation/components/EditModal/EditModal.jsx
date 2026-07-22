@@ -11,10 +11,22 @@ import './EditModal.css';
 const MAX_TAGS = 5;
 
 export function EditModal({ item, onClose, onUpdate }) {
+  const [draft, setDraft] = useState(null);
   const [editError, setEditError] = useState('');
   const [newTag, setNewTag] = useState('');
 
-  // Close on Escape key
+  // Sync draft state whenever item changes
+  useEffect(() => {
+    if (item) {
+      setDraft(JSON.parse(JSON.stringify(item)));
+      setEditError('');
+      setNewTag('');
+    } else {
+      setDraft(null);
+    }
+  }, [item]);
+
+  // Close on Escape key (cancels changes)
   useEffect(() => {
     if (!item) return;
     const handler = (e) => { if (e.key === 'Escape') onClose(); };
@@ -22,38 +34,61 @@ export function EditModal({ item, onClose, onUpdate }) {
     return () => document.removeEventListener('keydown', handler);
   }, [item, onClose]);
 
-  if (!item) return null;
+  if (!item || !draft) return null;
 
-  const tags = Array.isArray(item.tags) ? item.tags : [];
-  const genres = Array.isArray(item.genres) ? item.genres : [];
-  const progressMax = item.progreso.maximo != null ? item.progreso.maximo : '?';
+  const tags = Array.isArray(draft.tags) ? draft.tags : [];
+  const genres = Array.isArray(draft.genres) ? draft.genres : [];
+  const progressMax = draft.progreso?.maximo != null ? draft.progreso.maximo : '?';
 
   // ── Handlers ────────────────────────────────────────────────────────────────
+  const handleSave = () => {
+    const check = validarProgreso(draft.progreso?.actual ?? 0, draft.progreso?.maximo ?? null);
+    if (!check.valid) {
+      setEditError(check.message);
+      return;
+    }
+    onUpdate(item.id, {
+      estadoUsuario: draft.estadoUsuario,
+      puntuacion: draft.puntuacion,
+      progreso: draft.progreso,
+      descripcionPersonal: draft.descripcionPersonal,
+      tags: draft.tags,
+    });
+    onClose();
+  };
+
   const handleProgressChange = (field, rawValue) => {
     const value = rawValue === '' ? 0 : Number(rawValue);
-    const newProgreso = { ...item.progreso, [field]: isNaN(value) ? item.progreso[field] : value };
+    const newProgreso = { ...draft.progreso, [field]: isNaN(value) ? draft.progreso[field] : value };
     const check = validarProgreso(newProgreso.actual, newProgreso.maximo);
-    if (!check.valid) { setEditError(check.message); return; }
-    setEditError('');
-    onUpdate(item.id, { progreso: newProgreso });
+    if (!check.valid) { setEditError(check.message); } else { setEditError(''); }
+    setDraft((prev) => ({ ...prev, progreso: newProgreso }));
   };
 
   const handleScore = (e) => {
     const val = e.target.value === '' ? null : Number(e.target.value);
-    onUpdate(item.id, { puntuacion: val });
+    setDraft((prev) => ({ ...prev, puntuacion: val }));
   };
 
-  const handleStatus = (e) => onUpdate(item.id, { estadoUsuario: e.target.value });
+  const handleStatus = (e) => {
+    const val = e.target.value;
+    setDraft((prev) => ({ ...prev, estadoUsuario: val }));
+  };
+
+  const handleDescriptionChange = (e) => {
+    const val = e.target.value;
+    setDraft((prev) => ({ ...prev, descripcionPersonal: val }));
+  };
 
   const handleAddTag = () => {
     const trimmed = newTag.trim();
     if (!trimmed || tags.length >= MAX_TAGS || tags.includes(trimmed)) return;
-    onUpdate(item.id, { tags: [...tags, trimmed] });
+    setDraft((prev) => ({ ...prev, tags: [...tags, trimmed] }));
     setNewTag('');
   };
 
   const handleRemoveTag = (tag) => {
-    onUpdate(item.id, { tags: tags.filter((t) => t !== tag) });
+    setDraft((prev) => ({ ...prev, tags: tags.filter((t) => t !== tag) }));
   };
 
   const handleTagKeyDown = (e) => {
@@ -65,13 +100,18 @@ export function EditModal({ item, onClose, onUpdate }) {
       className="edit-modal-overlay"
       role="dialog"
       aria-modal="true"
-      aria-label={`Editar ${item.titulo}`}
+      aria-label={`Editar ${draft.titulo}`}
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div className="edit-modal">
         <header className="edit-modal__header">
-          <h2 className="edit-modal__title">Detalles de {item.mediaType === 'anime' ? 'Anime' : 'Manga'}</h2>
-          <button className="edit-modal__close" onClick={onClose} aria-label="Cerrar modal de edición">
+          <h2 className="edit-modal__title">Detalles de {draft.mediaType === 'anime' ? 'Anime' : 'Manga'}</h2>
+          <button
+            className="edit-modal__close"
+            onClick={handleSave}
+            aria-label="Aceptar y guardar cambios"
+            title="Aceptar cambios"
+          >
             <X size={20} />
           </button>
         </header>
@@ -79,20 +119,20 @@ export function EditModal({ item, onClose, onUpdate }) {
         <div className="edit-modal__body">
           {/* Header Info */}
           <div className="edit-modal__info-row">
-            {item.imagen ? (
-              <img src={item.imagen} alt={`Portada de ${item.titulo}`} className="edit-modal__thumb" />
+            {draft.imagen ? (
+              <img src={draft.imagen} alt={`Portada de ${draft.titulo}`} className="edit-modal__thumb" />
             ) : (
               <div className="edit-modal__thumb edit-modal__thumb--placeholder">
-                {item.mediaType === 'anime' ? <Tv size={32} /> : <BookOpen size={32} />}
+                {draft.mediaType === 'anime' ? <Tv size={32} /> : <BookOpen size={32} />}
               </div>
             )}
             <div className="edit-modal__info-text">
-              <h3 className="edit-modal__item-title">{item.titulo}</h3>
+              <h3 className="edit-modal__item-title">{draft.titulo}</h3>
               
-              {item.scoreApi && (
+              {draft.scoreApi && (
                 <div className="edit-modal__api-score">
                   <Star size={14} fill="#f59e0b" color="#f59e0b" />
-                  <span>{item.scoreApi} (Nota de la comunidad)</span>
+                  <span>{draft.scoreApi} (Nota de la comunidad)</span>
                 </div>
               )}
 
@@ -102,8 +142,8 @@ export function EditModal({ item, onClose, onUpdate }) {
                 </div>
               )}
 
-              {item.sinopsis && (
-                <p className="edit-modal__sinopsis">{item.sinopsis}</p>
+              {draft.sinopsis && (
+                <p className="edit-modal__sinopsis">{draft.sinopsis}</p>
               )}
             </div>
           </div>
@@ -113,11 +153,11 @@ export function EditModal({ item, onClose, onUpdate }) {
           {/* Controls */}
           <div className="edit-modal__controls">
             <div className="edit-modal__control-group">
-              <label className="edit-modal__label" htmlFor={`modal-status-${item.id}`}>Estado</label>
+              <label className="edit-modal__label" htmlFor={`modal-status-${draft.id}`}>Estado</label>
               <select
-                id={`modal-status-${item.id}`}
+                id={`modal-status-${draft.id}`}
                 className="edit-modal__input"
-                value={item.estadoUsuario}
+                value={draft.estadoUsuario}
                 onChange={handleStatus}
               >
                 {ESTADOS_USUARIO.map((s) => (
@@ -127,11 +167,11 @@ export function EditModal({ item, onClose, onUpdate }) {
             </div>
 
             <div className="edit-modal__control-group">
-              <label className="edit-modal__label" htmlFor={`modal-score-${item.id}`}>Puntuación</label>
+              <label className="edit-modal__label" htmlFor={`modal-score-${draft.id}`}>Puntuación</label>
               <select
-                id={`modal-score-${item.id}`}
+                id={`modal-score-${draft.id}`}
                 className="edit-modal__input"
-                value={item.puntuacion ?? ''}
+                value={draft.puntuacion ?? ''}
                 onChange={handleScore}
               >
                 <option value="">--</option>
@@ -143,23 +183,23 @@ export function EditModal({ item, onClose, onUpdate }) {
           </div>
 
           <div className="edit-modal__control-group edit-modal__control-group--progress">
-            <label className="edit-modal__label" htmlFor={`modal-prog-actual-${item.id}`}>Progreso ({progressMax} totales)</label>
+            <label className="edit-modal__label" htmlFor={`modal-prog-actual-${draft.id}`}>Progreso ({progressMax} totales)</label>
             <div className="edit-modal__progress-inputs">
               <input
-                id={`modal-prog-actual-${item.id}`}
+                id={`modal-prog-actual-${draft.id}`}
                 className="edit-modal__input edit-modal__input--small"
                 type="number" min="0"
-                max={item.progreso.maximo ?? 9999}
-                value={item.progreso.actual}
+                max={draft.progreso.maximo ?? 9999}
+                value={draft.progreso.actual}
                 onChange={(e) => handleProgressChange('actual', e.target.value)}
                 title="Vistos/Leídos"
               />
               <span className="edit-modal__progress-sep">/</span>
               <input
-                id={`modal-prog-max-${item.id}`}
+                id={`modal-prog-max-${draft.id}`}
                 className="edit-modal__input edit-modal__input--small"
                 type="number" min="0" max="9999"
-                value={item.progreso.maximo ?? ''}
+                value={draft.progreso.maximo ?? ''}
                 placeholder="?"
                 onChange={(e) => handleProgressChange('maximo', e.target.value === '' ? null : e.target.value)}
                 title="Total (editar si es incorrecto)"
@@ -173,12 +213,12 @@ export function EditModal({ item, onClose, onUpdate }) {
 
           {/* Personal Description */}
           <div className="edit-modal__control-group">
-            <label className="edit-modal__label" htmlFor={`modal-desc-${item.id}`}>Descripción Personal</label>
+            <label className="edit-modal__label" htmlFor={`modal-desc-${draft.id}`}>Descripción Personal</label>
             <textarea
-              id={`modal-desc-${item.id}`}
+              id={`modal-desc-${draft.id}`}
               className="edit-modal__input edit-modal__textarea"
-              value={item.descripcionPersonal || ''}
-              onChange={(e) => onUpdate(item.id, { descripcionPersonal: e.target.value })}
+              value={draft.descripcionPersonal || ''}
+              onChange={handleDescriptionChange}
               placeholder="¿Qué te pareció?"
               rows={3}
             />
@@ -230,6 +270,15 @@ export function EditModal({ item, onClose, onUpdate }) {
             )}
           </div>
         </div>
+
+        <footer className="edit-modal__footer">
+          <button className="edit-modal__btn edit-modal__btn--cancel" onClick={onClose}>
+            Cancelar
+          </button>
+          <button className="edit-modal__btn edit-modal__btn--save" onClick={handleSave}>
+            Aceptar
+          </button>
+        </footer>
       </div>
     </div>
   );

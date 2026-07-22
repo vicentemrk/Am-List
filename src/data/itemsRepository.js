@@ -172,29 +172,39 @@ export function remove(id) {
 }
 
 /**
- * Imports a batch of items, keeping local priority.
- * Items that already exist in localStorage (by id) are completely ignored.
- * Only completely new items are added.
+ * Imports a batch of items.
+ * Items that already exist in localStorage (by id) are updated/merged with imported data.
+ * New items are appended.
  * @param {object[]} importedItems
- * @returns {number} The amount of items successfully added
+ * @returns {number} The amount of items successfully added or updated
  */
 export function importBatch(importedItems) {
   const existing = readAll();
-  const existingIds = new Set(existing.map((i) => i.id));
-  let addedCount = 0;
+  const itemMap = new Map(existing.map((i) => [i.id, i]));
+  let processedCount = 0;
 
-  const newItems = [];
   for (const item of importedItems) {
-    if (existingIds.has(item.id)) continue; // Keep local data priority
     assertSchema(item);
-    newItems.push(item);
-    existingIds.add(item.id);
-    addedCount++;
+    if (itemMap.has(item.id)) {
+      const prev = itemMap.get(item.id);
+      itemMap.set(item.id, {
+        ...prev,
+        ...item,
+        progreso: {
+          ...prev.progreso,
+          ...(item.progreso ?? {}),
+        },
+        actualizadoEn: new Date().toISOString(),
+      });
+    } else {
+      itemMap.set(item.id, item);
+    }
+    processedCount++;
   }
 
-  if (addedCount > 0) {
-    writeAll([...existing, ...newItems]);
+  if (processedCount > 0) {
+    writeAll(Array.from(itemMap.values()));
   }
-  return addedCount;
+  return processedCount;
 }
 

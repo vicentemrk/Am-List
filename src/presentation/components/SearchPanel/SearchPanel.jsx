@@ -8,32 +8,43 @@ import { useSearch } from '../../hooks/useSearch.js';
 import { Star, Plus, Check } from 'lucide-react';
 import './SearchPanel.css';
 
-export function SearchPanel({ mediaType, onAdd, existingIds }) {
+export function SearchPanel({ mediaType, onAdd, onRemove, existingIds }) {
   const [query, setQuery]       = useState('');
   const [addedIds, setAddedIds] = useState(new Set());
 
   const { results, loading, error, errorCode, retry } = useSearch(query, mediaType);
 
-  const handleAdd = (result) => {
+  const handleToggleItem = (result) => {
     const id = `${result.mediaType}_${result.malId}`;
-    if (existingIds?.has(id) || addedIds.has(id)) return;
+    const isAdded = existingIds?.has(id) || addedIds.has(id);
 
-    const outcome = onAdd({
-      id,
-      malId:         result.malId,
-      mediaType:     result.mediaType,
-      titulo:        result.titulo,
-      imagen:        result.imagen,
-      estadoEmision: result.estadoEmision,
-      progreso:      result.progreso,
-      sinopsis:      result.sinopsis,
-      genres:        result.genres,
-      scoreApi:      result.score,
-      puntuacion:    null, // User's personal score is empty initially
-    });
+    if (isAdded) {
+      if (onRemove) {
+        onRemove(id);
+      }
+      setAddedIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+    } else {
+      const outcome = onAdd({
+        id,
+        malId:         result.malId,
+        mediaType:     result.mediaType,
+        titulo:        result.titulo,
+        imagen:        result.imagen,
+        estadoEmision: result.estadoEmision,
+        progreso:      result.progreso,
+        sinopsis:      result.sinopsis,
+        genres:        result.genres,
+        scoreApi:      result.score,
+        puntuacion:    null, // User's personal score is empty initially
+      });
 
-    if (outcome?.success !== false) {
-      setAddedIds((prev) => new Set(prev).add(id));
+      if (outcome?.success !== false) {
+        setAddedIds((prev) => new Set(prev).add(id));
+      }
     }
   };
 
@@ -114,9 +125,9 @@ export function SearchPanel({ mediaType, onAdd, existingIds }) {
                 </div>
                 <button
                   className={`search-panel__add-btn${isAdded ? ' search-panel__add-btn--added' : ''}`}
-                  onClick={() => handleAdd(r)}
-                  disabled={isAdded}
-                  aria-label={isAdded ? 'Ya en la lista' : `Agregar ${r.titulo}`}
+                  onClick={() => handleToggleItem(r)}
+                  aria-label={isAdded ? `Quitar ${r.titulo} de la lista` : `Agregar ${r.titulo}`}
+                  title={isAdded ? 'Hacer clic para eliminar de la lista' : 'Agregar a la lista'}
                 >
                   {isAdded ? <Check size={18} /> : <Plus size={18} />}
                 </button>

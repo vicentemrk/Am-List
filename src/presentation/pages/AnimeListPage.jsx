@@ -15,6 +15,7 @@ export function AnimeListPage({ onUpdate, onRemove, getFiltered, onOpenAdd }) {
   const [sortBy, setSortBy] = useState('recent');
   const [editingItem, setEditingItem] = useState(null);
   const [localSearch, setLocalSearch] = useState('');
+  const [selectedTags, setSelectedTags] = useState([]);
 
   const counts = useMemo(() => {
     const result = {};
@@ -24,9 +25,32 @@ export function AnimeListPage({ onUpdate, onRemove, getFiltered, onOpenAdd }) {
     return result;
   }, [getFiltered]);
 
+  const availableTags = useMemo(() => {
+    const allAnime = getFiltered('all', 'anime');
+    const set = new Set();
+    allAnime.forEach((item) => {
+      if (Array.isArray(item.tags)) {
+        item.tags.forEach((t) => set.add(t));
+      }
+    });
+    return Array.from(set).sort();
+  }, [getFiltered]);
+
+  const toggleTagFilter = (tag) => {
+    setSelectedTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+    );
+  };
+
   const visibleItems = useMemo(() => {
     let items = getFiltered(activeSection, 'anime');
     
+    if (selectedTags.length > 0) {
+      items = items.filter((item) =>
+        selectedTags.every((st) => item.tags?.includes(st))
+      );
+    }
+
     if (localSearch) {
       const q = localSearch.toLowerCase();
       items = items.filter(item => {
@@ -54,7 +78,7 @@ export function AnimeListPage({ onUpdate, onRemove, getFiltered, onOpenAdd }) {
       }
       return new Date(b.creadoEn || 0).getTime() - new Date(a.creadoEn || 0).getTime();
     });
-  }, [getFiltered, activeSection, sortBy, localSearch]);
+  }, [getFiltered, activeSection, sortBy, localSearch, selectedTags]);
 
   const handleDragStart = (e, id) => {
     if (sortBy !== 'manual') return;
@@ -82,17 +106,15 @@ export function AnimeListPage({ onUpdate, onRemove, getFiltered, onOpenAdd }) {
     const [draggedItem] = newItems.splice(draggedIdx, 1);
     newItems.splice(targetIdx, 0, draggedItem);
 
-    // Actualizamos el ordenManual de todos los items visibles
     newItems.forEach((item, index) => {
       onUpdate(item.id, { ordenManual: index });
     });
   };
 
-  // When updating an item, if it's the currently editing one, update local state
   const handleUpdate = (id, patch) => {
     const res = onUpdate(id, patch);
     if (res.success && editingItem && editingItem.id === id) {
-      setEditingItem(res.item); // Keep modal up-to-date
+      setEditingItem(res.item);
     }
   };
 
@@ -143,6 +165,34 @@ export function AnimeListPage({ onUpdate, onRemove, getFiltered, onOpenAdd }) {
             </select>
           </label>
         </div>
+
+        {availableTags.length > 0 && (
+          <div className="list-page__tags-bar">
+            <span className="list-page__tags-label">Etiquetas:</span>
+            <div className="list-page__tag-pills">
+              {availableTags.map((tag) => {
+                const active = selectedTags.includes(tag);
+                return (
+                  <button
+                    key={tag}
+                    className={`list-page__tag-filter-btn${active ? ' list-page__tag-filter-btn--active' : ''}`}
+                    onClick={() => toggleTagFilter(tag)}
+                  >
+                    #{tag}
+                  </button>
+                );
+              })}
+              {selectedTags.length > 0 && (
+                <button
+                  className="list-page__tag-clear-btn"
+                  onClick={() => setSelectedTags([])}
+                >
+                  Limpiar filtros
+                </button>
+              )}
+            </div>
+          </div>
+        )}
       </header>
 
       <SectionTabs
@@ -179,6 +229,7 @@ export function AnimeListPage({ onUpdate, onRemove, getFiltered, onOpenAdd }) {
                 onRemove={onRemove}
                 onEdit={setEditingItem}
                 isDraggable={sortBy === 'manual'}
+                searchQuery={localSearch}
               />
             </div>
           ))

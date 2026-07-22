@@ -4,6 +4,7 @@
 import React, { useRef, useState } from 'react';
 import { Upload } from 'lucide-react';
 import { parseMalXml } from '../../../data/malImporter.js';
+import { parseAmListJson } from '../../../data/jsonImporter.js';
 import './ImportButton.css';
 
 export function ImportButton({ onImport }) {
@@ -23,7 +24,13 @@ export function ImportButton({ onImport }) {
     setError('');
 
     try {
-      const items = await parseMalXml(file);
+      let items;
+      const fileName = file.name.toLowerCase();
+      if (fileName.endsWith('.json') || file.type === 'application/json') {
+        items = await parseAmListJson(file);
+      } else {
+        items = await parseMalXml(file);
+      }
       onImport(items);
     } catch (err) {
       setError(err.message || 'Error al importar.');
@@ -43,8 +50,8 @@ export function ImportButton({ onImport }) {
         className="import-btn"
         onClick={handleClick}
         disabled={loading}
-        aria-label="Importar MyAnimeList XML"
-        title="Importar lista de MyAnimeList"
+        aria-label="Importar archivo JSON o XML"
+        title="Importar lista desde JSON de AMlist o XML de MyAnimeList"
       >
         <Upload size={18} />
         <span className="import-btn__text">
@@ -53,7 +60,7 @@ export function ImportButton({ onImport }) {
       </button>
       <input
         type="file"
-        accept=".xml"
+        accept=".xml,.json"
         ref={fileInputRef}
         onChange={handleFileChange}
         style={{ display: 'none' }}

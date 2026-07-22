@@ -7,7 +7,20 @@ import React, { useState } from 'react';
 import { Tv, BookOpen, Star, Trash2, Pencil, GripVertical } from 'lucide-react';
 import './ItemCard.css';
 
-export function ItemCard({ item, onUpdate, onRemove, onEdit, isDraggable }) {
+function highlightMatch(text, query) {
+  if (!text || !query || !query.trim()) return text;
+  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const parts = text.split(new RegExp(`(${escaped})`, 'gi'));
+  return parts.map((part, i) =>
+    part.toLowerCase() === query.toLowerCase() ? (
+      <mark key={i} className="item-card__highlight">{part}</mark>
+    ) : (
+      part
+    )
+  );
+}
+
+export function ItemCard({ item, onUpdate, onRemove, onEdit, isDraggable, searchQuery = '' }) {
   const [sinopsisExpanded, setSinopsisExpanded] = useState(false);
 
   // ── display helpers ──────────────────────────────────────────────────────────
@@ -27,9 +40,7 @@ export function ItemCard({ item, onUpdate, onRemove, onEdit, isDraggable }) {
   const handleFavorito = () => { onUpdate(item.id, { favorito: !item.favorito }); };
 
   const handleDelete = () => {
-    if (window.confirm(`¿Estás seguro de que deseas eliminar "${item.titulo}" de tu lista?`)) {
-      onRemove(item.id);
-    }
+    onRemove(item.id);
   };
 
   return (
@@ -84,7 +95,7 @@ export function ItemCard({ item, onUpdate, onRemove, onEdit, isDraggable }) {
           </div>
         </div>
 
-        <h3 className="item-card__title">{item.titulo}</h3>
+        <h3 className="item-card__title">{highlightMatch(item.titulo, searchQuery)}</h3>
 
         {/* ── sub-info: géneros + sinopsis ─────────────────────────────── */}
         <div className="item-card__subinfo">
@@ -114,14 +125,16 @@ export function ItemCard({ item, onUpdate, onRemove, onEdit, isDraggable }) {
         {tags.length > 0 && (
           <div className="item-card__tags-display">
             {tags.map((t) => (
-              <span key={t} className="item-card__tag-pill">#{t}</span>
+              <span key={t} className="item-card__tag-pill">
+                #{highlightMatch(t, searchQuery)}
+              </span>
             ))}
           </div>
         )}
 
         {item.descripcionPersonal && (
           <div className="item-card__personal-desc">
-            <p>{item.descripcionPersonal}</p>
+            <p>{highlightMatch(item.descripcionPersonal, searchQuery)}</p>
           </div>
         )}
 

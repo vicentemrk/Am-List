@@ -318,6 +318,14 @@
   background: rgba(239, 68, 68, 0.05);
 }
 
+.item-card__highlight {
+  background: rgba(250, 204, 21, 0.35);
+  color: inherit;
+  padding: 0 0.15rem;
+  border-radius: 0.2rem;
+  font-weight: bold;
+}
+
 /* ── Responsive ───────────────────────────────────────────────────────────── */
 @media (max-width: 500px) {
   .item-card {

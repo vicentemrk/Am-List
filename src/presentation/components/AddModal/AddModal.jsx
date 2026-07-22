@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { SearchPanel } from '../SearchPanel/SearchPanel.jsx';
 import './AddModal.css';
 
-export function AddModal({ isOpen, onClose, mediaType, onAdd, existingIds }) {
+export function AddModal({ isOpen, onClose, mediaType, onAdd, onRemove, existingIds }) {
   const [isMultiple, setIsMultiple] = useState(false);
   // Close on Escape key
   useEffect(() => {
@@ -53,7 +53,12 @@ export function AddModal({ isOpen, onClose, mediaType, onAdd, existingIds }) {
         </header>
 
         <div className="add-modal__body">
-          <SearchPanel mediaType={mediaType} onAdd={handleAdd} existingIds={existingIds} />
+          <SearchPanel
+            mediaType={mediaType}
+            onAdd={handleAdd}
+            onRemove={onRemove}
+            existingIds={existingIds}
+          />
         </div>
       </div>
     </div>

@@ -18,7 +18,7 @@ const NAV_ITEMS = [
   { id: 'manga', label: 'Lista de Mangas' },
 ];
 
-export function AppShell({ theme, onToggleTheme, items, children, activePage, onPageChange, onAdd, onImport }) {
+export function AppShell({ theme, onToggleTheme, items, children, activePage, onPageChange, onAdd, onRemove, onImport }) {
   const [historialOpen, setHistorialOpen] = useState(false);
   const [sidebarOpen,   setSidebarOpen]   = useState(false);
   const [addModalOpen,  setAddModalOpen]  = useState(false);
@@ -154,6 +154,7 @@ export function AppShell({ theme, onToggleTheme, items, children, activePage, on
         onAdd={(item) => {
           return onAdd(item);
         }}
+        onRemove={onRemove}
         existingIds={new Set(items.filter(i => i.mediaType === activePage).map(i => i.id))}
       />
     </div>
