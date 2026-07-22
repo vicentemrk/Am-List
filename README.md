@@ -10,7 +10,7 @@
 
 ## ¿Qué es AMlist?
 
-AMlist es una **Single Page Application (SPA)** para gestionar tus listas personales de anime, manga, manhwa y manhua. Busca títulos usando las APIs de **AniList**, **MangaDex** y **Kitsu**, registra tu progreso, puntúa, marca favoritos y organiza todo en secciones — sin necesitar una cuenta ni un servidor (por ahora).
+AMlist es una **Single Page Application (SPA)** para gestionar tus listas personales de anime, manga, manhwa y manhwa. Busca títulos usando las APIs de **AniList**, **MangaDex** y **Kitsu**, registra tu progreso, puntúa, marca favoritos y organiza todo en secciones — sin necesitar una cuenta ni un servidor (Por ahora).
 
 Todo se guarda directamente en tu navegador (`localStorage`).
 
@@ -54,32 +54,18 @@ Todo se guarda directamente en tu navegador (`localStorage`).
 
 ## 🔮 Próximas funciones (roadmap)
 
-Las siguientes funciones están planificadas y organizadas por prioridad:
+Las siguientes funciones están planificadas para versiones futuras:
 
-### 🟢 Próximo (v1.1)
-Funciones de alto impacto y menor complejidad:
-
-- **Filtro por tags** — Filtrar la lista usando tus propias etiquetas personales
-- **Vista de detalle** — Panel expandible al hacer clic en la portada (sinopsis completa, géneros, info extra)
-
-### 🔵 Corto plazo (v1.2)
-Funciones que agregan valor significativo al uso diario:
-
-- **Dashboard de estadísticas** — Total de horas vistas, géneros favoritos, progreso general y racha de actividad
-- **Listas personalizadas** — Crear, renombrar y eliminar múltiples listas además de Anime y Manga
-- **Importar desde AniList / Kitsu** — Además del importador de MyAnimeList XML ya disponible
-- **Changelog visible** — Historial de cambios entre versiones de la aplicación
-
-### 🟣 Mediano plazo (v2.0)
-Funciones que requieren cambios de arquitectura o mayor alcance:
-
-- **Cuentas de usuario** *(opcional)* — Sin cuenta la app sigue funcionando al 100%; la cuenta permite recuperar listas en otros dispositivos
-- **Sincronización en la nube** *(requiere cuenta)* — Local-first: funciona offline, sincroniza cuando hay conexión (Supabase)
-
-### ⚪ Mejoras visuales
-Pendientes de diseño:
-
-- **Nuevo logo AMlist** — Rediseño del ícono y branding general
+- **Vista de detalle** — Panel expansible al hacer clic en la portada (sinopsis completa, tráiler, etc.)
+- **Múltiples listas** — Crear y gestionar varias listas personalizadas
+- **Dashboard de estadísticas** — Horas vistas, géneros favoritos, progreso general
+- **Sincronización en la nube** — Opcional, mediante Supabase (manteniendo modo offline)
+- **Importar desde AniList / Kitsu** — Además del XML de MyAnimeList ya disponible
+- **Crear, editar y eliminar listas personalizadas** -- (Pendiente)
+- **Cambiar logo AMlist** -- (Pendiente)
+- **Crear Cuenta Usuarios** -- Opcional, no necesario para el uso de la aplicacion, asi podran recuperar sus listas en otros dispositivos (Pendiente)
+- **Historial de cambios** -- Entre versiones de la pagina web (Pendiente)
+- **Filtro por tags de listas** -- Filtrar tu lista usando tus propias etiquetas
 
 ---
 
