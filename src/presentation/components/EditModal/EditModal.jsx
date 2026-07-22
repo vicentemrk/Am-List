@@ -174,7 +174,7 @@ export function EditModal({ item, onClose, onUpdate }) {
           {/* Controls */}
           <div className="edit-modal__controls">
             <div className="edit-modal__control-group">
-              <label className="edit-modal__label" htmlFor={`modal-status-${draft.id}`}>Estado (Usuario)</label>
+              <label className="edit-modal__label" htmlFor={`modal-status-${draft.id}`}>Estado</label>
               <select
                 id={`modal-status-${draft.id}`}
                 className="edit-modal__input"
@@ -182,20 +182,6 @@ export function EditModal({ item, onClose, onUpdate }) {
                 onChange={handleStatus}
               >
                 {ESTADOS_USUARIO.map((s) => (
-                  <option key={s.value} value={s.value}>{s.label}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="edit-modal__control-group">
-              <label className="edit-modal__label" htmlFor={`modal-emision-${draft.id}`}>Estado Emisión</label>
-              <select
-                id={`modal-emision-${draft.id}`}
-                className="edit-modal__input"
-                value={draft.estadoEmision || 'unknown'}
-                onChange={handleEmisionStatus}
-              >
-                {ESTADOS_EMISION.map((s) => (
                   <option key={s.value} value={s.value}>{s.label}</option>
                 ))}
               </select>

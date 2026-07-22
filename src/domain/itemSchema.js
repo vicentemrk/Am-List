@@ -76,12 +76,14 @@ export const DEFAULT_ITEM = {
   actualizadoEn: '',
 };
 
-/** Valid user status options */
+/** Valid user status options matching the 8 section tabs */
 export const ESTADOS_USUARIO = [
   { value: 'por_ver',    label: 'Por ver'    },
   { value: 'en_curso',   label: 'En curso'   },
+  { value: 'en_emision', label: 'En emisión' },
   { value: 'pausado',    label: 'Pausado'    },
   { value: 'completado', label: 'Completado' },
+  { value: 'finalizado', label: 'Finalizado' },
   { value: 'dropeado',   label: 'Dropeado'   },
 ];
 

@@ -51,9 +51,8 @@ export function SectionTabs({ activeSection, onSectionChange, counts }) {
 
   const onMouseMove = (e) => {
     if (!isDragging) return;
-    e.preventDefault();
     const x = e.pageX - listRef.current.offsetLeft;
-    const walk = (x - startX) * 2; // Scroll-fast
+    const walk = (x - startX) * 2;
     listRef.current.scrollLeft = scrollLeft - walk;
   };
 
