@@ -1,10 +1,15 @@
 /**
- * presentation/hooks/useItems.js
- * The single source of truth for items state in the UI.
- *
- * All reads/writes go through itemsRepository and historyRepository.
- * Business logic (filtering, validation) is handled by domain functions.
- * This hook never calls localStorage or fetch directly.
+ * ============================================================================
+ * MÓDULO: presentation/hooks/useItems.js
+ * ============================================================================
+ * Qué hace:
+ *   Custom Hook que actúa como fuente de verdad del estado de la lista de ítems
+ *   para la interfaz de usuario en React.
+ * Cómo lo hace:
+ *   Conecta los eventos de la pantalla (UI) con los adaptadores de datos (`itemsRepository`
+ *   e `historyRepository`) y las reglas de dominio (`filtrarPorSeccion`, `construirEntradaHistorial`).
+ *   Nunca llama a `localStorage` ni a `fetch` de manera directa (Arquitectura Hexagonal).
+ * ============================================================================
  */
 
 import { useState, useCallback } from 'react';
@@ -14,13 +19,13 @@ import { construirEntradaHistorial } from '../../domain/historial.js';
 import { filtrarPorSeccion } from '../../domain/validators.js';
 
 export function useItems() {
-  // Initialize from repository on first render
+  // Inicialización del estado leyendo la colección del repositorio
   const [items, setItems] = useState(() => repo.getAll());
 
-  // ── create ──────────────────────────────────────────────────────────────────
+  // ── Operación: Agregar ───────────────────────────────────────────────────────
   /**
-   * Adds a new item.
-   * @param {object} itemData  Must contain at least { malId, mediaType, titulo }
+   * Agrega un nuevo anime o manga a la lista.
+   * @param {object} itemData - Debe contener al menos { malId, mediaType, titulo }.
    * @returns {{ success: boolean, message: string, item?: object }}
    */
   const addItem = useCallback((itemData) => {
@@ -34,12 +39,12 @@ export function useItems() {
     }
   }, []);
 
-  // ── update ───────────────────────────────────────────────────────────────────
+  // ── Operación: Actualizar ────────────────────────────────────────────────────
   /**
-   * Updates fields of an existing item.
-   * @param {string} id
-   * @param {object} patch
-   * @param {string} [accion]  History action label (default: 'actualizado')
+   * Modifica las propiedades de un ítem existente (progreso, puntuación, estado, tags).
+   * @param {string} id - Identificador del ítem.
+   * @param {object} patch - Campos a modificar.
+   * @param {string} [accion] - Etiqueta descriptiva para el historial.
    * @returns {{ success: boolean, message: string, item?: object }}
    */
   const updateItem = useCallback((id, patch, accion = 'actualizado') => {
@@ -47,7 +52,7 @@ export function useItems() {
       const updated = repo.update(id, patch);
       setItems(repo.getAll());
 
-      // Pick a more descriptive history action based on what changed
+      // Determina una etiqueta de historial más precisa según el cambio realizado
       let resolvedAccion = accion;
       if (patch.puntuacion !== undefined) resolvedAccion = 'puntuado';
       else if (patch.favorito !== undefined) resolvedAccion = 'favorito';
@@ -60,10 +65,10 @@ export function useItems() {
     }
   }, []);
 
-  // ── remove ───────────────────────────────────────────────────────────────────
+  // ── Operación: Eliminar ──────────────────────────────────────────────────────
   /**
-   * Removes an item by id.
-   * @param {string} id
+   * Elimina un ítem por su ID de la colección.
+   * @param {string} id - ID del ítem.
    * @returns {{ success: boolean, message: string }}
    */
   const removeItem = useCallback((id) => {
@@ -78,10 +83,10 @@ export function useItems() {
     }
   }, []);
 
-  // ── import batch ────────────────────────────────────────────────────────────
+  // ── Operación: Importación en Lote ──────────────────────────────────────────
   /**
-   * Imports a batch of items, bypassing history log for brevity or logging as batch.
-   * @param {object[]} batch
+   * Importa una lista masiva de ítems y registra un evento global en el historial.
+   * @param {object[]} batch - Arreglo de ítems a importar.
    * @returns {{ success: boolean, addedCount: number, message: string }}
    */
   const importItems = useCallback((batch) => {
@@ -89,7 +94,7 @@ export function useItems() {
       const addedCount = repo.importBatch(batch);
       if (addedCount > 0) {
         setItems(repo.getAll());
-        // Log a single history event for the import
+        // Registrar un único evento de historial para la importación masiva
         appendHistory({
           id: `import_${Date.now()}`,
           timestamp: new Date().toISOString(),
@@ -105,12 +110,12 @@ export function useItems() {
     }
   }, []);
 
-  // ── filtered view ────────────────────────────────────────────────────────────
+  // ── Operación: Filtrado por Sección ──────────────────────────────────────────
   /**
-   * Returns items for a given section and optional media type filter.
-   * @param {string} seccion
-   * @param {'anime'|'manga'|'all'} [mediaType]
-   * @returns {object[]}
+   * Obtiene la sublista de ítems correspondientes a la pestaña/sección activa.
+   * @param {string} seccion - Clave de la sección (ej: 'completado', 'favorito').
+   * @param {'anime'|'manga'|'all'} [mediaType] - Tipo de contenido opcional.
+   * @returns {object[]} Lista de ítems filtrados.
    */
   const getFiltered = useCallback(
     (seccion, mediaType) => filtrarPorSeccion(items, seccion, mediaType),
@@ -119,4 +124,5 @@ export function useItems() {
 
   return { items, addItem, updateItem, removeItem, importItems, getFiltered };
 }
+
 
