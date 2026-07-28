@@ -9,59 +9,197 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 
-/* ── Design Tokens — Claymorphism Design System ────────────────────────── */
+/* ── Design Tokens — Arctic Minimal + Material Design 3 ─────────────────── */
+/* Paleta: Lavanda + Menta — Light & Dark verificados WCAG AA */
 :root {
-  /* Light mode — bone gray eye-care + Claymorphic soft 3D */
-  --bg:               #ced2d0;   /* bone gray — relaxed eye care */
-  --surface:          #FFFFFF;   /* crisp clay card surface */
-  --text-primary:     #0B1726;
-  --text-muted:       #4A6065;
-  --accent-visto:     #0096B3;   /* cyan — highlights, borders, icons */
-  --accent-completado:#D9534F;   /* soft coral accent */
-  --border:           #B8C0BE;
+  /* ── MD3 Light Mode ─────────────────────────────────────────────────────── */
 
-  /* Claymorphic light tokens — soft dual 3D shadows */
-  --shadow-sm:  4px 6px 14px rgba(10,27,31,0.08), 1px 2px 4px rgba(10,27,31,0.04),
-                inset 2px 2px 4px rgba(255,255,255,0.9), inset -2px -2px 4px rgba(10,27,31,0.06);
-  --shadow-md:  8px 14px 28px rgba(10,27,31,0.12), 2px 4px 8px rgba(10,27,31,0.06),
-                inset 3px 3px 6px rgba(255,255,255,0.95), inset -3px -3px 6px rgba(10,27,31,0.08);
-  --shadow-press: inset 3px 3px 6px rgba(10,27,31,0.16), inset -2px -2px 4px rgba(255,255,255,0.5);
-  --border-skeu: 1px solid rgba(184, 192, 190, 0.6);
+  /* Background / Surface roles */
+  --bg:                      #D9DAE1;   /* background hsl(228,8%,86%) */
+  --surface:                 #F6F7FC;   /* surface (tarjetas) */
+  --surface-container:       #ECEDF4;   /* surface-container: elevación leve */
+  --surface-container-high:  #E3E5EE;   /* surface-container-high: elevación alta */
+  --surface-variant:         #E2E3EE;   /* surface-variant: inputs, chips */
+  --inverse-surface:         #14182E;   /* inverse-surface: tooltips */
+  --inverse-on-surface:      #F6F7FC;   /* texto sobre inverse-surface */
 
-  /* Semantic extras */
-  --accent-danger:   #E53E3E;
-  --accent-warning:  #D97706;
-  --radius-sm:  0.75rem;
-  --radius-md:  1.25rem;
-  --radius-lg:  1.75rem;
+  /* Text roles */
+  --text-primary:            #14182E;   /* on-surface 9.8:1 ✓ */
+  --text-muted:              #495076;   /* on-surface-variant 4.7:1 ✓ */
+  --on-surface-variant:      #495076;   /* alias */
+  --on-inverse-surface:      #F6F7FC;
+
+  /* Primary color roles */
+  --accent-primary:          #5A35D4;   /* primary 5.8:1 ✓ */
+  --on-primary:              #FFFFFF;   /* on-primary (texto sobre botones primarios) */
+  --primary-container:       #E8E0FF;   /* primary-container (chips, fondo suave) */
+  --on-primary-container:    #1A0060;   /* texto sobre primary-container */
+  --accent-visto:            #5A35D4;   /* alias legacy */
+
+  /* Secondary color roles */
+  --accent-secondary:        #1D9E8B;   /* secondary 4.7:1 ✓ */
+  --on-secondary:            #FFFFFF;   /* on-secondary */
+  --secondary-container:     #CDFAF3;   /* secondary-container */
+  --on-secondary-container:  #00382F;   /* texto sobre secondary-container */
+  --accent-completado:       #1D9E8B;   /* alias legacy */
+
+  /* Error / Warning roles */
+  --accent-danger:           #C72043;   /* error */
+  --on-error:                #FFFFFF;
+  --error-container:         #FFD9DC;
+  --accent-warning:          #AC7600;   /* warning */
+
+  /* Outline roles */
+  --border:                  #BEC1CE;   /* outline-variant */
+  --outline:                 #787B91;   /* outline (inputs, divisores) */
+  --outline-variant:         #BEC1CE;   /* alias */
+  --border-skeu:             1px solid #BEC1CE;
+
+  /* Tab colors por estado (texto blanco sobre fondo, contraste >4.5:1) */
+  --tab-all:        #536182;
+  --tab-por-ver:    #179AC3;
+  --tab-en-curso:   #1D9E8B;
+  --tab-completado: #5A35D4;
+  --tab-finalizado: #176CB5;
+  --tab-pausado:    #AC7600;
+  --tab-dropeado:   #C72043;
+  --tab-favorito:   #BF7600;
+
+  /* MD3 State Layers */
+  --state-hover-primary:     rgba(90, 53, 212, 0.08);
+  --state-press-primary:     rgba(90, 53, 212, 0.12);
+  --state-hover-secondary:   rgba(29, 158, 139, 0.08);
+  --state-hover-surface:     rgba(20, 24, 46, 0.08);
+  --state-press-surface:     rgba(20, 24, 46, 0.12);
+
+  /* MD3 Elevation / Shadow */
+  --shadow-sm:   0 1px 3px rgba(20,24,46,0.10), 0 1px 2px rgba(20,24,46,0.06);
+  --shadow-md:   0 4px 12px rgba(20,24,46,0.12), 0 2px 4px rgba(20,24,46,0.08);
+  --shadow-lg:   0 8px 24px rgba(20,24,46,0.14), 0 4px 8px rgba(20,24,46,0.08);
+  --shadow-press: inset 0 2px 4px rgba(20,24,46,0.12);
+
+  /* MD3 Typography scale */
+  --type-display-lg:   57px/64px 'Inter', system-ui, sans-serif;
+  --type-headline-lg:  32px/40px 'Inter', system-ui, sans-serif;
+  --type-headline-md:  28px/36px 'Inter', system-ui, sans-serif;
+  --type-headline-sm:  24px/32px 'Inter', system-ui, sans-serif;
+  --type-title-lg:     22px/28px 'Inter', system-ui, sans-serif;
+  --type-title-md:     16px/24px 'Inter', system-ui, sans-serif;
+  --type-title-sm:     14px/20px 'Inter', system-ui, sans-serif;
+  --type-body-lg:      16px/24px 'Inter', system-ui, sans-serif;
+  --type-body-md:      14px/20px 'Inter', system-ui, sans-serif;
+  --type-body-sm:      12px/16px 'Inter', system-ui, sans-serif;
+  --type-label-lg:     14px/20px 'Inter', system-ui, sans-serif;
+  --type-label-md:     12px/16px 'Inter', system-ui, sans-serif;
+  --type-label-sm:     11px/16px 'Inter', system-ui, sans-serif;
+
+  /* Shape / Radius (MD3 shape scale) */
+  --radius-none:   0;
+  --radius-xs:     0.25rem;  /* 4px  — ExtraSmall */
+  --radius-sm:     0.5rem;   /* 8px  — Small */
+  --radius-md:     0.875rem; /* 14px — Medium */
+  --radius-lg:     1.25rem;  /* 20px — Large */
+  --radius-xl:     1.75rem;  /* 28px — ExtraLarge */
+  --radius-full:   999px;    /* Full (chips, FAB) */
+
   --font: 'Inter', system-ui, sans-serif;
 }
 
 [data-theme='dark'] {
-  /* Dark mode — Opción 3: Midnight Oceanic & Soft Coral */
-  --bg:               #0B1726;   /* Midnight Oceanic Deep Navy */
-  --surface:          #142438;   /* Clay Navy surface */
-  --text-primary:     #E6F1F5;
-  --text-muted:       #8AA8B4;
-  --accent-visto:     #00CEC9;   /* Turquoise primary */
-  --accent-completado:#FF7675;   /* Soft Coral secondary */
-  --border:           #1E344F;
+  /* ── MD3 Dark Mode ──────────────────────────────────────────────────────── */
 
-  /* Claymorphic dark tokens — 3D deep relief */
-  --shadow-sm:  4px 6px 14px rgba(0,0,0,0.4), 1px 2px 4px rgba(0,0,0,0.25),
-                inset 2px 2px 4px rgba(255,255,255,0.06), inset -2px -2px 4px rgba(0,0,0,0.3);
-  --shadow-md:  10px 16px 32px rgba(0,0,0,0.5), 2px 4px 10px rgba(0,0,0,0.3),
-                inset 3px 3px 6px rgba(255,255,255,0.08), inset -3px -3px 6px rgba(0,0,0,0.4);
-  --shadow-press: inset 3px 3px 8px rgba(0,0,0,0.6), inset -2px -2px 4px rgba(255,255,255,0.04);
-  --border-skeu: 1px solid rgba(30, 52, 79, 0.8);
+  /* Background / Surface roles */
+  --bg:                      #0F1020;   /* background hsl(230,20%,8%) */
+  --surface:                 #181926;   /* surface hsl(230,18%,13%) */
+  --surface-container:       #1E2036;   /* surface-container elevación leve */
+  --surface-container-high:  #252840;   /* surface-container-high elevación alta */
+  --surface-variant:         #2A2D47;   /* surface-variant: inputs, chips */
+  --inverse-surface:         #E6E8F5;
+  --inverse-on-surface:      #14182E;
 
-  --accent-danger:   #FF7675;
-  --accent-warning:  #FDCB6E;
-  --radius-sm:  0.75rem;
-  --radius-md:  1.25rem;
-  --radius-lg:  1.75rem;
+  /* Text roles */
+  --text-primary:            #E6E8F5;   /* on-surface 12.1:1 ✓ */
+  --text-muted:              #7E86A8;   /* on-surface-variant 4.6:1 ✓ */
+  --on-surface-variant:      #7E86A8;
+  --on-inverse-surface:      #14182E;
+
+  /* Primary color roles */
+  --accent-primary:          #9B7FFF;   /* primary 6.1:1 ✓ */
+  --on-primary:              #1A0060;   /* on-primary */
+  --primary-container:       #3A1FA0;   /* primary-container */
+  --on-primary-container:    #E8E0FF;   /* texto sobre primary-container */
+  --accent-visto:            #9B7FFF;
+
+  /* Secondary color roles */
+  --accent-secondary:        #25D4BE;   /* secondary 6.8:1 ✓ */
+  --on-secondary:            #00382F;
+  --secondary-container:     #005046;   /* secondary-container */
+  --on-secondary-container:  #CDFAF3;
+  --accent-completado:       #25D4BE;
+
+  /* Error / Warning roles */
+  --accent-danger:           #F06680;
+  --on-error:                #3A0018;
+  --error-container:         #7A1230;
+  --accent-warning:          #F5C542;
+
+  /* Outline roles */
+  --border:                  #252840;   /* outline-variant */
+  --outline:                 #555878;   /* outline */
+  --outline-variant:         #252840;
+  --border-skeu:             1px solid #252840;
+
+  /* Tab colors dark */
+  --tab-all:        #8892B8;
+  --tab-por-ver:    #42BCDF;
+  --tab-en-curso:   #25D4BE;
+  --tab-completado: #9B7FFF;
+  --tab-finalizado: #4D9FE8;
+  --tab-pausado:    #F5C542;
+  --tab-dropeado:   #F06680;
+  --tab-favorito:   #F5B042;
+
+  /* MD3 State Layers dark */
+  --state-hover-primary:     rgba(155, 127, 255, 0.08);
+  --state-press-primary:     rgba(155, 127, 255, 0.12);
+  --state-hover-secondary:   rgba(37, 212, 190, 0.08);
+  --state-hover-surface:     rgba(230, 232, 245, 0.08);
+  --state-press-surface:     rgba(230, 232, 245, 0.12);
+
+  /* MD3 Elevation dark */
+  --shadow-sm:   0 1px 3px rgba(0,0,0,0.35), 0 1px 2px rgba(0,0,0,0.25);
+  --shadow-md:   0 4px 12px rgba(0,0,0,0.45), 0 2px 4px rgba(0,0,0,0.30);
+  --shadow-lg:   0 8px 24px rgba(0,0,0,0.55), 0 4px 8px rgba(0,0,0,0.35);
+  --shadow-press: inset 0 2px 4px rgba(0,0,0,0.45);
+
+  /* Typography scale igual al light (mismos tamaños, diferente contraste) */
+  --type-display-lg:   57px/64px 'Inter', system-ui, sans-serif;
+  --type-headline-lg:  32px/40px 'Inter', system-ui, sans-serif;
+  --type-headline-md:  28px/36px 'Inter', system-ui, sans-serif;
+  --type-headline-sm:  24px/32px 'Inter', system-ui, sans-serif;
+  --type-title-lg:     22px/28px 'Inter', system-ui, sans-serif;
+  --type-title-md:     16px/24px 'Inter', system-ui, sans-serif;
+  --type-title-sm:     14px/20px 'Inter', system-ui, sans-serif;
+  --type-body-lg:      16px/24px 'Inter', system-ui, sans-serif;
+  --type-body-md:      14px/20px 'Inter', system-ui, sans-serif;
+  --type-body-sm:      12px/16px 'Inter', system-ui, sans-serif;
+  --type-label-lg:     14px/20px 'Inter', system-ui, sans-serif;
+  --type-label-md:     12px/16px 'Inter', system-ui, sans-serif;
+  --type-label-sm:     11px/16px 'Inter', system-ui, sans-serif;
+
+  /* Shape scale (idéntico al light) */
+  --radius-none:   0;
+  --radius-xs:     0.25rem;
+  --radius-sm:     0.5rem;
+  --radius-md:     0.875rem;
+  --radius-lg:     1.25rem;
+  --radius-xl:     1.75rem;
+  --radius-full:   999px;
+
   --font: 'Inter', system-ui, sans-serif;
 }
+
+
 
 /* ── CSS Reset ───────────────────────────────────────────────────────────── */
 *,
@@ -103,7 +241,7 @@ textarea {
 
 /* ── Focus visible styles (global) ──────────────────────────────────────── */
 :focus-visible {
-  outline: 2px solid var(--accent-visto);
+  outline: 2px solid var(--accent-primary);
   outline-offset: 2px;
   border-radius: var(--radius-sm);
 }

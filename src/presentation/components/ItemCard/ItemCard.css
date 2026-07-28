@@ -4,18 +4,17 @@
   border: var(--border-skeu);
   border-radius: var(--radius-md);
   overflow: hidden;
-  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1),
-              border-color 0.22s ease;
-  /* Claymorphic 3D soft dual shadow */
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.2s ease;
   box-shadow: var(--shadow-sm);
   position: relative;
 }
 
 .item-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-3px);
   box-shadow: var(--shadow-md);
-  border-color: var(--accent-visto);
+  border-color: var(--accent-primary);
 }
 
 .item-card__drag-handle {
@@ -110,15 +109,30 @@
 }
 
 .item-card__badge {
-  padding: 0.15rem 0.4rem;
-  border-radius: var(--radius-sm);
+  padding: 0.18rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
   background: var(--border);
   color: var(--text-primary);
 }
 
-.badge--airing   { background: color-mix(in srgb, var(--accent-visto) 15%, transparent);     color: var(--accent-visto);     }
-.badge--complete  { background: color-mix(in srgb, var(--accent-completado) 15%, transparent); color: var(--accent-completado); }
-.badge--upcoming  { background: color-mix(in srgb, var(--accent-warning) 15%, transparent);    color: var(--accent-warning);   }
+/* Insignia de Tu Estado — usa el mismo color del tab correspondiente */
+.item-card__badge--user {
+  background: color-mix(in srgb, var(--badge-color, var(--accent-primary)) 15%, transparent);
+  color: var(--badge-color, var(--accent-primary));
+  border: 1px solid color-mix(in srgb, var(--badge-color, var(--accent-primary)) 40%, transparent);
+}
+
+/* Asignar color de insignia según estadoUsuario (se pone via style en JSX o data-attr) */
+.item-card__badge--por_ver    { --badge-color: var(--tab-por-ver);    }
+.item-card__badge--en_curso   { --badge-color: var(--tab-en-curso);   }
+.item-card__badge--completado { --badge-color: var(--tab-completado); }
+.item-card__badge--finalizado { --badge-color: var(--tab-finalizado); }
+.item-card__badge--pausado    { --badge-color: var(--tab-pausado);    }
+.item-card__badge--dropeado   { --badge-color: var(--tab-dropeado);   }
 
 .item-card__type {
   color: var(--text-muted);

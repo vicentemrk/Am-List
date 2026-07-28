@@ -1,88 +1,111 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   MÓDULO: SectionTabs.css — Estilos Claymorphism para Pestañas
+   MÓDULO: SectionTabs.css — Estructura B · Indicador Inferior Animado MD3
    ═══════════════════════════════════════════════════════════════════════════
    Qué hace:
-     Estilos Claymorphic 3D para el componente de pestañas con relieve inflado,
-     sombras duales exterior/interior y transiciones de pulsado táctil.
+     Tabs con indicador inferior. El tab activo muestra su color de estado
+     en el texto y en el indicador. Inactivo: texto neutro con hover de
+     color (state layer MD3 del 8%). El indicador es un motion.span que
+     Framer Motion interpola — este CSS solo define su forma y color.
    ═══════════════════════════════════════════════════════════════════════════ */
 
+/* ── Contenedor nav ─────────────────────────────────────────────────────── */
 .section-tabs {
   position: relative;
   width: 100%;
-  padding: 0.5rem 0;
+  /* Línea divisora inferior — MD3 usa outline-variant */
+  border-bottom: 1px solid var(--outline-variant, var(--border));
 }
 
+/* ── Lista scrollable ───────────────────────────────────────────────────── */
 .section-tabs__list {
   display: flex;
-  gap: 0.5rem;
+  gap: 0;                  /* MD3 tabs no tienen gap — se separan con padding */
   margin: 0;
-  padding: 0.5rem;
+  padding: 0;
   list-style: none;
   overflow-x: auto;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
+  user-select: none;
 }
 
-.section-tabs__list::-webkit-scrollbar {
-  display: none;
-}
+.section-tabs__list::-webkit-scrollbar { display: none; }
 
-.section-tabs__indicator {
-  display: none; /* Desactivado en favor del diseño Claymorphic Pill */
-}
-
+/* ── Tab base ───────────────────────────────────────────────────────────── */
 .section-tabs__tab {
+  /* Layout */
+  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  padding: 0.55rem 1.15rem;
-  background: var(--surface);
-  color: var(--text-muted);
-  border: var(--border-skeu);
-  border-radius: var(--radius-md);
-  font-size: 0.875rem;
-  font-weight: 500;
+  gap: 0.35rem;
+  padding: 0.75rem 1.1rem 0.65rem;   /* top ligeramente mayor para compensar el indicador */
+
+  /* Apariencia base — sin relleno (MD3 primary tabs) */
+  background: transparent;
+  color: var(--on-surface-variant, var(--text-muted));
+  border: none;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;  /* solo arriba */
+
+  /* Tipografía MD3 — Label Large */
+  font: var(--type-label-lg, 600 14px/20px 'Inter', system-ui, sans-serif);
+  font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
-  box-shadow: var(--shadow-sm);
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+
+  /* Transiciones */
+  transition: color 0.2s ease, background 0.15s ease;
 }
 
+/* MD3 State Layer — hover */
 .section-tabs__tab:hover {
-  color: var(--text-primary);
-  border-color: var(--accent-visto);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  background: color-mix(in srgb, var(--tab-color, var(--accent-primary)) 8%, transparent);
+  color: var(--tab-color, var(--text-primary));
 }
 
+/* MD3 State Layer — pressed */
 .section-tabs__tab:active {
-  transform: translateY(1px);
-  box-shadow: var(--shadow-press);
+  background: color-mix(in srgb, var(--tab-color, var(--accent-primary)) 12%, transparent);
 }
 
+/* ── Tab activo ─────────────────────────────────────────────────────────── */
 .section-tabs__tab--active {
-  background: var(--surface);
-  color: var(--accent-visto);
+  /* El color del texto adopta el color del estado */
+  color: var(--tab-color, var(--accent-primary));
   font-weight: 700;
-  border-color: var(--accent-visto);
-  box-shadow: var(--shadow-press);
 }
 
+/* ── Indicador inferior (motion.span renderizado por Framer Motion) ──────── */
+.section-tabs__indicator {
+  /* Posicionado absolutamente al pie del botón */
+  position: absolute;
+  bottom: -1px;            /* se superpone 1px sobre el borde del nav */
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: var(--radius-full, 999px) var(--radius-full, 999px) 0 0;
+
+  /* El color toma el del tab activo via CSS custom property */
+  background: var(--tab-color, var(--accent-primary));
+}
+
+/* ── Contador superíndice ─────────────────────────────────────────────────  */
 .section-tabs__count {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 1.35rem;
-  height: 1.35rem;
-  padding: 0 0.35rem;
-  background: rgba(0, 206, 201, 0.12);
-  color: var(--accent-visto);
-  border-radius: 999px;
-  font-size: 0.72rem;
+  font-size: 0.65rem;
   font-weight: 700;
+  line-height: 1;
+  vertical-align: super;
+  /* Color del estado para el tab activo, muted para inactivo */
+  color: inherit;
+  opacity: 0.85;
 }
 
-.section-tabs__tab--active .section-tabs__count {
-  background: var(--accent-visto);
-  color: #ffffff;
-}
+/* ── Asignación de --tab-color por [data-section] ────────────────────────── */
+[data-section="all"]        { --tab-color: var(--tab-all);        }
+[data-section="por_ver"]    { --tab-color: var(--tab-por-ver);    }
+[data-section="en_curso"]   { --tab-color: var(--tab-en-curso);   }
+[data-section="completado"] { --tab-color: var(--tab-completado); }
+[data-section="finalizado"] { --tab-color: var(--tab-finalizado); }
+[data-section="pausado"]    { --tab-color: var(--tab-pausado);    }
+[data-section="dropeado"]   { --tab-color: var(--tab-dropeado);   }
+[data-section="favorito"]   { --tab-color: var(--tab-favorito);   }
+[data-section="en_emision"] { --tab-color: var(--tab-por-ver);    }

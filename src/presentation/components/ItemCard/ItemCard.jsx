@@ -84,7 +84,9 @@ function ItemCardComponent({ item, onUpdate, onRemove, onEdit, onDetail, isDragg
       {/* ── info section ──────────────────────────────────────────────────── */}
       <div className="item-card__info">
         <div className="item-card__meta">
-          <span className="item-card__badge item-card__badge--user">{userStatusLabel}</span>
+          <span className={`item-card__badge item-card__badge--user item-card__badge--${item.estadoUsuario}`}>
+            {userStatusLabel}
+          </span>
           <span className="item-card__type">{item.mediaType === 'anime' ? 'Anime' : 'Manga'}</span>
           <div className="item-card__scores-wrap">
             {item.scoreApi && (

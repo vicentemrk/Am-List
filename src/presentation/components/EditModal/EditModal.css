@@ -1,28 +1,32 @@
 .edit-modal-overlay {
+  /* Radix Dialog.Overlay: backdrop semitransparente */
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
+  -webkit-backdrop-filter: blur(4px);
   z-index: 1000;
-  animation: fadeIn 0.2s ease;
+  animation: fadeIn 0.18s ease;
 }
 
 .edit-modal {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 1.2rem;
-  width: 100%;
+  /* Radix Dialog.Content: centrado absolute sobre el overlay */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1001;
+
+  background: var(--surface);
+  border: 1px solid var(--outline-variant, var(--border));
+  border-radius: var(--radius-lg);
+  width: calc(100% - 2rem);
   max-width: 500px;
-  max-height: 90vh;
+  max-height: 90dvh;
   display: flex;
   flex-direction: column;
   box-shadow: var(--shadow-lg);
   overflow: hidden;
-  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .edit-modal__header {

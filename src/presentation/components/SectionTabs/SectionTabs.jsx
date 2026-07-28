@@ -1,74 +1,52 @@
 /**
  * presentation/components/SectionTabs/SectionTabs.jsx
- * Responsive filter tabs:
- *  - Mobile  (<768px): horizontal scrollable pills (Design A, no color badges)
- *  - Desktop (≥768px): underline indicator tabs (Design C, animated)
+ * ============================================================================
+ * Qué hace:
+ *   Pestañas de filtro con indicador inferior animado (Estructura B).
+ *   Usa Framer Motion `layoutId` para que el indicador se mueva suavemente
+ *   entre tabs al cambiar de sección. Cada tab adopta el color representativo
+ *   de su estado via CSS custom property --tab-color.
+ *
+ * Cómo funciona:
+ *   - `motion.span` con `layoutId="tab-indicator"` crea UN solo elemento DOM
+ *     que Framer Motion interpola automáticamente entre posiciones.
+ *   - El color del indicador se define en CSS via [data-section] → --tab-color.
+ *   - Drag-to-scroll en escritorio para navegar con ratón.
+ *   - Accesibilidad WAI-ARIA: role="tab", aria-selected, aria-controls.
+ * ============================================================================
  */
-import React, { useEffect, useRef } from 'react';
+import { useRef } from 'react';
+import { motion } from 'framer-motion';
 import { SECCIONES, SECCION_LABELS_SHORT } from '../../../domain/itemSchema.js';
 import './SectionTabs.css';
 
 export function SectionTabs({ activeSection, onSectionChange, counts }) {
-  const navRef     = useRef(null);
-  const activeRef  = useRef(null);
-  const listRef    = useRef(null);
+  const listRef = useRef(null);
 
-  const isMouseDownRef = useRef(false);
-  const startXRef = useRef(0);
-  const startScrollLeftRef = useRef(0);
-  const hasDraggedRef = useRef(false);
+  // ── Refs para drag-to-scroll sin re-renders ────────────────────────────────
+  const isMouseDownRef    = useRef(false);
+  const startXRef         = useRef(0);
+  const startScrollLeft   = useRef(0);
+  const hasDraggedRef     = useRef(false);
 
-  // Keep the light indicator in sync with the active tab on resize, activeSection change, and SCROLL
-  useEffect(() => {
-    const nav  = navRef.current;
-    const list = listRef.current;
-    const tab  = activeRef.current;
-    if (!nav || !tab || !list) return;
-
-    const updateIndicator = () => {
-      const navRect = nav.getBoundingClientRect();
-      const tabRect = tab.getBoundingClientRect();
-      nav.style.setProperty('--indicator-left',  `${tabRect.left - navRect.left}px`);
-      nav.style.setProperty('--indicator-width', `${tabRect.width}px`);
-    };
-
-    updateIndicator();
-
-    const ro = new ResizeObserver(updateIndicator);
-    ro.observe(nav);
-    ro.observe(list);
-    list.addEventListener('scroll', updateIndicator, { passive: true });
-    window.addEventListener('resize', updateIndicator);
-
-    return () => {
-      ro.disconnect();
-      list.removeEventListener('scroll', updateIndicator);
-      window.removeEventListener('resize', updateIndicator);
-    };
-  }, [activeSection]);
-
-  // ── Drag to scroll handlers (using refs to avoid React re-renders) ─────────
   const handleMouseDown = (e) => {
     if (e.button !== 0 || !listRef.current) return;
-    isMouseDownRef.current = true;
-    hasDraggedRef.current = false;
-    startXRef.current = e.pageX - listRef.current.offsetLeft;
-    startScrollLeftRef.current = listRef.current.scrollLeft;
+    isMouseDownRef.current  = true;
+    hasDraggedRef.current   = false;
+    startXRef.current       = e.pageX - listRef.current.offsetLeft;
+    startScrollLeft.current = listRef.current.scrollLeft;
   };
 
   const handleMouseMove = (e) => {
     if (!isMouseDownRef.current || !listRef.current) return;
-    const x = e.pageX - listRef.current.offsetLeft;
-    const walk = x - startXRef.current;
+    const walk = e.pageX - listRef.current.offsetLeft - startXRef.current;
     if (Math.abs(walk) > 4) {
-      hasDraggedRef.current = true;
-      listRef.current.scrollLeft = startScrollLeftRef.current - walk;
+      hasDraggedRef.current       = true;
+      listRef.current.scrollLeft  = startScrollLeft.current - walk;
     }
   };
 
-  const handleMouseUp = () => {
-    isMouseDownRef.current = false;
-  };
+  const handleMouseUp = () => { isMouseDownRef.current = false; };
 
   const handleWheel = (e) => {
     if (e.deltaY !== 0 && listRef.current) {
@@ -76,19 +54,15 @@ export function SectionTabs({ activeSection, onSectionChange, counts }) {
     }
   };
 
+  // Evitar que el click dispare si el usuario estaba arrastrando
   const handleTabClick = (sec) => {
-    if (!hasDraggedRef.current) {
-      onSectionChange(sec);
-    }
+    if (!hasDraggedRef.current) onSectionChange(sec);
   };
 
   return (
-    <nav className="section-tabs" aria-label="Secciones de la lista" ref={navRef}>
-      {/* Desktop underline indicator — positioned by CSS custom props set above */}
-      <span className="section-tabs__indicator" aria-hidden="true" />
-
-      <ul 
-        className="section-tabs__list" 
+    <nav className="section-tabs" aria-label="Secciones de la lista">
+      <ul
+        className="section-tabs__list"
         role="tablist"
         ref={listRef}
         onMouseDown={handleMouseDown}
@@ -103,18 +77,32 @@ export function SectionTabs({ activeSection, onSectionChange, counts }) {
             <li key={sec} role="presentation">
               <button
                 id={`tab-${sec}`}
-                ref={isActive ? activeRef : null}
+                data-section={sec}
                 className={`section-tabs__tab${isActive ? ' section-tabs__tab--active' : ''}`}
                 role="tab"
                 aria-selected={isActive}
                 aria-controls={`panel-${sec}`}
                 onClick={() => handleTabClick(sec)}
               >
+                {/* Label del tab */}
                 <span className="section-tabs__label">{SECCION_LABELS_SHORT[sec]}</span>
+
+                {/* Contador como superíndice (solo si hay ítems) */}
                 {counts?.[sec] !== undefined && (
-                  <span className="section-tabs__count" aria-label={`${counts[sec]} ítems`}>
+                  <sup className="section-tabs__count" aria-label={`${counts[sec]} ítems`}>
                     {counts[sec]}
-                  </span>
+                  </sup>
+                )}
+
+                {/* Indicador inferior animado — Framer Motion layoutId garantiza
+                    una sola instancia que se interpola entre tabs activos */}
+                {isActive && (
+                  <motion.span
+                    className="section-tabs__indicator"
+                    layoutId="tab-indicator"
+                    transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                    aria-hidden="true"
+                  />
                 )}
               </button>
             </li>
