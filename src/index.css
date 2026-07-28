@@ -9,57 +9,57 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 
-/* ── Design Tokens — Ocean/Cyan palette ────────────────────────────────── */
+/* ── Design Tokens — Claymorphism Design System ────────────────────────── */
 :root {
-  /* Light mode — bone gray eye-care */
+  /* Light mode — bone gray eye-care + Claymorphic soft 3D */
   --bg:               #ced2d0;   /* bone gray — relaxed eye care */
-  --surface:          #FFFFFF;   /* crisp card surface */
-  --text-primary:     #0A1B1F;
+  --surface:          #FFFFFF;   /* crisp clay card surface */
+  --text-primary:     #0B1726;
   --text-muted:       #4A6065;
-  --accent-visto:     #0096B3;   /* cyan — highlights, borders, underlines, icons */
-  --accent-completado:#562ca7;   /* purple — CTA buttons, primary actions */
+  --accent-visto:     #0096B3;   /* cyan — highlights, borders, icons */
+  --accent-completado:#D9534F;   /* soft coral accent */
   --border:           #B8C0BE;
 
-  /* Skeuomorphism light tokens — directional shadows */
-  --shadow-sm:  0 1px 3px rgba(10,27,31,0.08), 0 1px 2px rgba(10,27,31,0.05),
-                inset 0 1px 0 rgba(255,255,255,0.9);
-  --shadow-md:  0 4px 12px rgba(10,27,31,0.10), 0 2px 4px rgba(10,27,31,0.06),
-                inset 0 1px 0 rgba(255,255,255,0.8);
-  --shadow-press: inset 0 2px 4px rgba(10,27,31,0.15);
-  --border-skeu: 1px solid #B8C0BE;
+  /* Claymorphic light tokens — soft dual 3D shadows */
+  --shadow-sm:  4px 6px 14px rgba(10,27,31,0.08), 1px 2px 4px rgba(10,27,31,0.04),
+                inset 2px 2px 4px rgba(255,255,255,0.9), inset -2px -2px 4px rgba(10,27,31,0.06);
+  --shadow-md:  8px 14px 28px rgba(10,27,31,0.12), 2px 4px 8px rgba(10,27,31,0.06),
+                inset 3px 3px 6px rgba(255,255,255,0.95), inset -3px -3px 6px rgba(10,27,31,0.08);
+  --shadow-press: inset 3px 3px 6px rgba(10,27,31,0.16), inset -2px -2px 4px rgba(255,255,255,0.5);
+  --border-skeu: 1px solid rgba(184, 192, 190, 0.6);
 
   /* Semantic extras */
   --accent-danger:   #E53E3E;
   --accent-warning:  #D97706;
-  --radius-sm:  0.5rem;
-  --radius-md:  0.875rem;
-  --radius-lg:  1.25rem;
+  --radius-sm:  0.75rem;
+  --radius-md:  1.25rem;
+  --radius-lg:  1.75rem;
   --font: 'Inter', system-ui, sans-serif;
 }
 
 [data-theme='dark'] {
-  /* Dark mode — deep navy ocean */
-  --bg:               #0A1B1F;
-  --surface:          #14282D;
-  --text-primary:     #E2ECF0;
-  --text-muted:       #829DA3;
-  --accent-visto:     #00E9FF;   /* brighter cyan for dark bg */
-  --accent-completado:#a278f3;   /* lighter purple for dark bg */
-  --border:           #223B41;
+  /* Dark mode — Opción 3: Midnight Oceanic & Soft Coral */
+  --bg:               #0B1726;   /* Midnight Oceanic Deep Navy */
+  --surface:          #142438;   /* Clay Navy surface */
+  --text-primary:     #E6F1F5;
+  --text-muted:       #8AA8B4;
+  --accent-visto:     #00CEC9;   /* Turquoise primary */
+  --accent-completado:#FF7675;   /* Soft Coral secondary */
+  --border:           #1E344F;
 
-  /* Skeuomorphism dark tokens — light comes from top-left */
-  --shadow-sm:  0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.3),
-                inset 0 1px 0 rgba(255,255,255,0.04);
-  --shadow-md:  0 6px 20px rgba(0,0,0,0.5), 0 2px 6px rgba(0,0,0,0.35),
-                inset 0 1px 0 rgba(255,255,255,0.06);
-  --shadow-press: inset 0 2px 6px rgba(0,0,0,0.5);
-  --border-skeu: 1px solid #223B41;
+  /* Claymorphic dark tokens — 3D deep relief */
+  --shadow-sm:  4px 6px 14px rgba(0,0,0,0.4), 1px 2px 4px rgba(0,0,0,0.25),
+                inset 2px 2px 4px rgba(255,255,255,0.06), inset -2px -2px 4px rgba(0,0,0,0.3);
+  --shadow-md:  10px 16px 32px rgba(0,0,0,0.5), 2px 4px 10px rgba(0,0,0,0.3),
+                inset 3px 3px 6px rgba(255,255,255,0.08), inset -3px -3px 6px rgba(0,0,0,0.4);
+  --shadow-press: inset 3px 3px 8px rgba(0,0,0,0.6), inset -2px -2px 4px rgba(255,255,255,0.04);
+  --border-skeu: 1px solid rgba(30, 52, 79, 0.8);
 
-  --accent-danger:   #FC8181;
-  --accent-warning:  #F6AD55;
-  --radius-sm:  0.5rem;
-  --radius-md:  0.875rem;
-  --radius-lg:  1.25rem;
+  --accent-danger:   #FF7675;
+  --accent-warning:  #FDCB6E;
+  --radius-sm:  0.75rem;
+  --radius-md:  1.25rem;
+  --radius-lg:  1.75rem;
   --font: 'Inter', system-ui, sans-serif;
 }
 

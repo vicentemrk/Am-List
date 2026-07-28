@@ -2,18 +2,18 @@
   display: flex;
   background: var(--surface);
   border: var(--border-skeu);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   overflow: hidden;
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
-              border-color 0.2s;
-  /* Skeuomorphism: raised card with top-light */
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.22s ease;
+  /* Claymorphic 3D soft dual shadow */
   box-shadow: var(--shadow-sm);
   position: relative;
 }
 
 .item-card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-4px);
   box-shadow: var(--shadow-md);
   border-color: var(--accent-visto);
 }

@@ -1,192 +1,88 @@
-/* ─── SectionTabs — Responsive ────────────────────────────────────────────────
-   Mobile  (<768px): horizontal pill row  — Design A, no color badges
-   Desktop (≥768px): underline indicator  — Design C, animated sliding bar
-   ──────────────────────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════════
+   MÓDULO: SectionTabs.css — Estilos Claymorphism para Pestañas
+   ═══════════════════════════════════════════════════════════════════════════
+   Qué hace:
+     Estilos Claymorphic 3D para el componente de pestañas con relieve inflado,
+     sombras duales exterior/interior y transiciones de pulsado táctil.
+   ═══════════════════════════════════════════════════════════════════════════ */
 
-/* ── Shared container ────────────────────────────────────────────────────── */
 .section-tabs {
   position: relative;
   width: 100%;
+  padding: 0.5rem 0;
 }
 
 .section-tabs__list {
   display: flex;
-  gap: 0;
+  gap: 0.5rem;
   margin: 0;
-  padding: 0;
+  padding: 0.5rem;
   list-style: none;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
 }
 
-/* ════════════════════════════════════════════════════════════════════════════
-   MOBILE — pill row
-   ════════════════════════════════════════════════════════════════════════════ */
-@media (max-width: 767px) {
-  .section-tabs {
-    overflow: hidden;
-  }
-
-  .section-tabs__list {
-    gap: 0.35rem;
-    overflow-x: auto;
-    padding: 0.5rem 0.75rem;
-    scrollbar-width: none; /* hide scrollbar on mobile */
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .section-tabs__list::-webkit-scrollbar { display: none; }
-
-  /* Desktop indicator hidden on mobile */
-  .section-tabs__indicator { display: none; }
-
-  .section-tabs__tab {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    padding: 0.38rem 0.85rem;
-    background: var(--surface);
-    border: 1.5px solid var(--border);
-    border-radius: 999px;
-    color: var(--text-muted);
-    font-size: 0.8rem;
-    font-weight: 500;
-    white-space: nowrap;
-    cursor: pointer;
-    /* Subtle skeuomorphism: top highlight */
-    box-shadow: var(--shadow-sm);
-    transition: background 0.18s, color 0.18s, border-color 0.18s,
-                box-shadow 0.15s, transform 0.12s;
-  }
-
-  .section-tabs__tab:hover {
-    color: var(--text-primary);
-    border-color: var(--accent-visto);
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-md);
-  }
-
-  .section-tabs__tab:active {
-    transform: translateY(0);
-    box-shadow: var(--shadow-press);
-  }
-
-  .section-tabs__tab:focus-visible {
-    outline: 2px solid var(--accent-visto);
-    outline-offset: 2px;
-  }
-
-  /* Active pill: cyan border + slight cyan bg tint, dark text (accessible) */
-  .section-tabs__tab--active {
-    border-color: var(--accent-visto);
-    background: color-mix(in srgb, var(--accent-visto) 12%, var(--surface));
-    color: var(--text-primary);
-    font-weight: 700;
-  }
-
-  /* Count badge — neutral, no color coding */
-  .section-tabs__count {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 1.25rem;
-    height: 1.25rem;
-    padding: 0 0.25rem;
-    background: var(--border);
-    border-radius: 999px;
-    font-size: 0.68rem;
-    font-weight: 700;
-    color: var(--text-muted);
-  }
-
-  .section-tabs__tab--active .section-tabs__count {
-    background: color-mix(in srgb, var(--accent-visto) 25%, var(--border));
-    color: var(--text-primary);
-  }
+.section-tabs__list::-webkit-scrollbar {
+  display: none;
 }
 
-/* ════════════════════════════════════════════════════════════════════════════
-   DESKTOP — underline indicator tabs
-   ════════════════════════════════════════════════════════════════════════════ */
-@media (min-width: 768px) {
-  .section-tabs {
-    border-bottom: 1.5px solid var(--border);
-    /* Subtle skeuomorphism: slight inner top shadow */
-    box-shadow: inset 0 -1px 0 var(--border);
-  }
+.section-tabs__indicator {
+  display: none; /* Desactivado en favor del diseño Claymorphic Pill */
+}
 
-  .section-tabs__list {
-    gap: 0;
-    padding: 0;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
+.section-tabs__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1.15rem;
+  background: var(--surface);
+  color: var(--text-muted);
+  border: var(--border-skeu);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
 
-  .section-tabs__list::-webkit-scrollbar { display: none; }
+.section-tabs__tab:hover {
+  color: var(--text-primary);
+  border-color: var(--accent-visto);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
 
-  /* Sliding underline indicator — positioned by JS custom props */
-  .section-tabs__indicator {
-    position: absolute;
-    bottom: -1.5px;
-    left: var(--indicator-left, 0px);
-    width: var(--indicator-width, 0px);
-    height: 2.5px;
-    background: var(--accent-visto);
-    border-radius: 2px 2px 0 0;
-    transition: left 0.22s cubic-bezier(0.4, 0, 0.2, 1),
-                width 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-    /* Subtle glow matching the cyan accent */
-    box-shadow: 0 0 6px color-mix(in srgb, var(--accent-visto) 60%, transparent);
-  }
+.section-tabs__tab:active {
+  transform: translateY(1px);
+  box-shadow: var(--shadow-press);
+}
 
-  .section-tabs__tab {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.7rem 1.1rem;
-    background: none;
-    border: none;
-    color: var(--text-muted);
-    font-size: 0.82rem;
-    font-weight: 500;
-    letter-spacing: 0.01em;
-    white-space: nowrap;
-    cursor: pointer;
-    transition: color 0.18s;
-    position: relative;
-  }
+.section-tabs__tab--active {
+  background: var(--surface);
+  color: var(--accent-visto);
+  font-weight: 700;
+  border-color: var(--accent-visto);
+  box-shadow: var(--shadow-press);
+}
 
-  .section-tabs__tab:hover {
-    color: var(--text-primary);
-  }
+.section-tabs__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.35rem;
+  height: 1.35rem;
+  padding: 0 0.35rem;
+  background: rgba(0, 206, 201, 0.12);
+  color: var(--accent-visto);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
 
-  .section-tabs__tab:focus-visible {
-    outline: 2px solid var(--accent-visto);
-    outline-offset: -2px;
-    border-radius: 4px;
-  }
-
-  .section-tabs__tab--active {
-    color: var(--accent-visto);
-    font-weight: 700;
-  }
-
-  /* Count badge on desktop — inline, minimal */
-  .section-tabs__count {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 1.2rem;
-    height: 1.2rem;
-    padding: 0 0.2rem;
-    background: var(--border);
-    border-radius: 999px;
-    font-size: 0.65rem;
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
-    color: var(--text-muted);
-  }
-
-  .section-tabs__tab--active .section-tabs__count {
-    background: color-mix(in srgb, var(--accent-visto) 20%, var(--border));
-    color: var(--accent-visto);
-  }
+.section-tabs__tab--active .section-tabs__count {
+  background: var(--accent-visto);
+  color: #ffffff;
 }

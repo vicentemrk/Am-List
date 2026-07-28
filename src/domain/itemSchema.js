@@ -89,10 +89,9 @@ export const DEFAULT_ITEM = {
 export const ESTADOS_USUARIO = [
   { value: 'por_ver', label: 'Por ver' },
   { value: 'en_curso', label: 'En curso' },
-  { value: 'en_emision', label: 'En emisión' },
-  { value: 'pausado', label: 'Pausado' },
   { value: 'completado', label: 'Completado' },
   { value: 'finalizado', label: 'Finalizado' },
+  { value: 'pausado', label: 'Pausado' },
   { value: 'dropeado', label: 'Dropeado' },
 ];
 

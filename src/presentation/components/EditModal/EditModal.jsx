@@ -4,7 +4,7 @@
  */
 import React, { useEffect, useState } from 'react';
 import { validarProgreso } from '../../../domain/validators.js';
-import { ESTADOS_USUARIO, SCORE_RANGE } from '../../../domain/itemSchema.js';
+import { ESTADOS_USUARIO, ESTADOS_EMISION, SCORE_RANGE } from '../../../domain/itemSchema.js';
 import { X, Plus, Tv, BookOpen, Star } from 'lucide-react';
 import './EditModal.css';
 
@@ -75,6 +75,11 @@ export function EditModal({ item, onClose, onUpdate }) {
   const handleStatus = (e) => {
     const val = e.target.value;
     setDraft((prev) => ({ ...prev, estadoUsuario: val }));
+  };
+
+  const handleEmissionStatus = (e) => {
+    const val = e.target.value;
+    setDraft((prev) => ({ ...prev, estadoEmision: val }));
   };
 
   const handleToggleFavorito = () => {
@@ -169,7 +174,7 @@ export function EditModal({ item, onClose, onUpdate }) {
           {/* Controls */}
           <div className="edit-modal__controls">
             <div className="edit-modal__control-group">
-              <label className="edit-modal__label" htmlFor={`modal-status-${draft.id}`}>Estado</label>
+              <label className="edit-modal__label" htmlFor={`modal-status-${draft.id}`}>Tu Estado (Lista)</label>
               <select
                 id={`modal-status-${draft.id}`}
                 className="edit-modal__input"
@@ -178,6 +183,20 @@ export function EditModal({ item, onClose, onUpdate }) {
               >
                 {ESTADOS_USUARIO.map((s) => (
                   <option key={s.value} value={s.value}>{s.label}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="edit-modal__control-group">
+              <label className="edit-modal__label" htmlFor={`modal-emission-${draft.id}`}>Estado de Emisión</label>
+              <select
+                id={`modal-emission-${draft.id}`}
+                className="edit-modal__input"
+                value={draft.estadoEmision}
+                onChange={handleEmissionStatus}
+              >
+                {ESTADOS_EMISION.map((e) => (
+                  <option key={e.value} value={e.value}>{e.label}</option>
                 ))}
               </select>
             </div>

@@ -88,13 +88,13 @@ export function filtrarPorSeccion(items, seccion, mediaType) {
       return result.filter((item) => item.estadoUsuario === 'en_curso');
 
     case 'en_emision':
-      return result.filter((item) => item.estadoUsuario === 'en_emision' || item.estadoEmision === 'airing');
+      return result.filter((item) => item.estadoEmision === 'airing');
 
     case 'pausado':
       return result.filter((item) => item.estadoUsuario === 'pausado');
 
     case 'finalizado':
-      return result.filter((item) => item.estadoUsuario === 'finalizado' || item.estadoEmision === 'complete');
+      return result.filter((item) => item.estadoUsuario === 'finalizado');
 
     case 'dropeado':
       return result.filter((item) => item.estadoUsuario === 'dropeado');
