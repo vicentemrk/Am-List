@@ -16,10 +16,15 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { validarProgreso } from '../../../domain/validators.js';
 import { ESTADOS_USUARIO, ESTADOS_EMISION, SCORE_RANGE } from '../../../domain/itemSchema.js';
+import { CustomSelect } from '../Select/CustomSelect.jsx';
 import { X, Plus, Tv, BookOpen, Star } from 'lucide-react';
 import './EditModal.css';
 
 const MAX_TAGS = 5;
+const SCORE_OPTIONS = [
+  { value: '', label: '--' },
+  ...SCORE_RANGE.map((n) => ({ value: String(n), label: `${n} ★` })),
+];
 
 export function EditModal({ item, onClose, onUpdate }) {
   const [draft, setDraft] = useState(null);
@@ -70,18 +75,16 @@ export function EditModal({ item, onClose, onUpdate }) {
     setDraft((prev) => ({ ...prev, progreso: newProgreso }));
   };
 
-  const handleScore = (e) => {
-    const val = e.target.value === '' ? null : Number(e.target.value);
-    setDraft((prev) => ({ ...prev, puntuacion: val }));
+  const handleScore = (val) => {
+    const parsed = val === '' ? null : Number(val);
+    setDraft((prev) => ({ ...prev, puntuacion: parsed }));
   };
 
-  const handleStatus = (e) => {
-    const val = e.target.value;
+  const handleStatus = (val) => {
     setDraft((prev) => ({ ...prev, estadoUsuario: val }));
   };
 
-  const handleEmissionStatus = (e) => {
-    const val = e.target.value;
+  const handleEmissionStatus = (val) => {
     setDraft((prev) => ({ ...prev, estadoEmision: val }));
   };
 
@@ -194,45 +197,32 @@ export function EditModal({ item, onClose, onUpdate }) {
             <div className="edit-modal__controls">
               <div className="edit-modal__control-group">
                 <label className="edit-modal__label" htmlFor={`modal-status-${draft.id}`}>Tu Estado (Lista)</label>
-                <select
+                <CustomSelect
                   id={`modal-status-${draft.id}`}
-                  className="edit-modal__input"
                   value={draft.estadoUsuario}
-                  onChange={handleStatus}
-                >
-                  {ESTADOS_USUARIO.map((s) => (
-                    <option key={s.value} value={s.value}>{s.label}</option>
-                  ))}
-                </select>
+                  onValueChange={handleStatus}
+                  options={ESTADOS_USUARIO}
+                />
               </div>
 
               <div className="edit-modal__control-group">
                 <label className="edit-modal__label" htmlFor={`modal-emission-${draft.id}`}>Estado de Emisión</label>
-                <select
+                <CustomSelect
                   id={`modal-emission-${draft.id}`}
-                  className="edit-modal__input"
                   value={draft.estadoEmision}
-                  onChange={handleEmissionStatus}
-                >
-                  {ESTADOS_EMISION.map((e) => (
-                    <option key={e.value} value={e.value}>{e.label}</option>
-                  ))}
-                </select>
+                  onValueChange={handleEmissionStatus}
+                  options={ESTADOS_EMISION}
+                />
               </div>
 
               <div className="edit-modal__control-group">
                 <label className="edit-modal__label" htmlFor={`modal-score-${draft.id}`}>Puntuación</label>
-                <select
+                <CustomSelect
                   id={`modal-score-${draft.id}`}
-                  className="edit-modal__input"
-                  value={draft.puntuacion ?? ''}
-                  onChange={handleScore}
-                >
-                  <option value="">--</option>
-                  {SCORE_RANGE.map((n) => (
-                    <option key={n} value={n}>{n} ★</option>
-                  ))}
-                </select>
+                  value={draft.puntuacion != null ? String(draft.puntuacion) : ''}
+                  onValueChange={handleScore}
+                  options={SCORE_OPTIONS}
+                />
               </div>
             </div>
 
