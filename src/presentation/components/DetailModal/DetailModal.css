@@ -1,0 +1,192 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   MÓDULO: DetailModal.css — Estilos para el Modal de Detalle Expandido
+   ═══════════════════════════════════════════════════════════════════════════
+   Qué hace:
+     Estilos visuales estilo Aceternity UI con desenfoque de cristal (glassmorphism),
+     bordes resplandecientes, insignias interactivas y capas responsivas.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.detail-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  background: rgba(10, 27, 31, 0.65);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.detail-modal-card {
+  position: relative;
+  width: 100%;
+  max-width: 52rem;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.detail-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.detail-modal-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--text-primary);
+}
+
+.detail-modal-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+}
+
+.detail-modal-close-btn:hover {
+  background: rgba(0, 0, 0, 0.08);
+  color: var(--text-primary);
+}
+
+.detail-modal-body {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 1.75rem;
+}
+
+@media (max-width: 640px) {
+  .detail-modal-body {
+    grid-template-columns: 1fr;
+  }
+}
+
+.detail-modal-cover-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.detail-modal-cover {
+  width: 100%;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+  aspect-ratio: 2/3;
+  box-shadow: var(--shadow-md);
+  border: var(--border-skeu);
+}
+
+.detail-modal-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.detail-modal-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.detail-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.detail-badge--purple {
+  background: rgba(86, 44, 167, 0.12);
+  color: var(--accent-completado);
+  border: 1px solid rgba(86, 44, 167, 0.3);
+}
+
+.detail-badge--gold {
+  background: rgba(217, 119, 6, 0.12);
+  color: #D97706;
+  border: 1px solid rgba(217, 119, 6, 0.3);
+}
+
+.detail-modal-genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.genre-pill {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-sm);
+  background: rgba(0, 150, 179, 0.08);
+  color: var(--accent-visto);
+  border: 1px solid rgba(0, 150, 179, 0.2);
+}
+
+.detail-modal-synopsis {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  max-height: 12rem;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.detail-modal-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  gap: 1rem;
+}
+
+.quick-plus-one-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.25rem;
+  background: var(--accent-completado);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s, opacity 0.2s;
+}
+
+.quick-plus-one-btn:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
+.quick-plus-one-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}

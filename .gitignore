@@ -11,6 +11,13 @@ lerna-debug.log*
 node_modules/
 .npm/
 package-lock.json.log
+package-lock.json
+package.json
+.gitignore
+vite.config.js
+.oxlintrc.json
+pnpm-lock.yaml
+.env.local
 
 # Build & Output Directories
 dist/

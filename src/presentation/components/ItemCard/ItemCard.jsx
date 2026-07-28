@@ -20,7 +20,7 @@ function highlightMatch(text, query) {
   );
 }
 
-function ItemCardComponent({ item, onUpdate, onRemove, onEdit, isDraggable, searchQuery = '' }) {
+function ItemCardComponent({ item, onUpdate, onRemove, onEdit, onDetail, isDraggable, searchQuery = '' }) {
   const [sinopsisExpanded, setSinopsisExpanded] = useState(false);
 
   // ── display helpers ──────────────────────────────────────────────────────────
@@ -37,10 +37,18 @@ function ItemCardComponent({ item, onUpdate, onRemove, onEdit, isDraggable, sear
   const sinopsis = item.sinopsis || '';
   const sinopsisShort = sinopsis.length > 140 ? sinopsis.slice(0, 140) + '…' : sinopsis;
 
-  const handleFavorito = () => { onUpdate(item.id, { favorito: !item.favorito }); };
+  const handleFavorito = (e) => {
+    e.stopPropagation();
+    onUpdate(item.id, { favorito: !item.favorito });
+  };
 
-  const handleDelete = () => {
+  const handleDelete = (e) => {
+    e.stopPropagation();
     onRemove(item.id);
+  };
+
+  const handleOpenDetail = () => {
+    if (onDetail) onDetail(item);
   };
 
   return (
@@ -53,7 +61,7 @@ function ItemCardComponent({ item, onUpdate, onRemove, onEdit, isDraggable, sear
       )}
 
       {/* ── thumbnail ─────────────────────────────────────────────────────── */}
-      <div className="item-card__thumb-wrap">
+      <div className="item-card__thumb-wrap" onClick={handleOpenDetail} style={{ cursor: 'pointer' }}>
         {item.imagen ? (
           <img
             className="item-card__thumb"
@@ -95,7 +103,14 @@ function ItemCardComponent({ item, onUpdate, onRemove, onEdit, isDraggable, sear
           </div>
         </div>
 
-        <h3 className="item-card__title">{highlightMatch(item.titulo, searchQuery)}</h3>
+        <h3
+          className="item-card__title"
+          onClick={handleOpenDetail}
+          style={{ cursor: 'pointer' }}
+          title="Ver detalle completo"
+        >
+          {highlightMatch(item.titulo, searchQuery)}
+        </h3>
 
         {/* ── sub-info: géneros + sinopsis ─────────────────────────────── */}
         <div className="item-card__subinfo">
@@ -112,7 +127,10 @@ function ItemCardComponent({ item, onUpdate, onRemove, onEdit, isDraggable, sear
               {sinopsis.length > 140 && (
                 <button
                   className="item-card__sinopsis-toggle"
-                  onClick={() => setSinopsisExpanded((v) => !v)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSinopsisExpanded((v) => !v);
+                  }}
                 >
                   {sinopsisExpanded ? ' Ver menos' : ' Ver más'}
                 </button>
@@ -162,7 +180,10 @@ function ItemCardComponent({ item, onUpdate, onRemove, onEdit, isDraggable, sear
           <div className="item-card__actions">
             <button
               className="item-card__action-btn item-card__action-btn--edit"
-              onClick={() => onEdit(item)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(item);
+              }}
               aria-label="Editar detalles"
               title="Editar detalles"
             >
@@ -184,3 +205,4 @@ function ItemCardComponent({ item, onUpdate, onRemove, onEdit, isDraggable, sear
 }
 
 export const ItemCard = memo(ItemCardComponent);
+

@@ -15,12 +15,13 @@
 | Tema Eye-Care Gris Hueso (`#ced2d0`) | v1.0.1 | 🔥 Alta | ✅ Completado |
 | Pruebas E2E Iniciales con Playwright | v1.0.1 | 🔥 Alta | ✅ Completado (`e2e/app.spec.js`) |
 | **Limpieza de Iconos en Notificaciones (`Toast.jsx`)** | **v1.1** | 🔥 **Alta** | ✅ **Completado** |
-| **Comentarios JSDoc en Español en todo `src/`** | **v1.1** | 🔥 **Alta** | ⏳ **En Progreso** |
-| **Refactorización Hexagonal de Adaptadores** | **v1.1** | 🔥 **Alta** | ⏳ **En Progreso** |
-| **Setup de Shadcn UI + Aceternity UI** | **v1.2** | 🔥 **Alta** | 📅 **Planificado** |
-| **Vista de detalle expandida (Detail Modal / Aceternity)** | **v1.2** | 🔥 **Alta** | 📅 **Planificado** |
+| **Comentarios JSDoc en Español en todo `src/`** | **v1.1** | 🔥 **Alta** | ✅ **Completado** |
+| **Refactorización Hexagonal de Adaptadores** | **v1.1** | 🔥 **Alta** | ✅ **Completado (Puertos y Fachadas)** |
+| **Setup de Shadcn UI + Aceternity UI** | **v1.2** | 🔥 **Alta** | ✅ **Completado (Tailwind v4 + Framer Motion)** |
+| **Vista de detalle expandida (Detail Modal / Aceternity)** | **v1.2** | 🔥 **Alta** | ✅ **Completado (`DetailModal.jsx`)** |
 | **Dashboard de estadísticas de consumo** | **v1.2** | ⚡ **Media** | 📅 **Planificado** |
-| **Botón `+1` episodio rápido en tarjeta** | **v1.2** | 🔥 **Alta** | 📅 **Planificado** |
+| **Botón `+1` episodio rápido en tarjeta** | **v1.2** | 🔥 **Alta** | ✅ **Completado (Integrado en DetailModal)** |
+
 | Modulo PWA Offline (`vite-plugin-pwa`) | v1.3 | ⚡ Media | Planificado |
 | Importación directa desde AniList / Kitsu | v1.3 | ⚡ Media | Planificado |
 | **Backend Costo $0 (Serverless Postgres + Drizzle ORM sin Lock-in)** | **v2.0** | 💡 **Alta** | 🎯 **Arquitectura Lista** |

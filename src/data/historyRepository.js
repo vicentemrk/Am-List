@@ -1,72 +1,40 @@
 /**
  * ============================================================================
- * MÓDULO: data/historyRepository.js
+ * FACHADA DE INFRAESTRUCTURA: data/historyRepository.js
  * ============================================================================
  * Qué hace:
- *   Punto único de acceso para gestionar la bitácora cronológica del historial de
- *   cambios en `localStorage`.
- * Cómo lo hace:
- *   Lee y escribe arreglos de eventos en JSON. Mantiene un tope estricto de 500
- *   entradas (`MAX_ENTRIES`) descartando los eventos más antiguos para no saturar
- *   el almacenamiento del navegador.
+ *   Actúa como Fachada Principal de acceso a la bitácora de historial de cambios.
+ * 
+ * Cómo funciona:
+ *   Delega todas las llamadas (`getAllHistory`, `appendHistory`, `clearHistory`)
+ *   al adaptador activo (`historyLocalStorageAdapter` por defecto), permitiendo
+ *   un desacoplamiento absoluto de la capa de almacenamiento.
  * ============================================================================
  */
 
-const STORAGE_KEY = 'amlist_history';
-const MAX_ENTRIES = 500; // Límite máximo de registros para prevenir desbordamientos
+import { historyLocalStorageAdapter } from './adapters/localStorage/historyLocalStorageAdapter.js';
+
+let currentAdapter = historyLocalStorageAdapter;
 
 /**
- * Obtiene todas las entradas del historial almacenadas.
- * 
- * Qué hace:
- *   Recupera el historial de cambios en orden cronológico.
- * Cómo lo hace:
- *   Lee `localStorage` usando `try/catch` para tolerar JSONs corruptos sin fallar.
- * 
- * @returns {object[]} Lista de entradas del historial o arreglo vacío.
+ * Permite cambiar el adaptador activo de historial.
+ * @param {import('../domain/ports/HistoryRepositoryPort.js').IHistoryRepositoryPort} newAdapter
  */
+export function setHistoryAdapter(newAdapter) {
+  currentAdapter = newAdapter;
+}
+
+/** Obtiene todos los eventos de historial delegando al adaptador activo */
 export function getAllHistory() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return [];
-    return parsed;
-  } catch {
-    return [];
-  }
+  return currentAdapter.getAllHistory();
 }
 
-/**
- * Agrega una nueva entrada a la bitácora de historial.
- * 
- * Qué hace:
- *   Inserta un nuevo registro y recorta el arreglo si supera el máximo de 500 elementos.
- * Cómo lo hace:
- *   Combina el arreglo actual con la nueva entrada y aplica `.slice(-MAX_ENTRIES)`.
- * 
- * @param {object} entry - Objeto plano con la entrada construida por `construirEntradaHistorial`.
- */
+/** Agrega un nuevo evento delegando al adaptador activo */
 export function appendHistory(entry) {
-  if (!entry || typeof entry !== 'object') return;
-  try {
-    const current = getAllHistory();
-    const updated = [...current, entry].slice(-MAX_ENTRIES);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-  } catch {
-    // Almacenamiento lleno — ignora silenciosamente para evitar caídas
-  }
+  return currentAdapter.appendHistory(entry);
 }
 
-/**
- * Limpia por completo la bitácora del historial.
- * Útil para restablecimientos manuales o pruebas unitarias.
- */
+/** Limpia la bitácora delegando al adaptador activo */
 export function clearHistory() {
-  try {
-    localStorage.removeItem(STORAGE_KEY);
-  } catch {
-    // ignorar
-  }
+  return currentAdapter.clearHistory();
 }
-

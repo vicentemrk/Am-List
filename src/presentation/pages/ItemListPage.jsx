@@ -1,12 +1,9 @@
-/**
- * presentation/pages/ItemListPage.jsx
- * Generic unified list page for both 'anime' and 'manga' media types.
- */
 import React, { useState, useMemo } from 'react';
 import { Plus, Tv, BookOpen } from 'lucide-react';
 import { SectionTabs } from '../components/SectionTabs/SectionTabs.jsx';
 import { ItemCard } from '../components/ItemCard/ItemCard.jsx';
 import { EditModal } from '../components/EditModal/EditModal.jsx';
+import { DetailModal } from '../components/DetailModal/DetailModal.jsx';
 import { SECCIONES } from '../../domain/itemSchema.js';
 import './ListPage.css';
 
@@ -14,6 +11,7 @@ export function ItemListPage({ media = 'anime', onUpdate, onRemove, getFiltered,
   const [activeSection, setActiveSection] = useState('all');
   const [sortBy, setSortBy] = useState('recent');
   const [editingItem, setEditingItem] = useState(null);
+  const [detailItem, setDetailItem] = useState(null);
   const [localSearch, setLocalSearch] = useState('');
   const [selectedTags, setSelectedTags] = useState([]);
 
@@ -121,8 +119,9 @@ export function ItemListPage({ media = 'anime', onUpdate, onRemove, getFiltered,
 
   const handleUpdate = (id, patch) => {
     const res = onUpdate(id, patch);
-    if (res.success && editingItem && editingItem.id === id) {
-      setEditingItem(res.item);
+    if (res.success) {
+      if (editingItem && editingItem.id === id) setEditingItem(res.item);
+      if (detailItem && detailItem.id === id) setDetailItem(res.item);
     }
   };
 
@@ -225,6 +224,7 @@ export function ItemListPage({ media = 'anime', onUpdate, onRemove, getFiltered,
                 onUpdate={onUpdate}
                 onRemove={onRemove}
                 onEdit={setEditingItem}
+                onDetail={setDetailItem}
                 isDraggable={sortBy === 'manual'}
                 searchQuery={localSearch}
               />
@@ -234,6 +234,8 @@ export function ItemListPage({ media = 'anime', onUpdate, onRemove, getFiltered,
       </section>
 
       <EditModal item={editingItem} onClose={() => setEditingItem(null)} onUpdate={handleUpdate} />
+      <DetailModal item={detailItem} isOpen={Boolean(detailItem)} onClose={() => setDetailItem(null)} onUpdate={handleUpdate} />
     </div>
   );
 }
+
