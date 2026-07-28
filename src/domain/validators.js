@@ -1,13 +1,30 @@
 /**
- * domain/validators.js
- * Pure business-logic functions — zero imports of React, fetch or localStorage.
+ * ============================================================================
+ * MÓDULO: domain/validators.js
+ * ============================================================================
+ * Qué hace:
+ *   Contiene las funciones puras de lógica de negocio para validar el progreso
+ *   de episodios/capítulos, la puntuación asignada y el filtrado por secciones.
+ * Cómo lo hace:
+ *   Sin ninguna importación externa ni efectos secundarios. Recibe datos nativos
+ *   y devuelve objetos de resultado `{ valid: boolean, message: string }` o
+ *   listas de ítems filtradas.
+ * ============================================================================
  */
 
 /**
- * Validates that progress `actual` does not exceed `maximo`.
- * @param {number} actual  Current progress count (e.g. episodes watched)
- * @param {number|null} maximo  Maximum known count; null means unknown/unlimited
- * @returns {{ valid: boolean, message: string }}
+ * Valida que el progreso actual de un anime/manga no supere el máximo conocido.
+ * 
+ * Qué hace:
+ *   Garantiza que el número de episodios vistos no sea un número negativo ni supere
+ *   el límite máximo conocido de la serie (Regla 2 del Negocio).
+ * Cómo lo hace:
+ *   Convierte las entradas a números y compara `actual` contra `maximo`. Si `maximo`
+ *   es `null`, la serie se considera ilimitada (como series en emisión continua).
+ * 
+ * @param {number} actual - Episodios o capítulos vistos actualmente.
+ * @param {number|null} maximo - Total de episodios/capítulos máximos de la serie.
+ * @returns {{ valid: boolean, message: string }} Objeto con estado de validación y mensaje de error si aplica.
  */
 export function validarProgreso(actual, maximo) {
   const a = Number(actual);
@@ -33,16 +50,23 @@ export function validarProgreso(actual, maximo) {
 }
 
 /**
- * Filters a list of items by the active section key and optionally by media type.
- * @param {import('./itemSchema').DEFAULT_ITEM[]} items
- * @param {import('./itemSchema').SECCIONES[number]} seccion
- * @param {'anime'|'manga'|'all'} [mediaType]
- * @returns {import('./itemSchema').DEFAULT_ITEM[]}
+ * Filtra una colección de ítems según la sección seleccionada y el tipo de medio.
+ * 
+ * Qué hace:
+ *   Retorna únicamente las series o mangas que pertenecen a la pestaña activa en la UI.
+ * Cómo lo hace:
+ *   Primero filtra opcionalmente por `mediaType` ('anime' o 'manga'). Luego aplica una
+ *   evaluación `switch` comparando la propiedad `estadoUsuario`, `favorito` o `estadoEmision`.
+ * 
+ * @param {import('./itemSchema').DEFAULT_ITEM[]} items - Arreglo de ítems a filtrar.
+ * @param {import('./itemSchema').SECCIONES[number]} seccion - Clave de la sección activa (ej: 'favorito', 'en_curso').
+ * @param {'anime'|'manga'|'all'} [mediaType] - Tipo de contenido opcional.
+ * @returns {import('./itemSchema').DEFAULT_ITEM[]} Arreglo filtrado con los ítems correspondientes.
  */
 export function filtrarPorSeccion(items, seccion, mediaType) {
   let result = items;
 
-  // Pre-filter by media type when on a dedicated page
+  // Pre-filtrado opcional por tipo de medio cuando estamos en la página dedicada de Anime o Manga
   if (mediaType && mediaType !== 'all') {
     result = result.filter((item) => item.mediaType === mediaType);
   }
@@ -81,13 +105,20 @@ export function filtrarPorSeccion(items, seccion, mediaType) {
 }
 
 /**
- * Validates a score value.
- * @param {number|null} puntuacion
- * @returns {{ valid: boolean, message: string }}
+ * Valida la calificación personal otorgada por el usuario.
+ * 
+ * Qué hace:
+ *   Comprueba que la nota asignada esté dentro del rango permitido (1 a 10).
+ * Cómo lo hace:
+ *   Permite valores nulos (la nota es opcional). Si existe un valor, verifica
+ *   que sea un número entero o decimal finito entre 1 y 10.
+ * 
+ * @param {number|null} puntuacion - Nota ingresada por el usuario.
+ * @returns {{ valid: boolean, message: string }} Objeto de validación.
  */
 export function validarPuntuacion(puntuacion) {
   if (puntuacion === null || puntuacion === undefined) {
-    return { valid: true, message: '' }; // optional field
+    return { valid: true, message: '' }; // Campo opcional
   }
   const p = Number(puntuacion);
   if (!Number.isFinite(p) || p < 1 || p > 10) {
@@ -95,3 +126,4 @@ export function validarPuntuacion(puntuacion) {
   }
   return { valid: true, message: '' };
 }
+

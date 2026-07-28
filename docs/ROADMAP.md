@@ -1,7 +1,7 @@
 # AMlist — Roadmap de Desarrollo
 
 > Hoja de ruta del proyecto vinculada a la matriz híbrida de `20_ideas_implementacion.md`.
-> Última actualización: 2026-07-22
+> Última actualización: 2026-07-27
 
 ---
 
@@ -14,29 +14,30 @@
 | Pruebas Unitarias `useItems` | v1.0.1 | 🔥 Alta | ✅ Completado |
 | Tema Eye-Care Gris Hueso (`#ced2d0`) | v1.0.1 | 🔥 Alta | ✅ Completado |
 | Pruebas E2E Iniciales con Playwright | v1.0.1 | 🔥 Alta | ✅ Completado (`e2e/app.spec.js`) |
-| **Vista de detalle expandida (Detail Modal)** | **v1.1** | 🔥 **Alta** | **Próximo** |
-| **Dashboard de estadísticas de consumo** | **v1.1** | 🔥 **Alta** | **Próximo** |
-| **Botón `+1` episodio rápido en tarjeta** | **v1.1** | 🔥 **Alta** | **Próximo** |
-| **Persistencia de criterio de ordenamiento** | **v1.1** | 🔥 **Alta** | **Próximo** |
-| Modulo PWA Offline (`vite-plugin-pwa`) | v1.2 | ⚡ Media | Planificado |
-| Importación directa desde AniList / Kitsu | v1.2 | ⚡ Media | Planificado |
-| Listas personalizadas por usuario | v1.2 | ⚡ Media | Planificado |
-| Generador de Tarjeta para compartir PNG | v1.2 | ⚡ Media | Planificado |
-| Sugerencias "Qué ver a continuación" | v2.0 | 💡 Baja | Post-MVP v2 |
-| Sincronización en la Nube (Supabase) | v2.0 | 💡 Baja | Post-MVP v2 |
+| **Limpieza de Iconos en Notificaciones (`Toast.jsx`)** | **v1.1** | 🔥 **Alta** | ✅ **Completado** |
+| **Comentarios JSDoc en Español en todo `src/`** | **v1.1** | 🔥 **Alta** | ⏳ **En Progreso** |
+| **Refactorización Hexagonal de Adaptadores** | **v1.1** | 🔥 **Alta** | ⏳ **En Progreso** |
+| **Setup de Shadcn UI + Aceternity UI** | **v1.2** | 🔥 **Alta** | 📅 **Planificado** |
+| **Vista de detalle expandida (Detail Modal / Aceternity)** | **v1.2** | 🔥 **Alta** | 📅 **Planificado** |
+| **Dashboard de estadísticas de consumo** | **v1.2** | ⚡ **Media** | 📅 **Planificado** |
+| **Botón `+1` episodio rápido en tarjeta** | **v1.2** | 🔥 **Alta** | 📅 **Planificado** |
+| Modulo PWA Offline (`vite-plugin-pwa`) | v1.3 | ⚡ Media | Planificado |
+| Importación directa desde AniList / Kitsu | v1.3 | ⚡ Media | Planificado |
+| **Backend Costo $0 (Serverless Postgres + Drizzle ORM sin Lock-in)** | **v2.0** | 💡 **Alta** | 🎯 **Arquitectura Lista** |
+| Sincronización Multi-dispositivo en la Nube | v2.0 | 💡 Alta | 🎯 Arquitectura Lista |
 
 ---
 
-## 🚀 v1.1 — Próximo Ciclo de Desarrollo
+## 🚀 v1.1 — Ciclo de Desarrollo Actual
 
-### 1. Vista de Detalle Expandida (Detail Modal / Drawer)
-* **Objetivo**: Al hacer clic en la portada de un anime o manga, abrir un modal grande con la sinopsis completa, género como pills interactivas y todos los datos de edición, manteniendo la tarjeta `ItemCard` limpia.
+### 1. Limpieza de UI & Notificaciones
+* **Objetivo**: Notificaciones emergentes `Toast.jsx` con diseño limpio sin iconos sobrantes.
 
-### 2. Dashboard de Estadísticas de Consumo
-* **Objetivo**: Panel con visualización de total de episodios vistos, distribución por estado y top de géneros más consumidos.
+### 2. Documentación Exhaustiva JSDoc en Español
+* **Objetivo**: Documentar todos los módulos de `src/domain/`, `src/data/` y `src/presentation/` en lenguaje claro en español.
 
-### 3. Botón de Incremento Rápido (`+1`)
-* **Objetivo**: Incrementar el capítulo o episodio visto en 1 toque directo desde la lista.
+### 3. Fortalecimiento de Arquitectura Hexagonal
+* **Objetivo**: Mantener el aislamiento estricto entre el Núcleo de Dominio y los Adaptadores de Salida (localStorage / HTTP API).
 
 ---
 
@@ -44,3 +45,4 @@
 - Matriz de 20 Ideas: [`docs/20_ideas_implementacion.md`](./20_ideas_implementacion.md)
 - Plan Maestro: [`docs/PLAN_MAESTRO.md`](./PLAN_MAESTRO.md)
 - Criterios QA: [`docs/QA_CRITERIOS.md`](./QA_CRITERIOS.md)
+

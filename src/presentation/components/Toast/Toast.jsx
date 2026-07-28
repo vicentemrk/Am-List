@@ -1,4 +1,4 @@
-import { AlertCircle, Info, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import './Toast.css';
 
 export function Toast({ toast, onClose }) {
@@ -9,8 +9,6 @@ export function Toast({ toast, onClose }) {
   return (
     <div className={`toast-container toast-container--${type}`} role="status" aria-live="polite">
       <div className="toast-content">
-        {type === 'error' && <AlertCircle className="toast-icon" size={18} />}
-        {type === 'info' && <Info className="toast-icon" size={18} />}
         <span className="toast-message">{message}</span>
       </div>
       {action && (
@@ -24,3 +22,4 @@ export function Toast({ toast, onClose }) {
     </div>
   );
 }
+

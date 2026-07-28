@@ -1,9 +1,15 @@
 /**
- * data/itemsRepository.js
- * Single access point for all CRUD operations on items in localStorage.
- *
- * ID convention: `${mediaType}_${malId}` — deterministic and deduplicated.
- * Schema validation and progress validation are applied before every write.
+ * ============================================================================
+ * MÓDULO: data/itemsRepository.js
+ * ============================================================================
+ * Qué hace:
+ *   Punto único de acceso para todas las operaciones CRUD (Crear, Leer, Actualizar,
+ *   Borrar) de la colección de animes y mangas en `localStorage`.
+ * Cómo lo hace:
+ *   Utiliza la convención de IDs `${mediaType}_${malId}` para prevenir duplicados.
+ *   Aplica validaciones estrictas de esquema y progreso antes de escribir en disco.
+ *   Si los datos están dañados, recupera los ítems sanos sin romper la aplicación.
+ * ============================================================================
  */
 
 import { DEFAULT_ITEM } from '../domain/itemSchema.js';
@@ -11,13 +17,18 @@ import { validarProgreso, validarPuntuacion } from '../domain/validators.js';
 
 const STORAGE_KEY = 'amlist_items';
 
-// ─── helpers ──────────────────────────────────────────────────────────────────
+// ─── Funciones Auxiliares Privadas ───────────────────────────────────────────
 
 /**
- * Reads the raw array from localStorage.
- * Returns [] if the key is missing, or if the stored JSON is malformed.
- * Corrupt individual items are silently skipped.
- * @returns {object[]}
+ * Lee el arreglo crudo de ítems guardados en `localStorage`.
+ * 
+ * Qué hace:
+ *   Recupera el JSON almacenado en el navegador de manera segura.
+ * Cómo lo hace:
+ *   Usa `try/catch` para capturar JSON malformado. Filtra elementos corruptos y
+ *   garantiza que propiedades como `tags`, `genres` y `sinopsis` estén correctamente formateadas.
+ * 
+ * @returns {object[]} Lista de ítems válidos o arreglo vacío si no hay datos.
  */
 function readAll() {
   try {
@@ -25,7 +36,8 @@ function readAll() {
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
-    // Filter out any items that are missing the minimum required fields
+    
+    // Filtrar cualquier elemento que no cumpla con los requisitos mínimos de estructura
     return parsed
       .filter(
         (item) =>
@@ -36,10 +48,9 @@ function readAll() {
       )
       .map((item) => ({
         ...item,
-        // Migrate old single 'tag' string → discard, start fresh with []
+        // Migración de datos: asegurar que 'tags' sea un arreglo
         tags: Array.isArray(item.tags) ? item.tags : [],
-        tag: undefined, // remove old field
-        // Ensure genres and sinopsis exist
+        tag: undefined, // Eliminar campo en desuso
         genres:   Array.isArray(item.genres) ? item.genres : [],
         sinopsis: typeof item.sinopsis === 'string' ? item.sinopsis : '',
       }));
@@ -48,15 +59,15 @@ function readAll() {
   }
 }
 
-/** Writes the full array back to localStorage */
+/** Escribe la lista completa de ítems procesados nuevamente en `localStorage` */
 function writeAll(items) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
 }
 
 /**
- * Validates the item schema before writing.
- * @param {object} item
- * @throws {Error} if schema is invalid
+ * Comprueba la validez de un ítem antes de guardarlo en disco.
+ * @param {object} item - Objeto a validar.
+ * @throws {Error} Si el ítem no cumple con el esquema o las reglas de validación.
  */
 function assertSchema(item) {
   if (!item || typeof item !== 'object') throw new Error('El ítem debe ser un objeto.');
@@ -66,44 +77,42 @@ function assertSchema(item) {
   if (typeof item.titulo !== 'string' || item.titulo.trim() === '')
     throw new Error('El ítem necesita un título.');
 
-  // Validate progress
+  // Validación de la regla de progreso máximo
   const progresoResult = validarProgreso(
     item.progreso?.actual ?? 0,
     item.progreso?.maximo ?? null
   );
   if (!progresoResult.valid) throw new Error(progresoResult.message);
 
-  // Validate score (optional)
+  // Validación de la puntuación (opcional)
   const puntuacionResult = validarPuntuacion(item.puntuacion ?? null);
   if (!puntuacionResult.valid) throw new Error(puntuacionResult.message);
 }
 
-// ─── public API ───────────────────────────────────────────────────────────────
+// ─── API Pública del Repositorio ─────────────────────────────────────────────
 
 /**
- * Returns all stored items.
- * Corrupt entries are silently skipped; the app never crashes.
- * @returns {object[]}
+ * Obtiene todos los ítems almacenados.
+ * @returns {object[]} Lista de todos los animes y mangas guardados.
  */
 export function getAll() {
   return readAll();
 }
 
 /**
- * Returns a single item by id, or null if not found.
- * @param {string} id
- * @returns {object|null}
+ * Busca un ítem individual por su identificador único.
+ * @param {string} id - Identificador (ej: "anime_12345").
+ * @returns {object|null} El ítem encontrado o null.
  */
 export function getById(id) {
   return readAll().find((item) => item.id === id) ?? null;
 }
 
 /**
- * Creates a new item.
- * The id must follow the `${mediaType}_${malId}` convention and be unique.
- * @param {object} item  Must include at minimum: id, malId, mediaType, titulo
- * @returns {object}  The stored item
- * @throws {Error}  If schema is invalid or item already exists
+ * Crea y guarda un nuevo ítem en la colección.
+ * @param {object} item - Datos del nuevo ítem.
+ * @returns {object} El ítem guardado completo.
+ * @throws {Error} Si ya existe o si rompe la validación.
  */
 export function create(item) {
   const now = new Date().toISOString();
@@ -127,12 +136,10 @@ export function create(item) {
 }
 
 /**
- * Updates fields of an existing item.
- * Progress validation is enforced — the write is blocked if invalid.
- * @param {string} id
- * @param {Partial<typeof DEFAULT_ITEM>} patch
- * @returns {object}  The updated item
- * @throws {Error}  If item not found or schema is invalid
+ * Actualiza los campos de un ítem existente.
+ * @param {string} id - ID del ítem a modificar.
+ * @param {Partial<typeof DEFAULT_ITEM>} patch - Objeto con los campos a actualizar.
+ * @returns {object} El ítem actualizado.
  */
 export function update(id, patch) {
   const items = readAll();
@@ -143,7 +150,6 @@ export function update(id, patch) {
   const updated = {
     ...existing,
     ...patch,
-    // Deep-merge progreso so callers can pass partial { actual } or { maximo }
     progreso: {
       ...existing.progreso,
       ...(patch.progreso ?? {}),
@@ -159,9 +165,8 @@ export function update(id, patch) {
 }
 
 /**
- * Removes an item by id.
- * @param {string} id
- * @throws {Error}  If item not found
+ * Elimina un ítem de la colección por su id.
+ * @param {string} id - ID del ítem a borrar.
  */
 export function remove(id) {
   const items = readAll();
@@ -172,11 +177,10 @@ export function remove(id) {
 }
 
 /**
- * Imports a batch of items.
- * Items that already exist in localStorage (by id) are updated/merged with imported data.
- * New items are appended.
- * @param {object[]} importedItems
- * @returns {number} The amount of items successfully added or updated
+ * Importa un conjunto de ítems en lote.
+ * Si el ítem ya existe, lo actualiza combinando la información. Si es nuevo, lo agrega.
+ * @param {object[]} importedItems - Arreglo de ítems importados.
+ * @returns {number} Cantidad de ítems importados exitosamente.
  */
 export function importBatch(importedItems) {
   const existing = readAll();
@@ -207,4 +211,5 @@ export function importBatch(importedItems) {
   }
   return processedCount;
 }
+
 
