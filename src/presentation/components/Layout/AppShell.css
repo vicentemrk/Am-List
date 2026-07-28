@@ -291,6 +291,10 @@
   transition: color 0.15s;
 }
 
+.app-footer__credits a {
+  display: inline;
+}
+
 .app-footer a:hover {
   color: var(--text-primary);
 }
