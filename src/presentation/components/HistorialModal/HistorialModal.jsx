@@ -53,11 +53,18 @@ export function HistorialModal({ onClose }) {
           <ol className="historial-modal__list" aria-label="Eventos en orden cronológico inverso">
             {history.map((entry) => (
               <li key={entry.id} className="historial-modal__entry">
-                <span className={`historial-modal__action historial-action--${entry.accion}`}>
-                  {ACCION_LABELS[entry.accion] ?? entry.accion}
-                </span>
-                <span className="historial-modal__item-title">{entry.titulo}</span>
-                <span className="historial-modal__media">{entry.mediaType}</span>
+                <div className="historial-modal__entry-main">
+                  <span className={`historial-modal__action historial-action--${entry.accion}`}>
+                    {ACCION_LABELS[entry.accion] ?? entry.accion}
+                  </span>
+                  <span className="historial-modal__item-title">{entry.titulo || entry.item_titulo}</span>
+                  <span className="historial-modal__media">{entry.mediaType}</span>
+                </div>
+                {entry.detalles && (
+                  <div className="historial-modal__detalles">
+                    {entry.detalles}
+                  </div>
+                )}
                 <time className="historial-modal__time" dateTime={entry.timestamp}>
                   {formatTime(entry.timestamp)}
                 </time>

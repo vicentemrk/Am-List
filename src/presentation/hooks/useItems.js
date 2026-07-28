@@ -41,24 +41,75 @@ export function useItems() {
 
   // ── Operación: Actualizar ────────────────────────────────────────────────────
   /**
-   * Modifica las propiedades de un ítem existente (progreso, puntuación, estado, tags).
+   * Modifica las propiedades de un ítem existente y genera entradas individuales detalladas en el historial.
    * @param {string} id - Identificador del ítem.
    * @param {object} patch - Campos a modificar.
-   * @param {string} [accion] - Etiqueta descriptiva para el historial.
    * @returns {{ success: boolean, message: string, item?: object }}
    */
-  const updateItem = useCallback((id, patch, accion = 'actualizado') => {
+  const updateItem = useCallback((id, patch) => {
     try {
+      const prev = repo.getById(id);
       const updated = repo.update(id, patch);
       setItems(repo.getAll());
 
-      // Determina una etiqueta de historial más precisa según el cambio realizado
-      let resolvedAccion = accion;
-      if (patch.puntuacion !== undefined) resolvedAccion = 'puntuado';
-      else if (patch.favorito !== undefined) resolvedAccion = 'favorito';
-      else if (patch.progreso !== undefined) resolvedAccion = 'progreso';
+      if (prev) {
+        let eventsLogged = 0;
 
-      appendHistory(construirEntradaHistorial(updated, resolvedAccion));
+        // 1. Cambio de Estado Personal
+        if (patch.estadoUsuario !== undefined && prev.estadoUsuario !== updated.estadoUsuario) {
+          const labelMap = {
+            por_ver: 'Por ver', en_curso: 'En curso', completado: 'Completado',
+            finalizado: 'Finalizado', pausado: 'Pausado', dropeado: 'Dropeado'
+          };
+          const newLabel = labelMap[updated.estadoUsuario] ?? updated.estadoUsuario;
+          appendHistory(construirEntradaHistorial(updated, 'estado_cambiado', `Cambió estado a "${newLabel}"`));
+          eventsLogged++;
+        }
+
+        // 2. Cambio de Progreso
+        if (
+          patch.progreso !== undefined &&
+          (prev.progreso?.actual !== updated.progreso?.actual || prev.progreso?.maximo !== updated.progreso?.maximo)
+        ) {
+          const maxText = updated.progreso?.maximo ?? '?';
+          const unitText = updated.mediaType === 'anime' ? 'episodios' : 'capítulos';
+          appendHistory(construirEntradaHistorial(updated, 'progreso', `Progreso: ${updated.progreso?.actual ?? 0} / ${maxText} ${unitText}`));
+          eventsLogged++;
+        }
+
+        // 3. Cambio de Calificación
+        if (patch.puntuacion !== undefined && prev.puntuacion !== updated.puntuacion) {
+          const scoreText = updated.puntuacion ? `Puntuación: ${updated.puntuacion} ★` : 'Puntuación eliminada';
+          appendHistory(construirEntradaHistorial(updated, 'puntuado', scoreText));
+          eventsLogged++;
+        }
+
+        // 4. Cambio de Favorito
+        if (patch.favorito !== undefined && prev.favorito !== updated.favorito) {
+          const favText = updated.favorito ? 'Marcado como favorito' : 'Quitado de favoritos';
+          appendHistory(construirEntradaHistorial(updated, 'favorito', favText));
+          eventsLogged++;
+        }
+
+        // 5. Cambio de Etiquetas
+        if (patch.tags !== undefined && JSON.stringify(prev.tags) !== JSON.stringify(updated.tags)) {
+          const tagsText = updated.tags.length > 0 ? `Etiquetas: ${updated.tags.map((t) => `#${t}`).join(', ')}` : 'Sin etiquetas';
+          appendHistory(construirEntradaHistorial(updated, 'etiquetado', tagsText));
+          eventsLogged++;
+        }
+
+        // 6. Cambio de Descripción Personal
+        if (patch.descripcionPersonal !== undefined && prev.descripcionPersonal !== updated.descripcionPersonal) {
+          appendHistory(construirEntradaHistorial(updated, 'nota_personal', 'Nota personal actualizada'));
+          eventsLogged++;
+        }
+
+        // Fallback genérico si no se clasificó específicamente
+        if (eventsLogged === 0) {
+          appendHistory(construirEntradaHistorial(updated, 'actualizado', 'Ítem actualizado'));
+        }
+      }
+
       return { success: true, message: '', item: updated };
     } catch (err) {
       return { success: false, message: err.message };

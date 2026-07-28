@@ -5,6 +5,7 @@
  */
 import React, { useState, memo } from 'react';
 import { Tv, BookOpen, Star, Trash2, Pencil, GripVertical } from 'lucide-react';
+import { ESTADOS_USUARIO } from '../../../domain/itemSchema.js';
 import './ItemCard.css';
 
 function highlightMatch(text, query) {
@@ -24,12 +25,8 @@ function ItemCardComponent({ item, onUpdate, onRemove, onEdit, onDetail, isDragg
   const [sinopsisExpanded, setSinopsisExpanded] = useState(false);
 
   // ── display helpers ──────────────────────────────────────────────────────────
-  const emisionBadge = {
-    airing:   { label: 'En emisión',   cls: 'badge--airing'   },
-    complete: { label: 'Finalizado',   cls: 'badge--complete' },
-    upcoming: { label: 'Próximamente', cls: 'badge--upcoming' },
-    unknown:  { label: 'Desconocido',  cls: 'badge--unknown'  },
-  }[item.estadoEmision] ?? { label: item.estadoEmision, cls: '' };
+  const userStatusObj = ESTADOS_USUARIO.find((s) => s.value === item.estadoUsuario);
+  const userStatusLabel = userStatusObj?.label ?? item.estadoUsuario;
 
   const progressMax = item.progreso.maximo != null ? item.progreso.maximo : '?';
   const genres = Array.isArray(item.genres) ? item.genres.slice(0, 4) : [];
@@ -87,7 +84,7 @@ function ItemCardComponent({ item, onUpdate, onRemove, onEdit, onDetail, isDragg
       {/* ── info section ──────────────────────────────────────────────────── */}
       <div className="item-card__info">
         <div className="item-card__meta">
-          <span className={`item-card__badge ${emisionBadge.cls}`}>{emisionBadge.label}</span>
+          <span className="item-card__badge item-card__badge--user">{userStatusLabel}</span>
           <span className="item-card__type">{item.mediaType === 'anime' ? 'Anime' : 'Manga'}</span>
           <div className="item-card__scores-wrap">
             {item.scoreApi && (
