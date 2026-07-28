@@ -1,6 +1,6 @@
 # AMlist
 
-> Tu lista personal de anime y manga — 100% en el navegador, sin backend.
+> Tu lista personal de anime y manga.
 
 [![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![React](https://img.shields.io/badge/React-18-61DAFB?style=flat&logo=react&logoColor=white)](https://react.dev/)
@@ -46,7 +46,7 @@ Todo se guarda directamente en tu navegador (`localStorage`).
 
 | API | Uso |
 |---|---|
-| [AniList GraphQL](https://anilist.gitbook.io/anilist-apiv2-docs/) | Anime y Manga (fuente primaria) |
+| [AniList GraphQL](https://anilist.gitbook.io/anilist-apiv2-docs/) | Anime y Manga |
 | [MangaDex REST](https://api.mangadex.org/docs/) | Manga, Manhwa y Manhua |
 | [Kitsu REST](https://kitsu.docs.apiary.io/) | Fallback secundario |
 
