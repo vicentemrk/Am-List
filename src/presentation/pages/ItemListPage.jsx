@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Plus, Tv, BookOpen, Filter } from 'lucide-react';
+import { Plus, Tv, BookOpen } from 'lucide-react';
 import { SectionTabs } from '../components/SectionTabs/SectionTabs.jsx';
 import { ItemCard } from '../components/ItemCard/ItemCard.jsx';
 import { EditModal } from '../components/EditModal/EditModal.jsx';
@@ -16,17 +16,9 @@ const SORT_OPTIONS = [
   { value: 'progress', label: 'Progreso' },
 ];
 
-const SCORE_FILTER_OPTIONS = [
-  { value: 0, label: 'Todas las notas' },
-  { value: 7, label: '7+ ★' },
-  { value: 8, label: '8+ ★' },
-  { value: 9, label: '9+ ★' },
-];
-
 export function ItemListPage({ media = 'anime', onUpdate, onRemove, getFiltered, onOpenAdd }) {
   const [activeSection, setActiveSection] = useState('all');
   const [sortBy, setSortBy] = useState('recent');
-  const [minScoreFilter, setMinScoreFilter] = useState(0);
   const [editingItem, setEditingItem] = useState(null);
   const [detailItem, setDetailItem] = useState(null);
   const [localSearch, setLocalSearch] = useState('');
@@ -68,10 +60,6 @@ export function ItemListPage({ media = 'anime', onUpdate, onRemove, getFiltered,
   const visibleItems = useMemo(() => {
     let items = getFiltered(activeSection, media);
 
-    if (minScoreFilter > 0) {
-      items = items.filter((item) => (item.puntuacion || 0) >= minScoreFilter);
-    }
-
     if (selectedTags.length > 0) {
       items = items.filter((item) =>
         selectedTags.every((st) => item.tags?.includes(st))
@@ -105,7 +93,7 @@ export function ItemListPage({ media = 'anime', onUpdate, onRemove, getFiltered,
       }
       return new Date(b.creadoEn || 0).getTime() - new Date(a.creadoEn || 0).getTime();
     });
-  }, [getFiltered, activeSection, media, sortBy, minScoreFilter, localSearch, selectedTags]);
+  }, [getFiltered, activeSection, media, sortBy, localSearch, selectedTags]);
 
   const handleDragStart = (e, id) => {
     if (sortBy !== 'manual') return;
@@ -174,24 +162,6 @@ export function ItemListPage({ media = 'anime', onUpdate, onRemove, getFiltered,
         </div>
 
         <div className="list-page__toolbar">
-          {/* Chips sobrios para filtrar por nota mínima */}
-          <div className="list-page__score-filter">
-            <span className="list-page__filter-label">
-              <Filter size={13} /> Nota:
-            </span>
-            <div className="list-page__score-chips">
-              {SCORE_FILTER_OPTIONS.map((opt) => (
-                <button
-                  key={opt.value}
-                  className={`list-page__score-chip${minScoreFilter === opt.value ? ' list-page__score-chip--active' : ''}`}
-                  onClick={() => setMinScoreFilter(opt.value)}
-                >
-                  {opt.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
           {/* Selector de ordenamiento Radix */}
           <div className="list-page__sort-wrap">
             <span className="list-page__sort-label">Ordenar por:</span>
