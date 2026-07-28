@@ -52,23 +52,6 @@ Todo se guarda directamente en tu navegador (`localStorage`).
 
 ---
 
-## 🔮 Próximas funciones (roadmap)
-
-Las siguientes funciones están planificadas para versiones futuras:
-
-- **Vista de detalle** — Panel expansible al hacer clic en la portada (sinopsis completa, tráiler, etc.)
-- **Múltiples listas** — Crear y gestionar varias listas personalizadas
-- **Dashboard de estadísticas** — Horas vistas, géneros favoritos, progreso general
-- **Sincronización en la nube** — Opcional, mediante Supabase (manteniendo modo offline)
-- **Importar desde AniList / Kitsu** — Además del XML de MyAnimeList ya disponible
-- **Crear, editar y eliminar listas personalizadas** -- (Pendiente)
-- **Cambiar logo AMlist** -- (Pendiente)
-- **Crear Cuenta Usuarios** -- Opcional, no necesario para el uso de la aplicacion, asi podran recuperar sus listas en otros dispositivos (Pendiente)
-- **Historial de cambios** -- Entre versiones de la pagina web (Pendiente)
-- **Filtro por tags de listas** -- Filtrar tu lista usando tus propias etiquetas
-
----
-
 ## 📝 Licencia
 
 MIT © [vicentemrk](https://github.com/vicentemrk)
