@@ -178,6 +178,23 @@ function ItemCardComponent({ item, onUpdate, onRemove, onEdit, onDetail, isDragg
 
           <div className="item-card__actions">
             <button
+              className="item-card__action-btn item-card__action-btn--plus"
+              onClick={(e) => {
+                e.stopPropagation();
+                const actual = item.progreso?.actual ?? 0;
+                const maximo = item.progreso?.maximo;
+                if (maximo !== null && actual >= maximo) return;
+                onUpdate(item.id, {
+                  progreso: { ...item.progreso, actual: actual + 1 },
+                });
+              }}
+              disabled={item.progreso?.maximo !== null && (item.progreso?.actual ?? 0) >= item.progreso?.maximo}
+              aria-label={`Aumentar 1 ${item.mediaType === 'anime' ? 'episodio' : 'capítulo'}`}
+              title={`+1 ${item.mediaType === 'anime' ? 'episodio' : 'capítulo'}`}
+            >
+              +1
+            </button>
+            <button
               className="item-card__action-btn item-card__action-btn--edit"
               onClick={(e) => {
                 e.stopPropagation();

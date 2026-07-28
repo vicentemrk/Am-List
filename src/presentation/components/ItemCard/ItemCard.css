@@ -322,6 +322,26 @@
   box-shadow: var(--shadow-press);
 }
 
+.item-card__action-btn--plus {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent-primary);
+  border-color: color-mix(in srgb, var(--accent-primary) 35%, transparent);
+  background: color-mix(in srgb, var(--accent-primary) 10%, transparent);
+}
+
+.item-card__action-btn--plus:hover:not(:disabled) {
+  background: var(--accent-primary);
+  color: #ffffff;
+  border-color: var(--accent-primary);
+}
+
+.item-card__action-btn--plus:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .item-card__action-btn--remove:hover {
   color: #ef4444;
   border-color: rgba(239, 68, 68, 0.3);

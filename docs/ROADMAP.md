@@ -17,10 +17,14 @@
 | **Limpieza de Iconos en Notificaciones (`Toast.jsx`)** | **v1.1** | 🔥 **Alta** | ✅ **Completado** |
 | **Comentarios JSDoc en Español en todo `src/`** | **v1.1** | 🔥 **Alta** | ✅ **Completado** |
 | **Refactorización Hexagonal de Adaptadores** | **v1.1** | 🔥 **Alta** | ✅ **Completado (Puertos y Fachadas)** |
-| **Setup de Shadcn UI + Aceternity UI** | **v1.2** | 🔥 **Alta** | ✅ **Completado (Tailwind v4 + Framer Motion)** |
-| **Vista de detalle expandida (Detail Modal / Aceternity)** | **v1.2** | 🔥 **Alta** | ✅ **Completado (`DetailModal.jsx`)** |
+| **Setup de Shadcn UI + Aceternity UI** | **v1.2** | 🔥 **Alta** | ✅ **Completado (Radix UI Primitives + Framer Motion)** |
+| **Vista de detalle expandida (Detail Modal)** | **v1.2** | 🔥 **Alta** | ✅ **Completado (Radix Dialog + Framer Motion)** |
+| **Diseño Material Design 3 (MD3) + Arctic Minimal** | **v1.2** | 🔥 **Alta** | ✅ **Completado (Tokens HSL, State Layers, ADR-0003)** |
+| **Componente CustomSelect (Radix Select)** | **v1.2** | 🔥 **Alta** | ✅ **Completado (`CustomSelect.jsx`)** |
+| **Indicador Animado de Tabs (Estructura B)** | **v1.2** | 🔥 **Alta** | ✅ **Completado (`SectionTabs.jsx`)** |
+| **Barra de Progreso Lineal MD3 en `ItemCard`** | **v1.2** | 🔥 **Alta** | ✅ **Completado (`ItemCard.jsx`)** |
 | **Dashboard de estadísticas de consumo** | **v1.2** | ⚡ **Media** | 📅 **Planificado** |
-| **Botón `+1` episodio rápido en tarjeta** | **v1.2** | 🔥 **Alta** | ✅ **Completado (Integrado en DetailModal)** |
+| **Botón `+1` episodio rápido en tarjeta** | **v1.2** | 🔥 **Alta** | ✅ **Completado (`ItemCard.jsx` e `DetailModal.jsx`)** |
 
 | Modulo PWA Offline (`vite-plugin-pwa`) | v1.3 | ⚡ Media | Planificado |
 | Importación directa desde AniList / Kitsu | v1.3 | ⚡ Media | Planificado |
