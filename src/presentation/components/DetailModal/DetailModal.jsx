@@ -14,11 +14,14 @@
  * ============================================================================
  */
 
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import * as Dialog from '@radix-ui/react-dialog';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { X, Star, Plus, Tag, Pencil } from 'lucide-react';
 import { ESTADOS_USUARIO, ESTADOS_EMISION } from '../../../domain/itemSchema.js';
+import { translateGenres } from '../../../domain/genreTranslator.js';
+import { translateToSpanish } from '../../../data/translationService.js';
 import './DetailModal.css';
 
 /**
@@ -30,11 +33,34 @@ import './DetailModal.css';
  * @param {Function}    [props.onEdit]   - Abre el modal de edición para este ítem.
  */
 export function DetailModal({ item, isOpen, onClose, onUpdate, onEdit }) {
+  const [synopsis, setSynopsis] = useState(item?.sinopsis || '');
+
+  // Efecto de traducción automática de la sinopsis en segundo plano
+  useEffect(() => {
+    if (!isOpen || !item?.sinopsis) return;
+    let isSubscribed = true;
+    setSynopsis(item.sinopsis);
+
+    translateToSpanish(item.sinopsis).then((translated) => {
+      if (isSubscribed && translated && translated !== item.sinopsis) {
+        setSynopsis(translated);
+        if (onUpdate && item.id) {
+          onUpdate(item.id, { sinopsis: translated });
+        }
+      }
+    });
+
+    return () => {
+      isSubscribed = false;
+    };
+  }, [isOpen, item?.id, item?.sinopsis, onUpdate]);
+
   if (!item) return null;
 
   /** Etiquetas amigables de estado */
   const estadoLabel  = ESTADOS_USUARIO.find((e) => e.value === item.estadoUsuario)?.label ?? item.estadoUsuario;
   const emisionLabel = ESTADOS_EMISION.find((e) => e.value === item.estadoEmision)?.label  ?? item.estadoEmision;
+  const genres       = translateGenres(item.genres || []);
 
   /** Operación rápida +1 episodio/capítulo */
   const handlePlusOne = () => {
@@ -126,9 +152,9 @@ export function DetailModal({ item, isOpen, onClose, onUpdate, onEdit }) {
                 {/* Información detallada */}
                 <div className="detail-modal-info">
                   {/* Géneros */}
-                  {item.genres?.length > 0 && (
+                  {genres.length > 0 && (
                     <div className="detail-modal-genres">
-                      {item.genres.map((genre) => (
+                      {genres.map((genre) => (
                         <span key={genre} className="genre-pill">{genre}</span>
                       ))}
                     </div>
@@ -140,7 +166,7 @@ export function DetailModal({ item, isOpen, onClose, onUpdate, onEdit }) {
                       Sinopsis
                     </h3>
                     <p className="detail-modal-synopsis">
-                      {item.sinopsis || 'Sin sinopsis disponible para este título.'}
+                      {synopsis || 'Sin sinopsis disponible para este título.'}
                     </p>
                   </div>
 

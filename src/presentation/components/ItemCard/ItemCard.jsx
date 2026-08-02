@@ -6,6 +6,7 @@
 import React, { useState, memo } from 'react';
 import { Tv, BookOpen, Star, Trash2, Pencil, GripVertical } from 'lucide-react';
 import { ESTADOS_USUARIO } from '../../../domain/itemSchema.js';
+import { translateGenres } from '../../../domain/genreTranslator.js';
 import './ItemCard.css';
 
 function highlightMatch(text, query) {
@@ -29,7 +30,8 @@ function ItemCardComponent({ item, onUpdate, onRemove, onEdit, onDetail, isDragg
   const userStatusLabel = userStatusObj?.label ?? item.estadoUsuario;
 
   const progressMax = item.progreso.maximo != null ? item.progreso.maximo : '?';
-  const genres = Array.isArray(item.genres) ? item.genres.slice(0, 4) : [];
+  const rawGenres = Array.isArray(item.genres) ? item.genres : [];
+  const genres = translateGenres(rawGenres).slice(0, 4);
   const tags = Array.isArray(item.tags) ? item.tags : [];
   const sinopsis = item.sinopsis || '';
   const sinopsisShort = sinopsis.length > 140 ? sinopsis.slice(0, 140) + '…' : sinopsis;

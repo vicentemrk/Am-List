@@ -123,7 +123,7 @@ describe('searchAnime', () => {
       estadoEmision: 'complete',
       progreso: { actual: 0, maximo: 220 },
       score: '7.90',
-      genres: ['Action'],
+      genres: ['Acción'],
       source: 'AniList',
     });
   });

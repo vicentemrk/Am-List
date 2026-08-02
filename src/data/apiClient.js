@@ -3,6 +3,8 @@
  * Multi-API client with automatic fallback: Jikan -> AniList -> Kitsu.
  */
 
+import { translateGenres } from '../domain/genreTranslator.js';
+
 const ANILIST_BASE_URL = 'https://graphql.anilist.co';
 const KITSU_BASE_URL = 'https://kitsu.io/api/edge';
 const TIMEOUT_MS = 12_000;
@@ -71,8 +73,6 @@ function lsSet(key, data) {
   }
 }
 
-
-
 // ─── AniList normalization ─────────────────────────────────────────────────────
 
 function mapAniListStatus(status) {
@@ -103,7 +103,7 @@ function normalizeAniList(raw, mediaType) {
     sinopsis:  (raw.description || '').replace(/<[^>]*>?/gm, ''),
     // AniList score is 0-100, convert to 1-10 (Jikan scale)
     score:     raw.averageScore ? (raw.averageScore / 10).toFixed(2) : null,
-    genres:    raw.genres || [],
+    genres:    translateGenres(raw.genres || []),
     source:    'AniList'
   };
 }
@@ -245,7 +245,8 @@ function normalizeMangaDex(raw) {
   const coverFileName = coverRel?.attributes?.fileName;
   const imagen = coverFileName ? `https://uploads.mangadex.org/covers/${raw.id}/${coverFileName}.256.jpg` : '';
   
-  const tags = (attrs.tags || []).map(t => t.attributes?.name?.en).filter(Boolean);
+  const rawTags = (attrs.tags || []).map(t => t.attributes?.name?.en).filter(Boolean);
+  const sinopsisEsp = attrs.description?.['es-la'] || attrs.description?.es || attrs.description?.en || Object.values(attrs.description || {})[0] || '';
 
   return {
     malId:         `md_${raw.id}`,
@@ -257,9 +258,9 @@ function normalizeMangaDex(raw) {
       actual: 0,
       maximo: attrs.lastChapter ? parseInt(attrs.lastChapter, 10) : null,
     },
-    sinopsis:  attrs.description?.en || Object.values(attrs.description || {})[0] || '',
+    sinopsis:  sinopsisEsp,
     score:     null, // MangaDex stats need separate API call
-    genres:    tags,
+    genres:    translateGenres(rawTags),
     source:    'MangaDex'
   };
 }
