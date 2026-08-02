@@ -244,7 +244,7 @@ export function ItemListPage({ media = 'anime', onUpdate, onRemove, getFiltered,
       </section>
 
       <EditModal item={editingItem} onClose={() => setEditingItem(null)} onUpdate={handleUpdate} />
-      <DetailModal item={detailItem} isOpen={Boolean(detailItem)} onClose={() => setDetailItem(null)} onUpdate={handleUpdate} />
+      <DetailModal item={detailItem} isOpen={Boolean(detailItem)} onClose={() => setDetailItem(null)} onUpdate={handleUpdate} onEdit={setEditingItem} />
     </div>
   );
 }
