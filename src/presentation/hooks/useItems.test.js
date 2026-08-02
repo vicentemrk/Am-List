@@ -74,4 +74,46 @@ describe('itemsRepository & data layer CRUD', () => {
     expect(itemsRepo.getAll().length).toBe(0);
     expect(itemsRepo.getById(created.id)).toBeNull();
   });
+
+  it('enforces Regla 5: local items win on batch import', () => {
+    itemsRepo.create({
+      id: 'anime_100',
+      malId: 100,
+      mediaType: 'anime',
+      titulo: 'Local Bebop',
+      progreso: { actual: 15, maximo: 26 },
+      estadoUsuario: 'en_curso',
+    });
+
+    const importedBatch = [
+      {
+        id: 'anime_100',
+        malId: 100,
+        mediaType: 'anime',
+        titulo: 'Imported Bebop (Old)',
+        progreso: { actual: 5, maximo: 26 },
+        estadoUsuario: 'por_ver',
+      },
+      {
+        id: 'anime_200',
+        malId: 200,
+        mediaType: 'anime',
+        titulo: 'New Imported Anime',
+        progreso: { actual: 1, maximo: 12 },
+        estadoUsuario: 'por_ver',
+      },
+    ];
+
+    const addedCount = itemsRepo.importBatch(importedBatch);
+    expect(addedCount).toBe(1); // Only anime_200 was added
+
+    const localItem = itemsRepo.getById('anime_100');
+    expect(localItem.titulo).toBe('Local Bebop');
+    expect(localItem.progreso.actual).toBe(15);
+    expect(localItem.estadoUsuario).toBe('en_curso');
+
+    const newImported = itemsRepo.getById('anime_200');
+    expect(newImported).not.toBeNull();
+    expect(newImported.titulo).toBe('New Imported Anime');
+  });
 });

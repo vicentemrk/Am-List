@@ -6,6 +6,7 @@ import { EditModal } from '../components/EditModal/EditModal.jsx';
 import { DetailModal } from '../components/DetailModal/DetailModal.jsx';
 import { CustomSelect } from '../components/Select/CustomSelect.jsx';
 import { SECCIONES } from '../../domain/itemSchema.js';
+import { getSortPreference, setSortPreference } from '../../data/sortRepository.js';
 import './ListPage.css';
 
 const SORT_OPTIONS = [
@@ -18,7 +19,12 @@ const SORT_OPTIONS = [
 
 export function ItemListPage({ media = 'anime', onUpdate, onRemove, getFiltered, onOpenAdd }) {
   const [activeSection, setActiveSection] = useState('all');
-  const [sortBy, setSortBy] = useState('recent');
+  const [sortBy, setSortBy] = useState(() => getSortPreference());
+
+  const handleSortChange = (value) => {
+    setSortBy(value);
+    setSortPreference(value);
+  };
   const [editingItem, setEditingItem] = useState(null);
   const [detailItem, setDetailItem] = useState(null);
   const [localSearch, setLocalSearch] = useState('');
@@ -167,7 +173,7 @@ export function ItemListPage({ media = 'anime', onUpdate, onRemove, getFiltered,
             <span className="list-page__sort-label">Ordenar por:</span>
             <CustomSelect
               value={sortBy}
-              onValueChange={setSortBy}
+              onValueChange={handleSortChange}
               options={SORT_OPTIONS}
             />
           </div>

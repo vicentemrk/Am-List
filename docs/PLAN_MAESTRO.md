@@ -36,6 +36,7 @@ src/
     itemsRepository.js        # CRUD sobre localStorage (create/getAll/getById/update/remove)
     historyRepository.js      # Log de historial en localStorage
     themeRepository.js        # Persistencia del tema
+    sortRepository.js         # Persistencia del criterio de ordenamiento
     jsonImporter.js           # Importador JSON con sanitización XSS
     jsonImporter.test.js      # Tests unitarios de importación JSON
     malImporter.js            # Importador de XML de MyAnimeList con sanitización
@@ -50,6 +51,7 @@ src/
       useTheme.js
     components/
       AddModal/               # Modal de búsqueda + agregar (multi-add checkbox)
+      DetailModal/            # Modal de vista de detalle expandida
       EditModal/              # Modal de edición completa (puntuación, tags, descripción)
       ItemCard/               # Tarjeta de ítem optimizada con React.memo
       SearchPanel/            # Panel de resultados de búsqueda

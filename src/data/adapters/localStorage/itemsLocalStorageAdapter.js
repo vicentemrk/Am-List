@@ -178,30 +178,21 @@ export const itemsLocalStorageAdapter = {
   importBatch(importedItems) {
     const existing = readAll();
     const itemMap = new Map(existing.map((i) => [i.id, i]));
-    let processedCount = 0;
+    let addedCount = 0;
 
     for (const item of importedItems) {
       assertSchema(item);
-      if (itemMap.has(item.id)) {
-        const prev = itemMap.get(item.id);
-        itemMap.set(item.id, {
-          ...prev,
-          ...item,
-          progreso: {
-            ...prev.progreso,
-            ...(item.progreso ?? {}),
-          },
-          actualizadoEn: new Date().toISOString(),
-        });
-      } else {
+      // Regla 5: Al importar, tus datos locales ganan SIEMPRE.
+      // Si el ítem ya existe en la lista local, se ignora la versión importada.
+      if (!itemMap.has(item.id)) {
         itemMap.set(item.id, item);
+        addedCount++;
       }
-      processedCount++;
     }
 
-    if (processedCount > 0) {
+    if (addedCount > 0) {
       writeAll(Array.from(itemMap.values()));
     }
-    return processedCount;
+    return addedCount;
   },
 };

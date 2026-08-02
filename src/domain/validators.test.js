@@ -41,9 +41,9 @@ describe('filtrarPorSeccion', () => {
     expect(res.map((i) => i.id)).toEqual(['2', '6']);
   });
 
-  it('filters finalizado items strictly by user status', () => {
+  it('filters finalizado items by real-life emission status (complete)', () => {
     const res = filtrarPorSeccion(sampleItems, 'finalizado', 'anime');
-    expect(res.map((i) => i.id)).toEqual(['7']);
+    expect(res.map((i) => i.id)).toEqual(['3', '7']);
   });
 
   it('filters pausado items', () => {

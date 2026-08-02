@@ -94,7 +94,7 @@ export function filtrarPorSeccion(items, seccion, mediaType) {
       return result.filter((item) => item.estadoUsuario === 'pausado');
 
     case 'finalizado':
-      return result.filter((item) => item.estadoUsuario === 'finalizado');
+      return result.filter((item) => item.estadoEmision === 'complete');
 
     case 'dropeado':
       return result.filter((item) => item.estadoUsuario === 'dropeado');
