@@ -378,7 +378,7 @@
 
 .item-card__status-dropdown {
   position: absolute;
-  bottom: calc(100% + 8px);
+  top: calc(100% + 8px);
   right: 0;
   min-width: 160px;
   background: color-mix(in srgb, var(--surface) 92%, transparent);
