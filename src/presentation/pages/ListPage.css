@@ -66,20 +66,13 @@
   filter: brightness(0.95);
 }
 
-/* Variante expandida: ocupa el ancho del buscador anterior (header-row) */
+/* Variante expandida: alineada a la derecha en la misma fila del título */
 .list-page__add-btn--expanded {
-  max-width: 420px;
-  width: 100%;
+  flex: 1;
+  max-width: 400px;
   justify-content: center;
   padding: 0.62rem 1.1rem;
   font-size: 0.9rem;
-}
-
-/* Fila centrada del botón Agregar */
-.list-page__add-row {
-  display: flex;
-  justify-content: center;
-  margin-top: 0.4rem;
 }
 
 .list-page__toolbar {
@@ -241,8 +234,7 @@
 /* ── Mobile Accessibility Sizing ───────────────────────────────────────────── */
 @media (max-width: 768px) {
   /* El botón Agregar se oculta en mobile: el FAB flotante lo reemplaza */
-  .list-page__add-btn--expanded,
-  .list-page__add-row {
+  .list-page__add-btn--expanded {
     display: none;
   }
 

@@ -150,10 +150,7 @@ export function ItemListPage({ media = 'anime', onUpdate, onRemove, getFiltered,
               {counts.all} {counts.all === 1 ? unitSingular : unitPlural} en tu lista
             </p>
           </div>
-        </div>
 
-        {/* Botón Agregar centrado — v1.1 UI/UX */}
-        <div className="list-page__add-row">
           <button
             className="list-page__add-btn list-page__add-btn--expanded"
             onClick={onOpenAdd}
@@ -163,6 +160,7 @@ export function ItemListPage({ media = 'anime', onUpdate, onRemove, getFiltered,
             Agregar
           </button>
         </div>
+
 
         <div className="list-page__toolbar">
           {/* Buscador — movido del header-row al toolbar (Bloque 2 UI/UX v1.1) */}
