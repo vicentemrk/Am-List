@@ -3,8 +3,8 @@
  * Displays a single tracked item in a list view format.
  * Editing is delegated to a detailed modal view.
  */
-import React, { useState, memo } from 'react';
-import { Tv, BookOpen, Star, Trash2, Pencil, GripVertical } from 'lucide-react';
+import React, { useState, useRef, useEffect, memo } from 'react';
+import { Tv, BookOpen, Star, Trash2, Pencil, GripVertical, ClipboardList } from 'lucide-react';
 import { ESTADOS_USUARIO } from '../../../domain/itemSchema.js';
 import { translateGenres } from '../../../domain/genreTranslator.js';
 import './ItemCard.css';
@@ -24,6 +24,29 @@ function highlightMatch(text, query) {
 
 function ItemCardComponent({ item, onUpdate, onRemove, onEdit, onDetail, isDraggable, searchQuery = '' }) {
   const [sinopsisExpanded, setSinopsisExpanded] = useState(false);
+  const [statusMenuOpen, setStatusMenuOpen] = useState(false);
+  const statusMenuRef = useRef(null);
+
+  // Cierra el menú al hacer click fuera
+  useEffect(() => {
+    if (!statusMenuOpen) return;
+    const handleClickOutside = (e) => {
+      if (statusMenuRef.current && !statusMenuRef.current.contains(e.target)) {
+        setStatusMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [statusMenuOpen]);
+
+  /** Opciones del menú de estado (sin 'completado' — eliminado del tablist en v1.1) */
+  const STATUS_MENU_OPTIONS = [
+    { value: 'por_ver',    label: 'Por ver' },
+    { value: 'en_curso',   label: 'En curso' },
+    { value: 'finalizado', label: 'Finalizado' },
+    { value: 'pausado',    label: 'Pausado' },
+    { value: 'dropeado',   label: 'Dropeado' },
+  ];
 
   // ── display helpers ──────────────────────────────────────────────────────────
   const userStatusObj = ESTADOS_USUARIO.find((s) => s.value === item.estadoUsuario);
@@ -179,6 +202,63 @@ function ItemCardComponent({ item, onUpdate, onRemove, onEdit, onDetail, isDragg
           </div>
 
           <div className="item-card__actions">
+            {/* ── Botón de estado (reemplaza al +1) ─────────────────────────── */}
+            <div className="item-card__status-menu-wrap" ref={statusMenuRef}>
+              <button
+                className="item-card__action-btn item-card__action-btn--status"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setStatusMenuOpen((v) => !v);
+                }}
+                aria-label="Cambiar estado de la lista"
+                title="Cambiar estado"
+                aria-haspopup="listbox"
+                aria-expanded={statusMenuOpen}
+              >
+                <ClipboardList size={18} />
+              </button>
+
+              {statusMenuOpen && (
+                <div className="item-card__status-dropdown" role="listbox" aria-label="Estado de la lista">
+                  {STATUS_MENU_OPTIONS.map((opt) => {
+                    const isActive = item.estadoUsuario === opt.value;
+                    return (
+                      <button
+                        key={opt.value}
+                        className={`item-card__status-option item-card__status-option--${opt.value}${isActive ? ' item-card__status-option--active' : ''}`}
+                        role="option"
+                        aria-selected={isActive}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onUpdate(item.id, { estadoUsuario: opt.value });
+                          setStatusMenuOpen(false);
+                        }}
+                      >
+                        <span className="item-card__status-option-label">{opt.label}</span>
+                        {isActive && <span className="item-card__status-check" aria-hidden="true">✓</span>}
+                      </button>
+                    );
+                  })}
+                  <div className="item-card__status-divider" />
+                  <button
+                    className={`item-card__status-option item-card__status-option--favorito${item.favorito ? ' item-card__status-option--active' : ''}`}
+                    role="option"
+                    aria-selected={item.favorito}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onUpdate(item.id, { favorito: !item.favorito });
+                      setStatusMenuOpen(false);
+                    }}
+                  >
+                    <Star size={14} fill={item.favorito ? 'currentColor' : 'none'} />
+                    <span className="item-card__status-option-label">Favorito</span>
+                    {item.favorito && <span className="item-card__status-check" aria-hidden="true">✓</span>}
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* RESERVADO_FUTURO: +1 button — funcionalidad preservada para reactivar
             <button
               className="item-card__action-btn item-card__action-btn--plus"
               onClick={(e) => {
@@ -196,6 +276,7 @@ function ItemCardComponent({ item, onUpdate, onRemove, onEdit, onDetail, isDragg
             >
               +1
             </button>
+            */}
             <button
               className="item-card__action-btn item-card__action-btn--edit"
               onClick={(e) => {

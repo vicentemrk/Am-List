@@ -41,9 +41,12 @@ describe('filtrarPorSeccion', () => {
     expect(res.map((i) => i.id)).toEqual(['2', '6']);
   });
 
-  it('filters finalizado items by real-life emission status (complete)', () => {
+  it('filters finalizado items by estadoUsuario (Regla 6 v1.1 — NOT by estadoEmision)', () => {
+    // REGLA 6 reformulada: 'finalizado' filtra por estadoUsuario='finalizado',
+    // NO por estadoEmision='complete'. El ítem '3' tiene estadoEmision='complete'
+    // pero estadoUsuario='completado', por lo tanto NO debe aparecer en 'finalizado'.
     const res = filtrarPorSeccion(sampleItems, 'finalizado', 'anime');
-    expect(res.map((i) => i.id)).toEqual(['3', '7']);
+    expect(res.map((i) => i.id)).toEqual(['7']);
   });
 
   it('filters pausado items', () => {

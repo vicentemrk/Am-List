@@ -56,7 +56,13 @@ export function validarProgreso(actual, maximo) {
  *   Retorna únicamente las series o mangas que pertenecen a la pestaña activa en la UI.
  * Cómo lo hace:
  *   Primero filtra opcionalmente por `mediaType` ('anime' o 'manga'). Luego aplica una
- *   evaluación `switch` comparando la propiedad `estadoUsuario`, `favorito` o `estadoEmision`.
+ *   evaluación `switch` comparando la propiedad `estadoUsuario` o `favorito`.
+ *
+ * REGLA 6 (Reformulada en v1.1):
+ *   - Todos los tabs filtran EXCLUSIVAMENTE por `estadoUsuario` (lo que el usuario eligió).
+ *   - EXCEPCIÓN Única: el tab 'en_emision' filtra por `estadoEmision='airing'` porque
+ *     es información de la API, no un estado elegido por el usuario.
+ *   - El tab 'finalizado' refleja lo que el usuario marcó, NO lo que dice la API.
  * 
  * @param {import('./itemSchema').DEFAULT_ITEM[]} items - Arreglo de ítems a filtrar.
  * @param {import('./itemSchema').SECCIONES[number]} seccion - Clave de la sección activa (ej: 'favorito', 'en_curso').
@@ -88,13 +94,17 @@ export function filtrarPorSeccion(items, seccion, mediaType) {
       return result.filter((item) => item.estadoUsuario === 'en_curso');
 
     case 'en_emision':
+      // EXCEPCIÓN Única a la Regla 6: filtra por estadoEmision (dato de la API).
+      // El usuario no elige este estado; refleja si la serie sigue en emisción en el mundo real.
       return result.filter((item) => item.estadoEmision === 'airing');
 
     case 'pausado':
       return result.filter((item) => item.estadoUsuario === 'pausado');
 
     case 'finalizado':
-      return result.filter((item) => item.estadoEmision === 'complete');
+      // Regla 6 (v1.1): filtra por estadoUsuario='finalizado', NO por estadoEmision='complete'.
+      // 'Finalizado' = el usuario marcó este ítem como finalizado en su lista personal.
+      return result.filter((item) => item.estadoUsuario === 'finalizado');
 
     case 'dropeado':
       return result.filter((item) => item.estadoUsuario === 'dropeado');

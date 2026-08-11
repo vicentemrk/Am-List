@@ -151,23 +151,28 @@ export function ItemListPage({ media = 'anime', onUpdate, onRemove, getFiltered,
             </p>
           </div>
 
-          <div className="list-page__search-bar">
-            <input
-              type="search"
-              placeholder="Buscar por título, etiqueta o descripción..."
-              value={localSearch}
-              onChange={(e) => setLocalSearch(e.target.value)}
-              className="list-page__search-input"
-            />
-          </div>
-
-          <button className="list-page__add-btn" onClick={onOpenAdd} aria-label={addLabel}>
+          <button
+            className="list-page__add-btn list-page__add-btn--expanded"
+            onClick={onOpenAdd}
+            aria-label={addLabel}
+          >
             <Plus size={18} />
             Agregar
           </button>
         </div>
 
         <div className="list-page__toolbar">
+          {/* Buscador — movido del header-row al toolbar (Bloque 2 UI/UX v1.1) */}
+          <div className="list-page__search-bar">
+            <input
+              type="search"
+              placeholder="Buscar..."
+              value={localSearch}
+              onChange={(e) => setLocalSearch(e.target.value)}
+              className="list-page__search-input"
+              aria-label="Buscar por título, etiqueta o descripción"
+            />
+          </div>
           {/* Selector de ordenamiento Radix */}
           <div className="list-page__sort-wrap">
             <span className="list-page__sort-label">Ordenar por:</span>

@@ -13,20 +13,25 @@
  */
 
 /** @typedef {'anime'|'manga'} MediaType - Tipos de medios soportados */
-/** @typedef {'por_ver'|'en_curso'|'completado'|'dropeado'} EstadoUsuario - Estado asignado por el usuario */
+/** @typedef {'por_ver'|'en_curso'|'completado'|'finalizado'|'pausado'|'dropeado'} EstadoUsuario - Estado asignado por el usuario */
 /** @typedef {'airing'|'complete'|'upcoming'|'unknown'} EstadoEmision - Estado de emisión proveniente de la API */
 
 /** Tipos de contenido permitidos */
 export const MEDIA_TYPES = /** @type {const} */ (['anime', 'manga']);
 
-/** Lista con las 8 secciones navegables de la aplicación */
+/**
+ * Lista con las secciones navegables de la aplicación.
+ * REGLA: Los tabs se filtran por estadoUsuario excepto 'en_emision' (única excepción
+ * que filtra por estadoEmision='airing'). Ver Regla 6 en business_logic.txt.
+ * NOTA: 'completado' fue eliminado del tablist en v1.1. Eliminación completa del
+ * sistema planificada para v1.2+.
+ */
 export const SECCIONES = /** @type {const} */ ([
   'all',
-  'completado',
   'por_ver',
-  'favorito',
-  'en_curso',
   'en_emision',
+  'en_curso',
+  'favorito',
   'finalizado',
   'pausado',
   'dropeado',
@@ -35,11 +40,10 @@ export const SECCIONES = /** @type {const} */ ([
 /** Nombres descriptivos completos para accesibilidad (aria-label) */
 export const SECCION_LABELS = {
   all: 'Lista completa',
-  completado: 'Completados',
   por_ver: 'Por ver / Por mirar',
-  favorito: 'Favoritos',
-  en_curso: 'En curso / Mirando',
   en_emision: 'En emisión',
+  en_curso: 'En curso / Mirando',
+  favorito: 'Favoritos',
   finalizado: 'Finalizados',
   pausado: 'Pausados',
   dropeado: 'Dropeados / Abandonados',
@@ -48,11 +52,10 @@ export const SECCION_LABELS = {
 /** Nombres cortos para visualización en las pestañas gráficas */
 export const SECCION_LABELS_SHORT = {
   all: 'Todo',
-  completado: 'Completados',
   por_ver: 'Por ver',
-  favorito: 'Favoritos',
-  en_curso: 'En curso',
   en_emision: 'En emisión',
+  en_curso: 'En curso',
+  favorito: 'Favoritos',
   finalizado: 'Finalizados',
   pausado: 'Pausados',
   dropeado: 'Dropeados',

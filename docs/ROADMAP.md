@@ -18,6 +18,7 @@
 | **Freno de Mano en Búsqueda (API Rate Limiting / Throttling)** | **v1.1** | 🔥 **Alta** | 🚀 **En Desarrollo** |
 | **Persistencia del Criterio de Ordenamiento** | **v1.1** | 🔥 **Alta** | 🚀 **En Desarrollo** |
 | Listas Personalizadas por Usuario (Custom Collections) | v1.2 | ⚡ Media | Planificado |
+| **Eliminación Completa del Estado `completado`** (datos, schema, EditModal, historial) | v1.2 | ⚡ Media | Planificado |
 | Importación Directa desde AniList y Kitsu (JSON) | v1.2 | ⚡ Media | Planificado |
 | Sanitización y Validación Estricta en Importación | v1.2 | ⚡ Media | Planificado |
 | Atajos de Teclado (Keyboard Shortcuts) | v1.2 | ⚡ Media | Planificado |
@@ -35,7 +36,7 @@
 * **Objetivo**: Asegurar el cumplimiento al 100% de las 6 reglas fundamentales de negocio.
 * **Acciones**:
   - **Regla 5 (Prioridad Local en Importaciones)**: En `src/data/adapters/localStorage/itemsLocalStorageAdapter.js`, al importar desde MAL XML o JSON AMlist, los ítems existentes localmente se mantienen intactos. Las versiones importadas duplicadas se ignoran.
-  - **Regla 6 (Pestaña Finalizados vs Completados)**: En `src/domain/validators.js`, la sección `finalizado` filtra por `estadoEmision === 'complete'` (serie finalizada en el mundo real), dejando `completado` exclusivamente para el estado asignado por el usuario (`estadoUsuario === 'completado'`).
+  - **Regla 6 (Reformulada v1.1 — Tabs por estadoUsuario)**: Todos los tabs filtran EXCLUSIVAMENTE por `estadoUsuario`. La única excepción es `en_emision` (filtra por `estadoEmision='airing'`). El tab `finalizado` usa `estadoUsuario='finalizado'`, NO `estadoEmision='complete'`. El tab `completado` fue eliminado del tablist; su estado sigue en el sistema para no perder datos.
 
 ### 2. Limpieza de UI & Notificaciones (`Toast.jsx`)
 * **Objetivo**: Componente `Toast.jsx` con diseño accesible, limpio y sin iconos o marcas redundantes.

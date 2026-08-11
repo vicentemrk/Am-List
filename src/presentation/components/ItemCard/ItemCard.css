@@ -342,10 +342,101 @@
   transform: none;
 }
 
+.item-card__action-btn--status {
+  color: var(--accent-primary);
+  border-color: color-mix(in srgb, var(--accent-primary) 30%, transparent);
+  background: color-mix(in srgb, var(--accent-primary) 8%, transparent);
+}
+
+.item-card__action-btn--status:hover {
+  background: color-mix(in srgb, var(--accent-primary) 18%, transparent);
+  color: var(--accent-primary);
+  border-color: var(--accent-primary);
+}
+
 .item-card__action-btn--remove:hover {
   color: #ef4444;
   border-color: rgba(239, 68, 68, 0.3);
   background: rgba(239, 68, 68, 0.05);
+}
+
+/* ── Status dropdown glass ─────────────────────────────────────────────────── */
+.item-card__status-menu-wrap {
+  position: relative;
+}
+
+@keyframes statusDropdownIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.item-card__status-dropdown {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  right: 0;
+  min-width: 160px;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg), 0 0 0 1px rgba(255,255,255,0.06) inset;
+  overflow: hidden;
+  z-index: 100;
+  animation: statusDropdownIn 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.item-card__status-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+
+.item-card__status-option:hover {
+  background: var(--state-hover-surface);
+}
+
+.item-card__status-option-label {
+  flex: 1;
+}
+
+.item-card__status-check {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--accent-primary);
+  margin-left: auto;
+}
+
+/* Color accent por estado al estar activo */
+.item-card__status-option--por_ver.item-card__status-option--active    { color: var(--tab-por-ver); }
+.item-card__status-option--en_curso.item-card__status-option--active   { color: var(--tab-en-curso); }
+.item-card__status-option--finalizado.item-card__status-option--active { color: var(--tab-finalizado); }
+.item-card__status-option--pausado.item-card__status-option--active    { color: var(--tab-pausado); }
+.item-card__status-option--dropeado.item-card__status-option--active   { color: var(--tab-dropeado); }
+.item-card__status-option--favorito.item-card__status-option--active   { color: var(--tab-favorito); }
+
+.item-card__status-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0.2rem 0;
 }
 
 .item-card__highlight {

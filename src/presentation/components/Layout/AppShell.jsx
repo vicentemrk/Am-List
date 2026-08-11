@@ -94,9 +94,7 @@ export function AppShell({ theme, onToggleTheme, items, children, activePage, on
         </ul>
 
         <div className="app-sidebar__footer">
-          <div className="app-sidebar__tools">
-            <ImportButton onImport={onImport} />
-          </div>
+          {/* ImportButton eliminado del sidebar en v1.1: ya existe en el app-header top-right */}
 
           <button
             className="app-sidebar__historial-btn"
