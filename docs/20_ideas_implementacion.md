@@ -1,126 +1,152 @@
-# Matriz de Ideas de Implementación — AMlist
+﻿# Matriz de Ideas de Implementación — AMlist
 
 > Matriz Híbrida de Priorización y Pilares Técnicos para la evolución de AMlist.
 > Evaluado por **Impacto × Esfuerzo × Pilar Técnico**.
-> Última actualización: 2026-08-01
+> Última actualización: 2026-08-11
 
 ---
 
-## 📊 Matriz de Clasificación Híbrida
+## ✅ Ya Implementados (Completados en v1.1)
 
-| Pilar Técnico | 🔥 Alta Prioridad (v1.1) | ⚡ Media Prioridad (v1.2 - v1.3) | 💡 Baja Prioridad / Futuro (v2.0) |
+Las siguientes ideas fueron completadas en **v1.1** y se retiran del backlog activo:
+
+| # | Idea | Pilar | Versión |
 |---|---|---|---|
-| **🎨 UX / UI & Diseño** | 1. Modal Detallado<br>4. Botón `+1` Rápido | 9. Listas Personalizadas<br>11. Share Card PNG | 16. Visualizador de Portada HD |
-| **🧪 Testing & Calidad** | 6. Cobertura de Hooks & E2E | 10. Pruebas de Regresión Visual | 17. Mutation Testing (Stryker) |
-| **🛡️ Seguridad & Datos** | 3. Throttle/Rate Limit API | 8. Sanitización de JSON/XML | 18. Cifrado LocalStorage |
-| **⚡ Rendimiento & PWA** | 5. Ordenamiento Persistente | 7. PWA Instalable & Offline | 19. Virtualización de Listas |
-| **🚀 Producto & Ecosistema**| 12. Importación AniList/Kitsu (Promovido) | 14. Changelog In-App | 15. Sugerencias "Qué Ver"<br>20. Sincronización Supabase |
-
-> *Nota: La idea previa #2 (Dashboard de Estadísticas) fue cancelada por decisión del usuario.*
+| 1 | **Vista de Detalle Expandida (`DetailModal`)** | UX / UI | v1.1 ✓ |
+| 2 | **Freno de Mano en Búsqueda (`useDebounce` + Throttle)** | Seguridad | v1.1 ✓ |
+| 3 | **Botón de Cambio de Estado (`ClipboardList` Glass Dropdown)** | UX / UI | v1.1 ✓ |
+| 4 | **Persistencia del Criterio de Ordenamiento (`sortRepository`)** | Rendimiento | v1.1 ✓ |
+| 5 | **Suite de Tests (Vitest — `useItems`, `itemsRepository`, `validators`)** | Testing | v1.1 ✓ |
 
 ---
 
-## 🔥 Alta Prioridad (Asignadas a v1.1)
+## 🚫 Ideas Descartadas (Registro de Exclusiones)
 
-### 1. Vista de Detalle Expandida (Detail Modal / Drawer)
-* **Pilar**: 🎨 UX / UI & Diseño
-* **Versión**: v1.1 | **Esfuerzo**: 4-6h
-* **Descripción**: Al presionar la portada de un ítem, abre un modal/drawer completo tipo AniList/Netflix con la sinopsis sin truncar, géneros como pills interactivas, tráiler (si la API lo devuelve), puntuación de la comunidad y controles de edición. Mantiene la tarjeta `ItemCard` limpia y ligera.
+*Estas ideas han sido evaluadas y descartadas explícitamente para evitar volver a sugerirlas o pensarlas en futuras iteraciones:*
 
-### 2. Freno de Mano en Búsqueda (API Rate Limiting & Throttling)
-* **Pilar**: 🛡️ Seguridad & Datos
-* **Versión**: v1.1 | **Esfuerzo**: 2h
-* **Descripción**: Agregar una cola/debounce de peticiones en `useSearch.js` para evitar saturación (HTTP 429) en AniList GraphQL y MangaDex REST cuando el usuario escribe ráfagas rápidas.
-
-### 3. Botón de Incremento Rápido (`+1` Episodio/Capítulo) en Tarjeta
-* **Pilar**: 🎨 UX / UI & Diseño
-* **Versión**: v1.1 | **Esfuerzo**: 1h
-* **Descripción**: Permitir incrementar el progreso actual con un solo toque directo en la tarjeta sin abrir el modal de edición.
-
-### 4. Persistencia del Criterio de Ordenamiento
-* **Pilar**: ⚡ Rendimiento & PWA
-* **Versión**: v1.1 | **Esfuerzo**: 1h
-* **Descripción**: Guardar la preferencia de ordenamiento (fecha, título A-Z, puntuación, progreso) en `localStorage` mediante adaptadores para evitar que se reinicie al recargar.
-
-### 5. Suite Completa de Pruebas Unitarias para Hooks (`useItems`, `useSearch`)
-* **Pilar**: 🧪 Testing & Calidad
-* **Versión**: v1.1 | **Esfuerzo**: 2-3h
-* **Descripción**: Asegurar que las operaciones de filtrado, guardado, actualización e historial en los hooks principales y adaptadores no fallen ante cambios futuros.
+1. **Atajos de Teclado (Keyboard Shortcuts)**: Descartado para mantener la experiencia simple e intuitiva centrada en la interacción limpia con mouse/touch sin sobrecargar la curva de aprendizaje.
+2. **Estadísticas de Hábitos de Consumo**: Descartado para evitar cluttering visual y mantener el foco de la app en la gestión ágil y rápida de la lista personal.
+3. **Generador de Tarjetas para Compartir (Share Card PNG)**: Descartado al no alinearse con el enfoque local-first privado y sin consumo de recursos superfluos en Canvas.
 
 ---
 
-## ⚡ Media Prioridad (v1.2 y v1.3)
+## ⏸️ Ideas en Suspensión (En Evaluación Futura)
 
-### 6. Soporte PWA Completo (Progressive Web App - Offline First)
-* **Pilar**: ⚡ Rendimiento & PWA
-* **Versión**: v1.3 | **Esfuerzo**: 3-4h
-* **Descripción**: Integrar `vite-plugin-pwa` para permitir la instalación de AMlist como aplicación nativa en iOS, Android y escritorio con caché de Service Worker.
+*Ideas que no son ni buenas ni malas por ahora, pero quedan congeladas sin asignación de versión hasta evaluar necesidad real:*
 
-### 7. Sanitización y Validación Estricta en Importación (JSON / MAL XML)
-* **Pilar**: 🛡️ Seguridad & Datos
-* **Versión**: v1.2 | **Esfuerzo**: 2h
-* **Descripción**: Limpiar y desinfectar etiquetas HTML y scripts maliciosos de cualquier archivo cargado por el usuario antes de guardarlo en `localStorage`.
+1. **Listas Personalizadas por Usuario (Custom Collections)**: En pausa. Las 8 secciones base actuales cubren el 95% de las necesidades.
+2. **Motor de Sugerencias "Qué Ver"**: En pausa. Se prioriza la gestión sobre el descubrimiento activo por API.
 
-### 8. Listas Personalizadas por Usuario (Custom Collections)
+---
+
+## 📊 Matriz de Clasificación Híbrida (Backlog Activo)
+
+| Pilar Técnico | 🔥 Alta Prioridad (v1.2) | ⚡ Media Prioridad (v1.2 - v1.3) | 💡 Baja Prioridad / Futuro (v2.0) |
+|---|---|---|---|
+| **🎨 UX / UI & Diseño** | A. Eliminación completa `completado`<br>B. Edición en Lote (Multi-Select) | C. Modo Compacto / Densidad<br>D. Filtros Avanzados & Combinados | E. Galería HD de Portadas |
+| **🧪 Testing & Calidad** | F. Suite E2E Playwright | G. Pruebas de Regresión Visual | H. Mutation Testing (Stryker) |
+| **🛡️ Seguridad & Datos** | I. Sanitización JSON/XML Estricta<br>J. Auto-Snapshots / Backups | K. Importador AniList/Kitsu | L. Cifrado Opcional LocalStorage |
+| **⚡ Rendimiento & PWA** | M. Offline Status Banner & Graceful Fallback | N. PWA Instalable & Offline | O. Virtualización (@tanstack/virtual) |
+| **🚀 Producto & Ecosistema** | P. Changelog In-App | — | Q. Sincronización Supabase<br>R. Perfil Público Compartible |
+
+---
+
+## 🔥 Alta Prioridad (v1.2)
+
+### A. Eliminación Completa del Estado `completado`
+* **Pilar**: 🎨 UX / UI & 🛡️ Seguridad & Datos
+* **Versión**: v1.2 | **Esfuerzo**: 2-3h
+* **Descripción**: El tab fue eliminado en v1.1, pero el estado `completado` aún existe en `ESTADOS_USUARIO`, `itemSchema.js`, `EditModal` e historial. Migrar ítems existentes con `estadoUsuario='completado'` a `'finalizado'`, remover la opción del modal y limpiar todas las referencias en la codebase.
+
+### B. Edición en Lote (Multi-Select Control)
 * **Pilar**: 🎨 UX / UI & Diseño
-* **Versión**: v1.2 | **Esfuerzo**: 6-8h
-* **Descripción**: Permitir al usuario crear, renombrar y eliminar listas temáticas personalizadas (ej. "Animes de Verano", "Manga para Re-leer") además de las listas base.
+* **Versión**: v1.2 | **Esfuerzo**: 3-4h
+* **Descripción**: Permitir seleccionar múltiples tarjetas en la lista (modo selección) para cambiar estado, agregar/quitar etiquetas o eliminar varios ítems simultáneamente mediante una barra flotante de acciones masivas.
 
-### 9. Pruebas de Regresión Visual con Playwright
+### F. Suite E2E con Playwright + GitHub Actions
 * **Pilar**: 🧪 Testing & Calidad
-* **Versión**: v1.3 | **Esfuerzo**: 3-4h
-* **Descripción**: Configurar capturas de pantalla automatizadas para comparar visualmente que el tema claro (gris hueso `#ced2d0`) y oscuro no sufran regresiones.
-
-### 10. Tarjeta Visual para Compartir en Redes (Share Card Generator)
-* **Pilar**: 🎨 UX / UI & Diseño
-* **Versión**: v1.3 | **Esfuerzo**: 3-4h
-* **Descripción**: Renderizar una imagen PNG usando `html-to-image` o Canvas con la portada, título y puntuación personal para compartir en redes sociales.
-
-### 11. Importador Directo desde AniList y Kitsu
-* **Pilar**: 🚀 Producto & Ecosistema
 * **Versión**: v1.2 | **Esfuerzo**: 4-5h
-* **Descripción**: Extender la función de importación para aceptar exports nativos en JSON de AniList y Kitsu, complementando la importación XML de MyAnimeList.
+* **Descripción**: Configurar Playwright para flujos críticos: agregar ítem desde búsqueda, cambiar estado con `ClipboardList`, filtrar por tab, e importar XML de MAL. Integrar en CI/CD.
 
-### 12. Atajos de Teclado (Keyboard Navigation & Shortcuts)
-* **Pilar**: 🎨 UX / UI & Diseño
+### I. Sanitización y Validación Estricta en Importación
+* **Pilar**: 🛡️ Seguridad & Datos
 * **Versión**: v1.2 | **Esfuerzo**: 2h
-* **Descripción**: Atajos de teclado: `/` para buscar, `Ctrl+A` para agregar, y `Esc` para cerrar modales.
+* **Descripción**: Sanitización XSS y limpieza de campos maliciosos en `malImporter.js` y `jsonImporter.js` usando un helper `sanitizeText(str)` en el dominio antes de guardar en `localStorage`.
 
-### 13. Changelog Visible en la Aplicación (Novedades de Versión)
+### J. Snapshots Automáticos & Puntos de Restauración Local
+* **Pilar**: 🛡️ Seguridad & Datos
+* **Versión**: v1.2 | **Esfuerzo**: 2-3h
+* **Descripción**: Creación automática de un punto de restauración en `localStorage` antes de ejecutar una importación o borrado masivo, permitiendo deshacer la operación con 1 solo clic.
+
+### M. Offline Status Banner & Graceful Fallback
+* **Pilar**: ⚡ Rendimiento & PWA
+* **Versión**: v1.2 | **Esfuerzo**: 2h
+* **Descripción**: Notificación sutil en la UI cuando falla la conexión al buscar o actualizar en la API, manteniendo la funcionalidad local al 100% y reintentando automáticamente al volver la red.
+
+### P. Changelog In-App (Novedades de Versión)
 * **Pilar**: 🚀 Producto & Ecosistema
 * **Versión**: v1.2 | **Esfuerzo**: 1-2h
-* **Descripción**: Modal desplegable de novedades que lee directamente los cambios de la versión instalada.
+* **Descripción**: Modal "Novedades de la versión" que abre automáticamente la primera vez que se detecta una nueva versión en `localStorage`.
 
 ---
 
-## 💡 Baja Prioridad / Futuro (v2.0)
+## ⚡ Media Prioridad (v1.2 → v1.3)
 
-### 14. Motor de Sugerencias "Qué Ver a Continuación"
-* **Pilar**: 🚀 Producto & Ecosistema
-* **Versión**: v2.0 | **Esfuerzo**: 6-8h
-* **Descripción**: Algoritmo local que analiza los géneros más puntuados por el usuario para sugerir nuevos títulos de la API.
+### C. Modo Compacto / Densidad de Vista Configurable
+* **Pilar**: 🎨 UX / UI & Diseño
+* **Versión**: v1.3 | **Esfuerzo**: 2-3h
+* **Descripción**: Selector de densidad: vista detallada actual | vista compacta (solo portada + título + badge) | cuadrícula de portadas (galería). Persistido en `localStorage`.
 
-### 15. Galería de Portadas en Alta Resolución
+### D. Filtros Avanzados & Combinados
+* **Pilar**: 🎨 UX / UI & Diseño
+* **Versión**: v1.3 | **Esfuerzo**: 3h
+* **Descripción**: Panel de filtros combinados: filtrar por múltiples géneros simultáneamente (inclusión/exclusión) y rango de puntuación personal en la barra de herramientas.
+
+### G. Pruebas de Regresión Visual con Playwright
+* **Pilar**: 🧪 Testing & Calidad
+* **Versión**: v1.3 | **Esfuerzo**: 3-4h
+* **Descripción**: Capturas de pantalla automatizadas en tema claro y oscuro para prevenir regresiones visuales en `ItemCard`, `SectionTabs`, `DetailModal` y toolbars.
+
+### K. Importador Directo desde AniList y Kitsu (JSON)
+* **Pilar**: 🛡️ Seguridad & Datos
+* **Versión**: v1.2 | **Esfuerzo**: 3-4h
+* **Descripción**: Extender la importación para aceptar exports nativos en JSON de AniList y Kitsu, complementando la importación XML de MyAnimeList.
+
+### N. Soporte PWA Completo (Progressive Web App - Offline First)
+* **Pilar**: ⚡ Rendimiento & PWA
+* **Versión**: v1.3 | **Esfuerzo**: 3-4h
+* **Descripción**: Integrar `vite-plugin-pwa` para permitir la instalación de AMlist como app nativa en móvil y escritorio con Service Worker.
+
+---
+
+## 💡 Baja Prioridad / Futuro (v2.0+)
+
+### E. Galería de Portadas en Alta Resolución
 * **Pilar**: 🎨 UX / UI & Diseño
 * **Versión**: v2.0 | **Esfuerzo**: 2-3h
-* **Descripción**: Visualizador emergente con zoom para apreciar la ilustración de portada original.
+* **Descripción**: Visualizador emergente con zoom y pan táctil para apreciar la portada original desde el `DetailModal`.
 
-### 16. Pruebas de Mutación de Código con Stryker
+### H. Pruebas de Mutación de Código con Stryker
 * **Pilar**: 🧪 Testing & Calidad
 * **Versión**: v2.0 | **Esfuerzo**: 4h
-* **Descripción**: Evaluación de la suite de pruebas introduciendo mutantes para verificar que los errores sean detectados.
+* **Descripción**: Evaluación de la suite introduciendo mutantes en `validators.js` e `itemsRepository.js`. Meta: >80% de mutantes eliminados.
 
-### 17. Cifrado Opcional de Datos Locales
+### L. Cifrado Opcional de Datos Locales
 * **Pilar**: 🛡️ Seguridad & Datos
 * **Versión**: v2.0 | **Esfuerzo**: 3-4h
-* **Descripción**: Cifrado AES opcional para la información guardada en `localStorage`.
+* **Descripción**: Cifrado AES-GCM opcional para el `localStorage`, activado por PIN del usuario para dispositivos compartidos.
 
-### 18. Virtualización de Listas Extensas (`react-window`)
+### O. Virtualización de Listas Extensas (@tanstack/virtual)
 * **Pilar**: ⚡ Rendimiento & PWA
 * **Versión**: v2.0 | **Esfuerzo**: 3-4h
-* **Descripción**: Renderizar únicamente los elementos visibles en pantalla si la lista del usuario supera los 500 ítems.
+* **Descripción**: Renderizar únicamente los elementos visibles en pantalla si la lista supera los 500 ítems.
 
-### 19. Sincronización Opcional en la Nube (Supabase Local-First)
+### Q. Sincronización Opcional en la Nube (Supabase Local-First)
 * **Pilar**: 🚀 Producto & Ecosistema
 * **Versión**: v2.0 | **Esfuerzo**: 12-16h
-* **Descripción**: Sincronización en segundo plano con Supabase PostgreSQL sin perder la capacidad de operar 100% offline.
+* **Descripción**: Sincronización en segundo plano con Supabase PostgreSQL sin perder la operación 100% offline. Adaptador hexagonal dual.
+
+### R. Perfil Público Compartible (Read-Only Link)
+* **Pilar**: 🚀 Producto & Ecosistema
+* **Versión**: v2.0 | **Esfuerzo**: 6-8h
+* **Descripción**: Generar una URL pública de solo lectura para mostrar la lista de forma visual (requiere backend v2.0).

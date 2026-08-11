@@ -150,7 +150,10 @@ export function ItemListPage({ media = 'anime', onUpdate, onRemove, getFiltered,
               {counts.all} {counts.all === 1 ? unitSingular : unitPlural} en tu lista
             </p>
           </div>
+        </div>
 
+        {/* Botón Agregar centrado — v1.1 UI/UX */}
+        <div className="list-page__add-row">
           <button
             className="list-page__add-btn list-page__add-btn--expanded"
             onClick={onOpenAdd}

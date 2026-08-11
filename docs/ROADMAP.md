@@ -1,69 +1,83 @@
-# AMlist — Roadmap de Desarrollo
+﻿# AMlist — Roadmap de Desarrollo
 
 > Hoja de ruta del proyecto vinculada a la matriz híbrida de `20_ideas_implementacion.md` y las reglas de negocio de `business_logic.txt`.
-> Última actualización: 2026-08-01
+> Última actualización: 2026-08-11
 
 ---
 
 ## 🎯 Fases del Roadmap
-
+|------------------------------------------------------------------------------------------------------------------|
 | Funcionalidad / Módulo | Versión | Prioridad | Estado |
 |---|---|---|---|
-| **Alineación Estricta de Lógica de Negocio (Reglas 5 y 6)** | **v1.1** | 🔥 **Crítica** | 🚀 **En Desarrollo** |
-| **Limpieza de UI & Notificaciones (`Toast.jsx`)** | **v1.1** | 🔥 **Alta** | 🚀 **En Desarrollo** |
-| **Documentación Exhaustiva JSDoc 100% en Español** | **v1.1** | 🔥 **Alta** | 🚀 **En Desarrollo** |
-| **Fortalecimiento de Arquitectura Hexagonal** | **v1.1** | 🔥 **Alta** | 🚀 **En Desarrollo** |
-| **Vista de Detalle Expandida (`DetailModal`)** | **v1.1** | 🔥 **Alta** | 🚀 **En Desarrollo** |
-| **Botón de Incremento Rápido `+1` en Tarjeta (`ItemCard`)** | **v1.1** | 🔥 **Alta** | 🚀 **En Desarrollo** |
-| **Freno de Mano en Búsqueda (API Rate Limiting / Throttling)** | **v1.1** | 🔥 **Alta** | 🚀 **En Desarrollo** |
-| **Persistencia del Criterio de Ordenamiento** | **v1.1** | 🔥 **Alta** | 🚀 **En Desarrollo** |
-| Listas Personalizadas por Usuario (Custom Collections) | v1.2 | ⚡ Media | Planificado |
-| **Eliminación Completa del Estado `completado`** (datos, schema, EditModal, historial) | v1.2 | ⚡ Media | Planificado |
-| Importación Directa desde AniList y Kitsu (JSON) | v1.2 | ⚡ Media | Planificado |
+| **Alineación Estricta de Lógica de Negocio (Reglas 5 y 6)** | **v1.1** | 🔥 **Crítica** | ✅ **Completado** |
+| **Reordenamiento y Refactor del Tablist** | **v1.1** | 🔥 **Alta** | ✅ **Completado** |
+| **Botón de Estado `ClipboardList` (reemplaza `+1`)** | **v1.1** | 🔥 **Alta** | ✅ **Completado** |
+| **Reestructuración UI/UX Header (buscador + Agregar centrado)** | **v1.1** | 🔥 **Alta** | ✅ **Completado** |
+| **Vista de Detalle Expandida (`DetailModal`)** | **v1.1** | 🔥 **Alta** | ✅ **Completado** |
+| **Freno de Mano en Búsqueda (useDebounce / Throttling)** | **v1.1** | 🔥 **Alta** | ✅ **Completado** |
+| **Persistencia del Criterio de Ordenamiento** | **v1.1** | 🔥 **Alta** | ✅ **Completado** |
+| **Suite de Tests (27 tests — domain, data, hooks)** | **v1.1** | 🔥 **Alta** | ✅ **Completado** |
+|------------------------------------------------------------------------------------------------------------------|
+| **Eliminación Completa del Estado `completado`** | v1.2 | 🔥 Alta | Planificado |
+| Edición en Lote (Multi-Select Control) | v1.2 | 🔥 Alta | Planificado |
+| Auto-Snapshots / Puntos de Restauración Local | v1.2 | 🔥 Alta | Planificado |
+| Offline Status Banner & Graceful Fallback | v1.2 | 🔥 Alta | Planificado |
 | Sanitización y Validación Estricta en Importación | v1.2 | ⚡ Media | Planificado |
-| Atajos de Teclado (Keyboard Shortcuts) | v1.2 | ⚡ Media | Planificado |
-| Módulo PWA Offline (`vite-plugin-pwa`) | v1.3 | ⚡ Media | Planificado |
+| Suite E2E con Playwright + GitHub Actions CI | v1.2 | ⚡ Media | Planificado |
+| Changelog In-App (Novedades de Versión) | v1.2 | ⚡ Media | Planificado |
+| Importación Directa desde AniList y Kitsu (JSON) | v1.2 | ⚡ Media | Planificado |
+|------------------------------------------------------------------------------------------------------------------|
+| Modo Compacto / Densidad de Vista Configurable | v1.3 | ⚡ Media | Planificado |
+| Filtros Avanzados y Combinados (Géneros y Score) | v1.3 | ⚡ Media | Planificado |
+| Módulo PWA Instalable (`vite-plugin-pwa`) | v1.3 | ⚡ Media | Planificado |
 | Pruebas de Regresión Visual con Playwright | v1.3 | ⚡ Media | Planificado |
-| Generador de Tarjetas para Compartir (Share Card PNG) | v1.3 | ⚡ Media | Planificado |
-| Backend Costo $0 (Serverless Postgres + Drizzle ORM sin Lock-in) | v2.0 | 💡 Alta | 🎯 Arquitectura Lista |
+|------------------------------------------------------------------------------------------------------------------|
+| Cuentas de Usuario + Supabase Auth | v2.0 | 💡 Alta | 🎯 Arquitectura Lista |
 | Sincronización Multi-dispositivo en la Nube | v2.0 | 💡 Alta | 🎯 Arquitectura Lista |
+| Perfil Público Compartible (Read-Only Link) | v2.0 | 💡 Media | Planificado |
+| Virtualización de Listas Extensas (@tanstack/virtual) | v2.0 | 💡 Baja | Planificado |
+|------------------------------------------------------------------------------------------------------------------|
 
 ---
 
-## 🚀 v1.1 — Ciclo de Desarrollo Actual (Completado y Verificado)
+## ✅ v1.1 — Completado (2026-08-11)
 
-### 1. Alineación Estricta de Lógica de Negocio (`business_logic.txt`)
-* **Objetivo**: Asegurar el cumplimiento al 100% de las 6 reglas fundamentales de negocio.
-* **Acciones**:
-  - **Regla 5 (Prioridad Local en Importaciones)**: En `src/data/adapters/localStorage/itemsLocalStorageAdapter.js`, al importar desde MAL XML o JSON AMlist, los ítems existentes localmente se mantienen intactos. Las versiones importadas duplicadas se ignoran.
-  - **Regla 6 (Reformulada v1.1 — Tabs por estadoUsuario)**: Todos los tabs filtran EXCLUSIVAMENTE por `estadoUsuario`. La única excepción es `en_emision` (filtra por `estadoEmision='airing'`). El tab `finalizado` usa `estadoUsuario='finalizado'`, NO `estadoEmision='complete'`. El tab `completado` fue eliminado del tablist; su estado sigue en el sistema para no perder datos.
+### 1. Alineación Estricta de Lógica de Negocio
+* **Regla 5**: Al importar desde MAL XML o JSON AMlist, los ítems existentes localmente se mantienen intactos. Los duplicados importados se ignoran.
+* **Regla 6 (Reformulada)**: Todos los tabs filtran EXCLUSIVAMENTE por `estadoUsuario`. Única excepción: `en_emision` (filtra por `estadoEmision='airing'`). El tab `finalizado` usa `estadoUsuario='finalizado'`, NO la API.
 
-### 2. Limpieza de UI & Notificaciones (`Toast.jsx`)
-* **Objetivo**: Componente `Toast.jsx` con diseño accesible, limpio y sin iconos o marcas redundantes.
+### 2. Reordenamiento del Tablist
+* Nuevo orden: `Todo → Por ver → En emisión → En curso → Favoritos → Finalizados → Pausados → Dropeados`
+* Tab `Completados` eliminado de la UI (el estado `completado` sigue en el sistema para no perder datos históricos).
 
-### 3. Documentación Exhaustiva JSDoc 100% en Español
-* **Objetivo**: Documentar todos los módulos de `src/domain/`, `src/data/` y `src/presentation/` en lenguaje claro en español sin anglicismos innecesarios ni ambigüedades.
+### 3. Botón de Estado `ClipboardList`
+* Reemplaza el botón `+1` con un dropdown glass animado.
+* Permite cambiar `estadoUsuario` directamente desde la tarjeta.
+* Incluye toggle de favorito.
+* El código del `+1` queda comentado como `RESERVADO_FUTURO`.
 
-### 4. Fortalecimiento de Arquitectura Hexagonal
-* **Objetivo**: Garantizar el aislamiento estricto entre el Núcleo de Dominio (`src/domain`), la Capa de Datos (`src/data`) y la Capa de Presentación (`src/presentation`). Ningún componente visual llama a `localStorage` ni `fetch` directamente.
+### 4. Reestructuración UI/UX del Header
+* Buscador movido al toolbar (junto a "Ordenar por:").
+* Botón Agregar ahora centrado debajo del título.
+* `ImportButton` eliminado del sidebar (permanece en el top-right del header).
 
 ### 5. Vista de Detalle Expandida (`DetailModal`)
-* **Objetivo**: Modal emergente para inspeccionar sinopsis completa, géneros, tráiler, puntuación y detalles sin sobrecargar la tarjeta `ItemCard`.
+* Modal emergente con sinopsis completa, géneros como pills, puntuaciones, estado y controles de edición rápida.
 
-### 6. Botón de Incremento Rápido (`+1` Episodio/Capítulo) en Tarjeta
-* **Objetivo**: Permitir al usuario avanzar su progreso actual con un solo clic directamente desde la tarjeta `ItemCard`, validando el límite máximo conocido (Regla 2).
+### 6. Freno de Mano en Búsqueda
+* `useDebounce` (300ms) + AbortController en vuelo para prevenir HTTP 429 en AniList/MangaDex.
 
-### 7. Freno de Mano en Búsqueda (API Rate Limiting & Throttling)
-* **Objetivo**: Sistema de control de frecuencia en `useSearch.js` y `apiClient.js` con debounce (300ms) y abort en vuelo para prevenir HTTP 429 en AniList/MangaDex.
+### 7. Persistencia de Ordenamiento
+* `sortRepository.js` guarda la preferencia de ordenamiento en localStorage entre sesiones.
 
-### 8. Persistencia del Criterio de Ordenamiento
-* **Objetivo**: Guardar la preferencia de ordenamiento (título, puntuación, progreso, fecha) en `localStorage` a través del adaptador correspondiente para recordar la vista del usuario tras recargar la página.
+### 8. Suite de Tests (27/27 ✓)
+* Tests unitarios en: `validators.js`, `genreTranslator.js`, `apiClient.js`, `jsonImporter.js`, `useItems.js`.
+* `validators.test.js` actualizado para reflejar la Regla 6 reformulada.
 
 ---
 
 ## 🛠️ Vinculación con Documentos
 
-- Matriz de Ideas de Implementación: [`docs/20_ideas_implementacion.md`](./20_ideas_implementacion.md)
-- Plan Maestro: [`docs/PLAN_MAESTRO.md`](./PLAN_MAESTRO.md)
-- Explicación de Lógica de Negocio: [`business_logic.txt`](../business_logic.txt)
-- Criterios QA: [`docs/QA_CRITERIOS.md`](./QA_CRITERIOS.md)
+- Matriz de Ideas: [`docs/20_ideas_implementacion.md`](./20_ideas_implementacion.md)
+- Lógica de Negocio: [`business_logic.txt`](../business_logic.txt)
+- Sistema de Auth (privado): [`docs/auth_system_design.md`](./auth_system_design.md)

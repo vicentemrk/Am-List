@@ -73,6 +73,7 @@ skils-lock.json
 
 # Internal Business Logic & Draft Notes (Private)
 business_logic.txt
+auth_system_design.md
 promptlogo.md
 *conversacion.md
 Plan-AmList.md
@@ -85,3 +86,4 @@ Building AMlist SPA Application.md
 0003-radix-primitives-and-md3-design-system.md
 EXPLICACION_EXCESIVAMENTE_SENCILLA.md
 docs/adr
+Refactoring AmList Tablist Architecture.md
