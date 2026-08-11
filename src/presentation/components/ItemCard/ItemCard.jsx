@@ -74,7 +74,7 @@ function ItemCardComponent({ item, onUpdate, onRemove, onEdit, onDetail, isDragg
   };
 
   return (
-    <article className="item-card item-card--list" aria-label={item.titulo}>
+    <article className={`item-card item-card--list${statusMenuOpen ? ' item-card--menu-open' : ''}`} aria-label={item.titulo}>
       {/* ── drag handle ───────────────────────────────────────────────────── */}
       {isDraggable && (
         <div className="item-card__drag-handle" aria-hidden="true">

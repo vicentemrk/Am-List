@@ -3,12 +3,15 @@
   background: var(--surface);
   border: var(--border-skeu);
   border-radius: var(--radius-md);
-  overflow: hidden;
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
               box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
               border-color 0.2s ease;
   box-shadow: var(--shadow-sm);
   position: relative;
+}
+
+.item-card--menu-open {
+  z-index: 50;
 }
 
 .item-card:hover {
@@ -38,6 +41,9 @@
   width: 140px;
   flex-shrink: 0;
   border-right: 1px solid var(--border);
+  border-top-left-radius: var(--radius-md);
+  border-bottom-left-radius: var(--radius-md);
+  overflow: hidden;
 }
 
 .item-card__thumb {
@@ -380,13 +386,13 @@
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  min-width: 160px;
-  background: color-mix(in srgb, var(--surface) 92%, transparent);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  min-width: 170px;
+  background: color-mix(in srgb, var(--surface) 98%, transparent);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-lg), 0 0 0 1px rgba(255,255,255,0.06) inset;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45), var(--shadow-lg);
   overflow: hidden;
   z-index: 100;
   animation: statusDropdownIn 0.15s cubic-bezier(0.16, 1, 0.3, 1);
@@ -457,6 +463,9 @@
     height: 180px;
     border-right: none;
     border-bottom: 1px solid var(--border);
+    border-top-left-radius: var(--radius-md);
+    border-top-right-radius: var(--radius-md);
+    border-bottom-left-radius: 0;
   }
   .item-card__thumb {
     object-position: center 20%;
