@@ -5,7 +5,10 @@ import React, { useRef, useState } from 'react';
 import { Upload } from 'lucide-react';
 import { parseMalXml } from '../../../data/malImporter.js';
 import { parseAmListJson } from '../../../data/jsonImporter.js';
+import { parseAniListJson } from '../../../data/anilistImporter.js';
+import { parseKitsuJson } from '../../../data/kitsuImporter.js';
 import './ImportButton.css';
+
 
 export function ImportButton({ onImport }) {
   const fileInputRef = useRef(null);
@@ -26,12 +29,28 @@ export function ImportButton({ onImport }) {
     try {
       let items;
       const fileName = file.name.toLowerCase();
+
       if (fileName.endsWith('.json') || file.type === 'application/json') {
-        items = await parseAmListJson(file);
+        const text = await file.text();
+        const parsed = JSON.parse(text);
+
+        // AniList export format check
+        if (parsed?.MediaListCollection || parsed?.data?.MediaListCollection) {
+          items = await parseAniListJson(text);
+        }
+        // Kitsu export format check
+        else if (Array.isArray(parsed?.data) && parsed.data[0]?.type === 'libraryEntries') {
+          items = await parseKitsuJson(text);
+        }
+        // AMlist native JSON format
+        else {
+          items = await parseAmListJson(text);
+        }
       } else {
         items = await parseMalXml(file);
       }
       onImport(items);
+
     } catch (err) {
       setError(err.message || 'Error al importar.');
       setTimeout(() => setError(''), 5000);
@@ -51,7 +70,8 @@ export function ImportButton({ onImport }) {
         onClick={handleClick}
         disabled={loading}
         aria-label="Importar archivo JSON o XML"
-        title="Importar lista desde JSON de AMlist o XML de MyAnimeList"
+        title="Importar lista desde JSON (AMlist, AniList, Kitsu) o XML (MyAnimeList)"
+
       >
         <Upload size={18} />
         <span className="import-btn__text">

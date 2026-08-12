@@ -6,6 +6,8 @@
 import React, { useState, useRef, useEffect, memo } from 'react';
 import { Tv, BookOpen, Star, Trash2, Pencil, GripVertical, ClipboardList } from 'lucide-react';
 import { ESTADOS_USUARIO } from '../../../domain/itemSchema.js';
+
+
 import { translateGenres } from '../../../domain/genreTranslator.js';
 import './ItemCard.css';
 
@@ -23,7 +25,9 @@ function highlightMatch(text, query) {
 }
 
 function ItemCardComponent({ item, onUpdate, onRemove, onEdit, onDetail, isDraggable, searchQuery = '' }) {
+
   const [sinopsisExpanded, setSinopsisExpanded] = useState(false);
+
   const [statusMenuOpen, setStatusMenuOpen] = useState(false);
   const statusMenuRef = useRef(null);
 
@@ -76,6 +80,8 @@ function ItemCardComponent({ item, onUpdate, onRemove, onEdit, onDetail, isDragg
   return (
     <article className={`item-card item-card--list${statusMenuOpen ? ' item-card--menu-open' : ''}`} aria-label={item.titulo}>
       {/* ── drag handle ───────────────────────────────────────────────────── */}
+
+
       {isDraggable && (
         <div className="item-card__drag-handle" aria-hidden="true">
           <GripVertical size={20} />

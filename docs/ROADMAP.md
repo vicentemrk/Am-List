@@ -1,7 +1,7 @@
-﻿# AMlist — Roadmap de Desarrollo
+# AMlist — Roadmap de Desarrollo
 
 > Hoja de ruta del proyecto vinculada a la matriz híbrida de `20_ideas_implementacion.md` y las reglas de negocio de `business_logic.txt`.
-> Última actualización: 2026-08-11
+> Última actualización: 2026-08-12
 
 ---
 
@@ -18,19 +18,22 @@
 | **Persistencia del Criterio de Ordenamiento** | **v1.1** | 🔥 **Alta** | ✅ **Completado** |
 | **Suite de Tests (27 tests — domain, data, hooks)** | **v1.1** | 🔥 **Alta** | ✅ **Completado** |
 |------------------------------------------------------------------------------------------------------------------|
-| **Eliminación Completa del Estado `completado`** | v1.2 | 🔥 Alta | Planificado |
-| Edición en Lote (Multi-Select Control) | v1.2 | 🔥 Alta | Planificado |
-| Auto-Snapshots / Puntos de Restauración Local | v1.2 | 🔥 Alta | Planificado |
-| Offline Status Banner & Graceful Fallback | v1.2 | 🔥 Alta | Planificado |
-| Sanitización y Validación Estricta en Importación | v1.2 | ⚡ Media | Planificado |
-| Suite E2E con Playwright + GitHub Actions CI | v1.2 | ⚡ Media | Planificado |
-| Changelog In-App (Novedades de Versión) | v1.2 | ⚡ Media | Planificado |
-| Importación Directa desde AniList y Kitsu (JSON) | v1.2 | ⚡ Media | Planificado |
+| **Eliminación Completa del Estado `completado`** | **v1.2** | 🔥 **Alta** | ✅ **Completado** |
+| **Auto-Snapshots / Puntos de Restauración Local** | **v1.2** | 🔥 **Alta** | ✅ **Completado** |
+| **Offline Status Banner & Graceful Fallback** | **v1.2** | 🔥 **Alta** | ✅ **Completado** |
+| **Sanitización al Dominio (`sanitizeText`)** | **v1.2** | ⚡ **Media** | ✅ **Completado** |
+| **Changelog In-App (`ChangelogModal`)** | **v1.2** | ⚡ **Media** | ✅ **Completado** |
+| **Importación Directa desde AniList y Kitsu (JSON)** | **v1.2** | ⚡ **Media** | ✅ **Completado** |
+| **Suite E2E con Playwright + GitHub Actions CI** | **v1.2** | ⚡ **Media** | ✅ **Completado** |
+
+
 |------------------------------------------------------------------------------------------------------------------|
 | Modo Compacto / Densidad de Vista Configurable | v1.3 | ⚡ Media | Planificado |
 | Filtros Avanzados y Combinados (Géneros y Score) | v1.3 | ⚡ Media | Planificado |
 | Módulo PWA Instalable (`vite-plugin-pwa`) | v1.3 | ⚡ Media | Planificado |
 | Pruebas de Regresión Visual con Playwright | v1.3 | ⚡ Media | Planificado |
+| **Limpieza de dependencias Tailwind** (`tailwind-merge`, `clsx`) | v1.3 | 🔧 Técnico | Planificado |
+| **Correcciones de Seguridad OWASP** (CSP headers, npm audit fix, `estadoUsuario` enum) | v1.3 | 🛡️ Seguridad | Planificado |
 |------------------------------------------------------------------------------------------------------------------|
 | Cuentas de Usuario + Supabase Auth | v2.0 | 💡 Alta | 🎯 Arquitectura Lista |
 | Sincronización Multi-dispositivo en la Nube | v2.0 | 💡 Alta | 🎯 Arquitectura Lista |

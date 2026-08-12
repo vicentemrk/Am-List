@@ -17,6 +17,8 @@ import * as repo from '../../data/itemsRepository.js';
 import { appendHistory } from '../../data/historyRepository.js';
 import { construirEntradaHistorial } from '../../domain/historial.js';
 import { filtrarPorSeccion } from '../../domain/validators.js';
+import { saveSnapshot } from '../../data/snapshotRepository.js';
+
 
 export function useItems() {
   // Inicialización del estado leyendo la colección del repositorio
@@ -58,7 +60,7 @@ export function useItems() {
         // 1. Cambio de Estado Personal
         if (patch.estadoUsuario !== undefined && prev.estadoUsuario !== updated.estadoUsuario) {
           const labelMap = {
-            por_ver: 'Por ver', en_curso: 'En curso', completado: 'Completado',
+            por_ver: 'Por ver', en_curso: 'En curso',
             finalizado: 'Finalizado', pausado: 'Pausado', dropeado: 'Dropeado'
           };
           const newLabel = labelMap[updated.estadoUsuario] ?? updated.estadoUsuario;
@@ -142,6 +144,8 @@ export function useItems() {
    */
   const importItems = useCallback((batch) => {
     try {
+      // Guardar snapshot antes de la importación (punto de restauración)
+      const snapshot = saveSnapshot(repo.getAll());
       const addedCount = repo.importBatch(batch);
       if (addedCount > 0) {
         setItems(repo.getAll());
@@ -155,16 +159,16 @@ export function useItems() {
           item_titulo: null
         });
       }
-      return { success: true, addedCount, message: '' };
+      return { success: true, addedCount, message: '', snapshotId: snapshot.id };
     } catch (err) {
-      return { success: false, addedCount: 0, message: err.message };
+      return { success: false, addedCount: 0, message: err.message, snapshotId: null };
     }
   }, []);
 
   // ── Operación: Filtrado por Sección ──────────────────────────────────────────
   /**
    * Obtiene la sublista de ítems correspondientes a la pestaña/sección activa.
-   * @param {string} seccion - Clave de la sección (ej: 'completado', 'favorito').
+   * @param {string} seccion - Clave de la sección (ej: 'finalizado', 'favorito').
    * @param {'anime'|'manga'|'all'} [mediaType] - Tipo de contenido opcional.
    * @returns {object[]} Lista de ítems filtrados.
    */

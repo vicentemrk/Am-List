@@ -3,18 +3,7 @@
  * Parses and validates AMlist JSON exports with security sanitization.
  */
 import { DEFAULT_ITEM } from '../domain/itemSchema.js';
-
-/**
- * Sanitizes input strings to strip dangerous HTML tags and script injections.
- * @param {string} str
- * @returns {string}
- */
-function sanitizeString(str) {
-  if (typeof str !== 'string') return '';
-  return str
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-    .trim();
-}
+import { sanitizeText } from '../domain/sanitizer.js';
 
 /**
  * Parses JSON content (File object or JSON string) exported by AMlist.
@@ -62,18 +51,21 @@ export async function parseAmListJson(input) {
         id,
         malId,
         mediaType,
-        titulo: sanitizeString(item.titulo) || 'Sin título',
-        descripcionPersonal: sanitizeString(item.descripcionPersonal || ''),
-        sinopsis: sanitizeString(item.sinopsis || ''),
+        titulo: sanitizeText(item.titulo, { maxLength: 200 }) || 'Sin título',
+        descripcionPersonal: sanitizeText(item.descripcionPersonal || '', { maxLength: 1000 }),
+        sinopsis: sanitizeText(item.sinopsis || '', { maxLength: 2000 }),
         progreso: {
           actual: Number(item.progreso?.actual) || 0,
           maximo: item.progreso?.maximo != null ? Number(item.progreso.maximo) : null,
         },
         tags: Array.isArray(item.tags)
-          ? item.tags.map((t) => sanitizeString(t)).filter(Boolean).slice(0, 5)
+          ? item.tags
+              .map((t) => sanitizeText(t, { maxLength: 30 }))
+              .filter((t) => t.length > 0)   // rechaza tags vacios o solo-espacios
+              .slice(0, 5)
           : [],
         genres: Array.isArray(item.genres)
-          ? item.genres.map((g) => sanitizeString(g)).filter(Boolean)
+          ? item.genres.map((g) => sanitizeText(g, { maxLength: 50 })).filter(Boolean)
           : [],
       };
     });

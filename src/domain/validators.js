@@ -81,10 +81,8 @@ export function filtrarPorSeccion(items, seccion, mediaType) {
     case 'all':
       return result;
 
-    case 'completado':
-      return result.filter((item) => item.estadoUsuario === 'completado');
-
     case 'por_ver':
+
       return result.filter((item) => item.estadoUsuario === 'por_ver');
 
     case 'favorito':

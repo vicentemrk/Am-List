@@ -9,6 +9,8 @@ import { SECCIONES } from '../../domain/itemSchema.js';
 import { getSortPreference, setSortPreference } from '../../data/sortRepository.js';
 import './ListPage.css';
 
+
+
 const SORT_OPTIONS = [
   { value: 'recent', label: 'Agregado recientemente' },
   { value: 'manual', label: 'Orden personalizado' },
@@ -29,6 +31,9 @@ export function ItemListPage({ media = 'anime', onUpdate, onRemove, getFiltered,
   const [detailItem, setDetailItem] = useState(null);
   const [localSearch, setLocalSearch] = useState('');
   const [selectedTags, setSelectedTags] = useState([]);
+
+
+
 
   const isAnime = media === 'anime';
   const title = isAnime ? 'Lista de Animes' : 'Lista de Mangas';
@@ -250,8 +255,10 @@ export function ItemListPage({ media = 'anime', onUpdate, onRemove, getFiltered,
       </section>
 
       <EditModal item={editingItem} onClose={() => setEditingItem(null)} onUpdate={handleUpdate} />
+
       <DetailModal item={detailItem} isOpen={Boolean(detailItem)} onClose={() => setDetailItem(null)} onUpdate={handleUpdate} onEdit={setEditingItem} />
     </div>
   );
 }
+
 

@@ -13,7 +13,8 @@
  */
 
 /** @typedef {'anime'|'manga'} MediaType - Tipos de medios soportados */
-/** @typedef {'por_ver'|'en_curso'|'completado'|'finalizado'|'pausado'|'dropeado'} EstadoUsuario - Estado asignado por el usuario */
+/** @typedef {'por_ver'|'en_curso'|'finalizado'|'pausado'|'dropeado'} EstadoUsuario - Estado asignado por el usuario */
+
 /** @typedef {'airing'|'complete'|'upcoming'|'unknown'} EstadoEmision - Estado de emisión proveniente de la API */
 
 /** Tipos de contenido permitidos */
@@ -23,8 +24,8 @@ export const MEDIA_TYPES = /** @type {const} */ (['anime', 'manga']);
  * Lista con las secciones navegables de la aplicación.
  * REGLA: Los tabs se filtran por estadoUsuario excepto 'en_emision' (única excepción
  * que filtra por estadoEmision='airing'). Ver Regla 6 en business_logic.txt.
- * NOTA: 'completado' fue eliminado del tablist en v1.1. Eliminación completa del
- * sistema planificada para v1.2+.
+ * NOTA: 'completado' fue eliminado completamente del sistema en v1.2.
+ * La migración automática ocurre en `itemsLocalStorageAdapter.readAll()`.
  */
 export const SECCIONES = /** @type {const} */ ([
   'all',
@@ -90,12 +91,11 @@ export const DEFAULT_ITEM = {
 
 /** Opciones válidas de estado elegidas por el usuario */
 export const ESTADOS_USUARIO = [
-  { value: 'por_ver', label: 'Por ver' },
-  { value: 'en_curso', label: 'En curso' },
-  { value: 'completado', label: 'Completado' },
+  { value: 'por_ver',    label: 'Por ver' },
+  { value: 'en_curso',   label: 'En curso' },
   { value: 'finalizado', label: 'Finalizado' },
-  { value: 'pausado', label: 'Pausado' },
-  { value: 'dropeado', label: 'Dropeado' },
+  { value: 'pausado',    label: 'Pausado' },
+  { value: 'dropeado',   label: 'Dropeado' },
 ];
 
 /** Opciones de estado de emisión otorgadas por la API externa */

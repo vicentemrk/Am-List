@@ -41,6 +41,8 @@ function readAll() {
       )
       .map((item) => ({
         ...item,
+        // v1.2: Migración automática — 'completado' fue eliminado, se mapea a 'finalizado'
+        estadoUsuario: item.estadoUsuario === 'completado' ? 'finalizado' : item.estadoUsuario,
         tags: Array.isArray(item.tags) ? item.tags : [],
         tag: undefined,
         genres:   Array.isArray(item.genres) ? item.genres : [],

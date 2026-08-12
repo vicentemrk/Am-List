@@ -1,6 +1,7 @@
 /**
  * data/apiClient.js
- * Multi-API client with automatic fallback: Jikan -> AniList -> Kitsu.
+ * Multi-API client with automatic fallback: AniList → MangaDex → Kitsu.
+ * Note: Jikan was permanently removed. See ADR-0001.
  */
 
 import { translateGenres } from '../domain/genreTranslator.js';

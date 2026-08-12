@@ -69,6 +69,38 @@
   gap: 0.5rem;
 }
 
+.app-header__icon-btn {
+  position: relative;
+  background: var(--surface-container, #ECEDF4);
+  border: 1px solid var(--border, #BEC1CE);
+  color: var(--text-primary);
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.app-header__icon-btn:hover {
+  background: var(--surface-container-high, #E3E5EE);
+  border-color: var(--accent-primary);
+}
+
+.app-header__badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 8px;
+  height: 8px;
+  background: var(--accent-danger, #C72043);
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--surface);
+}
+
+
 /* ── Sidebar overlay (mobile) ─────────────────────────────────────────────── */
 .sidebar-overlay {
   position: fixed;
