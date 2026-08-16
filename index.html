@@ -2,23 +2,83 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=0.85" />
 
-    <!-- SEO -->
-    <title>AMlist — Tu lista de anime y manga</title>
-    <meta name="description" content="AMlist: gestiona tus listas personales de anime y manga. Busca con AniList y MangaDex, registra tu progreso, favoritos y más. 100% offline, sin backend." />
+    <!-- Content-Security-Policy (OWASP v1.3) -->
+    <!-- unsafe-inline en style-src: requerido por Radix UI Dialog/Select (inyecta estilos inline en portals) -->
+    <meta http-equiv="Content-Security-Policy"
+      content="default-src 'self';
+               script-src 'self' 'unsafe-inline';
+               style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+               font-src 'self' https://fonts.gstatic.com;
+               img-src 'self' data:
+                 https://s4.anilist.co
+                 https://s3.anilist.co
+                 https://uploads.mangadex.org
+                 https://media.kitsu.app
+                 https://media.kitsu.io;
+               connect-src 'self'
+                 https://graphql.anilist.co
+                 https://api.mangadex.org
+                 https://kitsu.app
+                 https://kitsu.io;
+               object-src 'none';
+               base-uri 'self';
+               form-action 'self';" />
+
+    <!-- Primary SEO Meta Tags -->
+    <title>AMlist — Gestor Personal de Listas de Anime, Manga, Manhwa y Manhua</title>
+    <meta name="title" content="AMlist — Gestor Personal de Listas de Anime, Manga, Manhwa y Manhua" />
+    <meta name="description" content="AMlist es tu gestor personal, gratuito y 100% privado para organizar tus listas de anime, manga, manhwa y manhua en español. Sin servidor ni registros obligatorios, funciona offline en tu navegador." />
+    <meta name="keywords" content="amlist, lista de anime, lista de manga, gestor de anime, organizador de manga, leer manhwa, ver anime, tracker de anime, tracker de manga, lista de manhwa, lista de manhua, anilist español, myanimelist español, anime list offline, tracker anime en español" />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="AMlist" />
+    <meta name="application-name" content="AMlist" />
     <meta name="theme-color" content="#162425" />
+    <link rel="canonical" href="https://vicentemrk.github.io/Am-List/" />
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-    <!-- Open Graph (optional social preview) -->
-    <meta property="og:title" content="AMlist — Tu lista de anime y manga" />
-    <meta property="og:description" content="Gestiona tu lista de anime y manga. Sin backend, 100% en tu navegador." />
+    <!-- Open Graph / Facebook / WhatsApp -->
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="AMlist" />
+    <meta property="og:url" content="https://vicentemrk.github.io/Am-List/" />
+    <meta property="og:title" content="AMlist — Organizador Personal de Anime, Manga, Manhwa y Manhua" />
+    <meta property="og:description" content="Gestiona tu lista personal de anime y manga en español. 100% privado, offline-first y sin necesidad de crear cuenta." />
+    <meta property="og:image" content="https://vicentemrk.github.io/Am-List/favicon.svg" />
+    <meta property="og:locale" content="es_ES" />
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:url" content="https://vicentemrk.github.io/Am-List/" />
+    <meta name="twitter:title" content="AMlist — Gestor Personal de Anime y Manga" />
+    <meta name="twitter:description" content="Organiza y sigue tu progreso de anime, manga, manhwa y manhua sin cuenta ni servidor." />
+    <meta name="twitter:image" content="https://vicentemrk.github.io/Am-List/favicon.svg" />
+
+    <!-- JSON-LD Structured Data (Schema.org WebApplication) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "AMlist",
+        "url": "https://vicentemrk.github.io/Am-List/",
+        "description": "Gestor personal y privado para listas de anime, manga, manhwa y manhua en español.",
+        "applicationCategory": "EntertainmentApplication",
+        "operatingSystem": "All",
+        "browserRequirements": "Requires HTML5 and JavaScript.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "inLanguage": "es"
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
+

@@ -4,13 +4,17 @@
  * ============================================================================
  * Qué hace:
  *   Contiene las funciones puras de lógica de negocio para validar el progreso
- *   de episodios/capítulos, la puntuación asignada y el filtrado por secciones.
+ *   de episodios/capítulos, la puntuación asignada, el estado de usuario y
+ *   el filtrado por secciones y rango de puntuación.
  * Cómo lo hace:
  *   Sin ninguna importación externa ni efectos secundarios. Recibe datos nativos
  *   y devuelve objetos de resultado `{ valid: boolean, message: string }` o
  *   listas de ítems filtradas.
  * ============================================================================
  */
+
+import { esEstadoUsuarioValido } from './itemSchema.js';
+
 
 /**
  * Valida que el progreso actual de un anime/manga no supere el máximo conocido.
@@ -135,3 +139,48 @@ export function validarPuntuacion(puntuacion) {
   return { valid: true, message: '' };
 }
 
+/**
+ * Valida que el estadoUsuario sea un valor del enum permitido.
+ *
+ * Qué hace:
+ *   Rechaza cualquier valor fuera de los estados definidos en `VALID_ESTADOS_USUARIO`.
+ *   Esto incluye el estado obsoleto 'completado' que fue eliminado en v1.2.
+ *
+ * @param {string} estado - Valor de estadoUsuario a validar.
+ * @returns {{ valid: boolean, message: string }} Objeto de validación.
+ */
+export function validarEstadoUsuario(estado) {
+  if (!esEstadoUsuarioValido(estado)) {
+    return {
+      valid: false,
+      message: `Estado de usuario inválido: "${estado}". Los valores permitidos son: por_ver, en_curso, finalizado, pausado, dropeado.`,
+    };
+  }
+  return { valid: true, message: '' };
+}
+
+/**
+ * Filtra una colección de ítems por rango de puntuación personal.
+ *
+ * Qué hace:
+ *   Retorna únicamente los ítems cuya puntuación personal (la que pone el usuario)
+ *   esté dentro del rango [min, max] especificado.
+ *
+ * Cómo lo hace:
+ *   - Si el rango es [1, 10], el filtro está INACTIVO y devuelve todos los ítems
+ *     sin modificar (incluyendo los que tienen `puntuacion=null`).
+ *   - Con cualquier rango parcial, los ítems con `puntuacion=null` se excluyen
+ *     porque el usuario está buscando explícitamente ítems con puntuación en ese rango.
+ *
+ * @param {import('./itemSchema').DEFAULT_ITEM[]} items - Arreglo de ítems a filtrar.
+ * @param {number} min - Puntuación mínima (1-10).
+ * @param {number} max - Puntuación máxima (1-10).
+ * @returns {import('./itemSchema').DEFAULT_ITEM[]} Arreglo filtrado.
+ */
+export function filtrarPorRangoPuntuacion(items, min, max) {
+  if (min === 1 && max === 10) return items; // Filtro inactivo — rango completo
+  return items.filter((item) => {
+    if (item.puntuacion === null || item.puntuacion === undefined) return false;
+    return item.puntuacion >= min && item.puntuacion <= max;
+  });
+}

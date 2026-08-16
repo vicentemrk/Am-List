@@ -98,6 +98,23 @@ export const ESTADOS_USUARIO = [
   { value: 'dropeado',   label: 'Dropeado' },
 ];
 
+/**
+ * Set de valores válidos de estadoUsuario derivado de ESTADOS_USUARIO.
+ * Fuente única de verdad — no requiere sincronización manual.
+ * OWASP v1.3: valida cualquier estado antes de persistir.
+ */
+export const VALID_ESTADOS_USUARIO = new Set(ESTADOS_USUARIO.map((e) => e.value));
+
+/**
+ * Comprueba si un valor es un estadoUsuario válido.
+ * @param {string} estado
+ * @returns {boolean}
+ */
+export function esEstadoUsuarioValido(estado) {
+  return VALID_ESTADOS_USUARIO.has(estado);
+}
+
+
 /** Opciones de estado de emisión otorgadas por la API externa */
 export const ESTADOS_EMISION = [
   { value: 'airing', label: 'En emisión' },

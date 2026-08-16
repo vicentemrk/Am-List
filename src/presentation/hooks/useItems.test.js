@@ -53,9 +53,9 @@ describe('itemsRepository & data layer CRUD', () => {
       tipo: 'Manga',
     });
 
-    const updated = itemsRepo.update(created.id, { puntuacion: 10, estadoUsuario: 'completado' });
+    const updated = itemsRepo.update(created.id, { puntuacion: 10, estadoUsuario: 'finalizado' });
     expect(updated.puntuacion).toBe(10);
-    expect(updated.estadoUsuario).toBe('completado');
+    expect(updated.estadoUsuario).toBe('finalizado');
 
     const fetched = itemsRepo.getById(created.id);
     expect(fetched.puntuacion).toBe(10);

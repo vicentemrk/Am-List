@@ -10,13 +10,13 @@
 |---|---|
 | Nombre | **AMlist** |
 | Tipo | SPA (Single Page Application) |
-| Stack | React 19 + Vite, CSS con variables (Light Eye-Care `#ced2d0` / Dark Navy `#0A1B1F`) |
+| Stack | React 19 + Vite, Pure Vanilla CSS tokens (Lavanda `#5A35D4` + Menta `#1D9E8B` MD3 Light/Dark) — Sin Tailwind |
 | APIs | AniList GraphQL → MangaDex REST → Kitsu REST (triple fallback, sin Jikan) |
-| Persistencia | 100 % cliente — `localStorage`, CRUD con integridad validada |
+| Persistencia | 100 % cliente — `localStorage`, CRUD con integridad validada + `assertSchema` |
 | Iconos | `lucide-react` |
-| Enfoque | Mobile First · Clean Architecture (3 capas) · Sin backend |
-| Pruebas | Vitest (13 tests unitarios) + Playwright E2E |
-| Calidad | `oxlint` (0 errores, 0 advertencias) |
+| Enfoque | Mobile First · Clean Architecture (3 capas) · Sin backend · OWASP CSP Security |
+| Pruebas | Vitest (57 tests unitarios) + Playwright E2E + Regresión Visual (10 snapshots) |
+| Calidad | `oxlint` + `npm audit` (0 vulnerabilidades) |
 | Repositorio | https://github.com/vicentemrk/AmList |
 
 ---
@@ -26,60 +26,64 @@
 ```
 src/
   domain/                     # Lógica pura, cero imports de React/fetch/localStorage
-    itemSchema.js             # DEFAULT_ITEM, SECCIONES, SECCION_LABELS
-    validators.js             # validarProgreso(), filtrarPorSeccion(), validarPuntuacion()
+    itemSchema.js             # DEFAULT_ITEM, SECCIONES, ESTADOS_USUARIO, VALID_ESTADOS_USUARIO Set
+    validators.js             # validarProgreso(), filtrarPorSeccion(), validarPuntuacion(), validarEstadoUsuario(), filtrarPorRangoPuntuacion()
     historial.js              # construirEntradaHistorial()
+    genreTranslator.js        # Traductor de géneros de API a español
+    sanitizer.js              # Sanitización contra XSS
 
   data/                       # Único punto de acceso a efectos secundarios
     apiClient.js              # AniList → MangaDex → Kitsu (triple fallback)
-    apiClient.test.js         # Tests: 100% pasan, sin rastro de Jikan
-    itemsRepository.js        # CRUD sobre localStorage (create/getAll/getById/update/remove)
+    itemsRepository.js        # CRUD sobre localStorage + assertSchema validation
     historyRepository.js      # Log de historial en localStorage
     themeRepository.js        # Persistencia del tema
     sortRepository.js         # Persistencia del criterio de ordenamiento
-    jsonImporter.js           # Importador JSON con sanitización XSS
-    jsonImporter.test.js      # Tests unitarios de importación JSON
-    malImporter.js            # Importador de XML de MyAnimeList con sanitización
+    viewRepository.js         # Persistencia de la densidad de vista (detailed / compact)
+    snapshotRepository.js     # Puntos de restauración local
+    jsonImporter.js           # Importador JSON
+    malImporter.js            # Importador XML de MyAnimeList
+    anilistImporter.js        # Importador AniList JSON
+    kitsuImporter.js          # Importador Kitsu JSON
 
   presentation/               # React puro: hooks + componentes + páginas
     App.jsx
     hooks/
       useItems.js
-      useItems.test.js        # Pruebas unitarias de repositorio e integridad
+      useViewDensity.js       # Hook de densidad de vista (modo compacto vs detallado)
       useSearch.js
       useDebounce.js
       useTheme.js
     components/
       AddModal/               # Modal de búsqueda + agregar (multi-add checkbox)
       DetailModal/            # Modal de vista de detalle expandida
-      EditModal/              # Modal de edición completa (puntuación, tags, descripción)
-      ItemCard/               # Tarjeta de ítem optimizada con React.memo
+      EditModal/              # Modal de edición completa
+      ItemCard/               # Tarjeta con prop `density` ('detailed' | 'compact')
+      ScoreRangeSlider/       # Slider dual CSS puro para rango de puntuación personal (1-10)
       SearchPanel/            # Panel de resultados de búsqueda
       Layout/AppShell/        # Shell con sidebar flotante centrado, header, footer
-      SectionTabs/            # Pestañas arrastrables (scroll)
-      ThemeToggle/            # Sun/Moon (lucide-react)
-      ExportButton/           # Descarga amlist_export_{fecha}.json
-      ImportButton/           # Importa XML de MyAnimeList / JSON AMlist
-      FloatingActionButton/   # FAB mobile-only (+ agregar)
-      HistorialModal/         # Historial cronológico descendente
-      Toast/                  # Notificaciones emergentes (sin ícono de checkmark sobrante)
+      SectionTabs/            # Pestañas arrastrables
+      ThemeToggle/            # Sun/Moon
+      ExportButton/           # Exportar JSON
+      ImportButton/           # Importar XML/JSON
+      HistorialModal/         # Historial cronológico
+      Toast/                  # Notificaciones emergentes
     pages/
-      ItemListPage.jsx        # Componente genérico unificado para Anime y Manga (ADR-0002)
-      AnimeListPage.jsx       # Wrapper delgado sobre ItemListPage (media="anime")
-      MangaListPage.jsx       # Wrapper delgado sobre ItemListPage (media="manga")
+      ItemListPage.jsx        # Componente unificado con filtros, orden, densidad y slider de nota
+      AnimeListPage.jsx       # Wrapper (media="anime")
+      MangaListPage.jsx       # Wrapper (media="manga")
 
-  index.css                   # Tokens CSS + Eye Care Design (#ced2d0) + Mobile First
+  index.css                   # System tokens (Lavanda/Menta) MD3 + Eye Care — Pure Vanilla CSS
 
 docs/
-  adr/                        # Registros de Decisiones de Arquitectura
-    0001-local-first-and-api-fallback.md
-    0002-unified-item-list-page.md
-  recomendaciones.md          # Recomendaciones ejecutivas de mejora
   20_ideas_implementacion.md  # Matriz híbrida de priorización de ideas
+  ROADMAP.md                  # Roadmap del proyecto y registro de versiones
+  PLAN_MAESTRO.md             # Fuente única de verdad
 
-e2e/                          # Pruebas End-to-End con Playwright
+e2e/                          # Pruebas End-to-End y Regresión Visual con Playwright
   app.spec.js
+  visual.spec.js              # 10/10 visual regression snapshots (fixtures sintéticos)
 ```
+
 
 **Regla de dependencia (invariante):**
 ```

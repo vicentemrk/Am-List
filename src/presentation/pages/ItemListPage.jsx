@@ -1,12 +1,15 @@
 import React, { useState, useMemo } from 'react';
-import { Plus, Tv, BookOpen } from 'lucide-react';
+import { Plus, Tv, BookOpen, LayoutList, LayoutGrid } from 'lucide-react';
 import { SectionTabs } from '../components/SectionTabs/SectionTabs.jsx';
 import { ItemCard } from '../components/ItemCard/ItemCard.jsx';
 import { EditModal } from '../components/EditModal/EditModal.jsx';
 import { DetailModal } from '../components/DetailModal/DetailModal.jsx';
 import { CustomSelect } from '../components/Select/CustomSelect.jsx';
+import { ScoreRangeSlider } from '../components/ScoreRangeSlider/ScoreRangeSlider.jsx';
 import { SECCIONES } from '../../domain/itemSchema.js';
+import { filtrarPorRangoPuntuacion } from '../../domain/validators.js';
 import { getSortPreference, setSortPreference } from '../../data/sortRepository.js';
+import { useViewDensity } from '../hooks/useViewDensity.js';
 import './ListPage.css';
 
 
@@ -22,17 +25,19 @@ const SORT_OPTIONS = [
 export function ItemListPage({ media = 'anime', onUpdate, onRemove, getFiltered, onOpenAdd }) {
   const [activeSection, setActiveSection] = useState('all');
   const [sortBy, setSortBy] = useState(() => getSortPreference());
+  const { density, toggleDensity } = useViewDensity();
+  const [scoreRange, setScoreRange] = useState([1, 10]);
 
-  const handleSortChange = (value) => {
-    setSortBy(value);
-    setSortPreference(value);
-  };
+
   const [editingItem, setEditingItem] = useState(null);
   const [detailItem, setDetailItem] = useState(null);
   const [localSearch, setLocalSearch] = useState('');
   const [selectedTags, setSelectedTags] = useState([]);
 
-
+  const handleSortChange = (value) => {
+    setSortBy(value);
+    setSortPreference(value);
+  };
 
 
   const isAnime = media === 'anime';
@@ -69,7 +74,11 @@ export function ItemListPage({ media = 'anime', onUpdate, onRemove, getFiltered,
   };
 
   const visibleItems = useMemo(() => {
+    // Pipeline: seccion → puntuacion → tags → busqueda → ordenar
     let items = getFiltered(activeSection, media);
+
+    // Fase 3: Filtro de puntuación personal
+    items = filtrarPorRangoPuntuacion(items, scoreRange[0], scoreRange[1]);
 
     if (selectedTags.length > 0) {
       items = items.filter((item) =>
@@ -104,7 +113,8 @@ export function ItemListPage({ media = 'anime', onUpdate, onRemove, getFiltered,
       }
       return new Date(b.creadoEn || 0).getTime() - new Date(a.creadoEn || 0).getTime();
     });
-  }, [getFiltered, activeSection, media, sortBy, localSearch, selectedTags]);
+  }, [getFiltered, activeSection, media, sortBy, localSearch, selectedTags, scoreRange]);
+
 
   const handleDragStart = (e, id) => {
     if (sortBy !== 'manual') return;
@@ -168,7 +178,7 @@ export function ItemListPage({ media = 'anime', onUpdate, onRemove, getFiltered,
 
 
         <div className="list-page__toolbar">
-          {/* Buscador — movido del header-row al toolbar (Bloque 2 UI/UX v1.1) */}
+          {/* Buscador */}
           <div className="list-page__search-bar">
             <input
               type="search"
@@ -179,7 +189,7 @@ export function ItemListPage({ media = 'anime', onUpdate, onRemove, getFiltered,
               aria-label="Buscar por título, etiqueta o descripción"
             />
           </div>
-          {/* Selector de ordenamiento Radix */}
+          {/* Selector de ordenamiento */}
           <div className="list-page__sort-wrap">
             <span className="list-page__sort-label">Ordenar por:</span>
             <CustomSelect
@@ -188,6 +198,21 @@ export function ItemListPage({ media = 'anime', onUpdate, onRemove, getFiltered,
               options={SORT_OPTIONS}
             />
           </div>
+          {/* Filtro de puntuación personal (Fase 3) */}
+          <ScoreRangeSlider
+            min={scoreRange[0]}
+            max={scoreRange[1]}
+            onChange={(min, max) => setScoreRange([min, max])}
+          />
+          {/* Toggle densidad de vista (Fase 2) */}
+          <button
+            className="list-page__density-btn"
+            onClick={toggleDensity}
+            aria-label={density === 'detailed' ? 'Cambiar a vista compacta' : 'Cambiar a vista detallada'}
+            title={density === 'detailed' ? 'Vista compacta' : 'Vista detallada'}
+          >
+            {density === 'detailed' ? <LayoutGrid size={18} /> : <LayoutList size={18} />}
+          </button>
         </div>
 
         {availableTags.length > 0 && (
@@ -248,7 +273,9 @@ export function ItemListPage({ media = 'anime', onUpdate, onRemove, getFiltered,
                 onDetail={setDetailItem}
                 isDraggable={sortBy === 'manual'}
                 searchQuery={localSearch}
+                density={density}
               />
+
             </div>
           ))
         )}

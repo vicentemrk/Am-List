@@ -24,7 +24,7 @@ function highlightMatch(text, query) {
   );
 }
 
-function ItemCardComponent({ item, onUpdate, onRemove, onEdit, onDetail, isDraggable, searchQuery = '' }) {
+function ItemCardComponent({ item, onUpdate, onRemove, onEdit, onDetail, isDraggable, searchQuery = '', density = 'detailed' }) {
 
   const [sinopsisExpanded, setSinopsisExpanded] = useState(false);
 
@@ -77,8 +77,102 @@ function ItemCardComponent({ item, onUpdate, onRemove, onEdit, onDetail, isDragg
     if (onDetail) onDetail(item);
   };
 
+  // ── Compact layout (density='compact') ────────────────────────────────────
+  if (density === 'compact') {
+    return (
+      <article
+        className={`item-card item-card--compact${statusMenuOpen ? ' item-card--menu-open' : ''}`}
+        aria-label={item.titulo}
+      >
+        {/* Thumbnail small */}
+        <div className="item-card__thumb-wrap item-card__thumb-wrap--compact" onClick={handleOpenDetail} style={{ cursor: 'pointer' }}>
+          {item.imagen ? (
+            <img
+              className="item-card__thumb item-card__thumb--compact"
+              src={item.imagen}
+              alt={`Portada de ${item.titulo}`}
+              loading="lazy"
+            />
+          ) : (
+            <div className="item-card__thumb item-card__thumb--placeholder item-card__thumb--compact" aria-hidden="true">
+              {item.mediaType === 'anime' ? <Tv size={20} /> : <BookOpen size={20} />}
+            </div>
+          )}
+        </div>
+
+        {/* Info: title + badge */}
+        <div className="item-card__info item-card__info--compact">
+          <h3
+            className="item-card__title item-card__title--compact"
+            onClick={handleOpenDetail}
+            style={{ cursor: 'pointer' }}
+            title={item.titulo}
+          >
+            {highlightMatch(item.titulo, searchQuery)}
+          </h3>
+          <span className={`item-card__badge item-card__badge--user item-card__badge--${item.estadoUsuario}`}>
+            {userStatusLabel}
+          </span>
+        </div>
+
+        {/* Actions */}
+        <div className="item-card__actions item-card__actions--compact">
+          <div className="item-card__status-menu-wrap" ref={statusMenuRef}>
+            <button
+              className="item-card__action-btn item-card__action-btn--status"
+              onClick={(e) => { e.stopPropagation(); setStatusMenuOpen((v) => !v); }}
+              aria-label="Cambiar estado"
+              title="Cambiar estado"
+              aria-haspopup="listbox"
+              aria-expanded={statusMenuOpen}
+            >
+              <ClipboardList size={16} />
+            </button>
+            {statusMenuOpen && (
+              <div className="item-card__status-dropdown" role="listbox" aria-label="Estado de la lista">
+                {STATUS_MENU_OPTIONS.map((opt) => {
+                  const isActive = item.estadoUsuario === opt.value;
+                  return (
+                    <button
+                      key={opt.value}
+                      className={`item-card__status-option item-card__status-option--${opt.value}${isActive ? ' item-card__status-option--active' : ''}`}
+                      role="option"
+                      aria-selected={isActive}
+                      onClick={(e) => { e.stopPropagation(); onUpdate(item.id, { estadoUsuario: opt.value }); setStatusMenuOpen(false); }}
+                    >
+                      <span className="item-card__status-option-label">{opt.label}</span>
+                      {isActive && <span className="item-card__status-check" aria-hidden="true">✓</span>}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+          <button
+            className="item-card__action-btn item-card__action-btn--edit"
+            onClick={(e) => { e.stopPropagation(); onEdit(item); }}
+            aria-label="Editar"
+            title="Editar"
+          >
+            <Pencil size={16} />
+          </button>
+          <button
+            className="item-card__action-btn item-card__action-btn--remove"
+            onClick={handleDelete}
+            aria-label="Eliminar"
+            title="Eliminar"
+          >
+            <Trash2 size={16} />
+          </button>
+        </div>
+      </article>
+    );
+  }
+
+  // ── Detailed layout (density='detailed', default) ─────────────────────────
   return (
     <article className={`item-card item-card--list${statusMenuOpen ? ' item-card--menu-open' : ''}`} aria-label={item.titulo}>
+
       {/* ── drag handle ───────────────────────────────────────────────────── */}
 
 

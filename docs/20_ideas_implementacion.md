@@ -1,4 +1,4 @@
-﻿# Matriz de Ideas de Implementación — AMlist
+# Matriz de Ideas de Implementación — AMlist
 
 > Matriz Híbrida de Priorización y Pilares Técnicos para la evolución de AMlist.
 > Evaluado por **Impacto × Esfuerzo × Pilar Técnico**.
@@ -27,6 +27,7 @@ Las siguientes ideas fueron completadas en **v1.1** y se retiran del backlog act
 1. **Atajos de Teclado (Keyboard Shortcuts)**: Descartado para mantener la experiencia simple e intuitiva centrada en la interacción limpia con mouse/touch sin sobrecargar la curva de aprendizaje.
 2. **Estadísticas de Hábitos de Consumo**: Descartado para evitar cluttering visual y mantener el foco de la app en la gestión ágil y rápida de la lista personal.
 3. **Generador de Tarjetas para Compartir (Share Card PNG)**: Descartado al no alinearse con el enfoque local-first privado y sin consumo de recursos superfluos en Canvas.
+4. **Edición en Lote (Multi-Select Control)**: Descartado permanentemente. La interacción uno a uno (dropdown de estado por tarjeta + `EditModal` individual) es suficiente y más coherente con el diseño de la app. Agregar una barra flotante de acciones masivas añadiría complejidad sin un beneficio real para el caso de uso típico.
 
 ---
 

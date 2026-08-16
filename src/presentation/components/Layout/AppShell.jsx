@@ -9,11 +9,10 @@ import { ImportButton } from '../ImportButton/ImportButton.jsx';
 import { HistorialModal } from '../HistorialModal/HistorialModal.jsx';
 import { AddModal } from '../AddModal/AddModal.jsx';
 import { FloatingActionButton } from '../FloatingActionButton/FloatingActionButton.jsx';
-import { ChangelogModal } from '../ChangelogModal/ChangelogModal.jsx';
-import { hasSeenChangelog } from '../../../data/changelogRepository.js';
-import { Menu, History, Code, Bell } from 'lucide-react';
+import { Menu, History, Code } from 'lucide-react';
 import faviconUrl from '/favicon.svg';
 import './AppShell.css';
+
 
 
 const NAV_ITEMS = [
@@ -23,11 +22,9 @@ const NAV_ITEMS = [
 
 export function AppShell({ theme, onToggleTheme, items, children, activePage, onPageChange, onAdd, onRemove, onImport }) {
   const [historialOpen, setHistorialOpen] = useState(false);
-  const [changelogOpen, setChangelogOpen] = useState(false);
   const [sidebarOpen,   setSidebarOpen]   = useState(false);
   const [addModalOpen,  setAddModalOpen]  = useState(false);
 
-  const hasUnreadChangelog = !hasSeenChangelog();
 
   const handleOpenAdd = () => setAddModalOpen(true);
 
@@ -57,20 +54,12 @@ export function AppShell({ theme, onToggleTheme, items, children, activePage, on
         </div>
 
         <div className="app-header__actions">
-          <button
-            className="app-header__icon-btn"
-            onClick={() => setChangelogOpen(true)}
-            aria-label="Novedades de versión"
-            title="Novedades de v1.2"
-          >
-            <Bell size={18} />
-            {hasUnreadChangelog && <span className="app-header__badge" />}
-          </button>
           <ImportButton onImport={onImport} />
           <ExportButton items={items} />
           <ThemeToggle theme={theme} onToggle={onToggleTheme} />
         </div>
       </header>
+
 
 
       {/* ── Sidebar overlay (mobile) ─────────────────────────────────────────── */}
@@ -153,8 +142,6 @@ export function AppShell({ theme, onToggleTheme, items, children, activePage, on
       {/* ── Historial drawer ─────────────────────────────────────────────────── */}
       {historialOpen && <HistorialModal onClose={() => setHistorialOpen(false)} />}
 
-      {/* ── Changelog modal ──────────────────────────────────────────────────── */}
-      <ChangelogModal open={changelogOpen} onClose={() => setChangelogOpen(false)} />
 
 
       {/* ── FAB (mobile only) ────────────────────────────────────────────────── */}

@@ -16,7 +16,8 @@
  */
 
 import { DEFAULT_ITEM } from '../../../domain/itemSchema.js';
-import { validarProgreso, validarPuntuacion } from '../../../domain/validators.js';
+import { validarProgreso, validarPuntuacion, validarEstadoUsuario } from '../../../domain/validators.js';
+
 
 const STORAGE_KEY = 'amlist_items';
 
@@ -79,8 +80,12 @@ function assertSchema(item) {
   );
   if (!progresoResult.valid) throw new Error(progresoResult.message);
 
+  const estadoResult = validarEstadoUsuario(item.estadoUsuario);
+  if (!estadoResult.valid) throw new Error(estadoResult.message);
+
   const puntuacionResult = validarPuntuacion(item.puntuacion ?? null);
   if (!puntuacionResult.valid) throw new Error(puntuacionResult.message);
+
 }
 
 /**

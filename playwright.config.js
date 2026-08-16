@@ -7,6 +7,11 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
+  // Visual regression: screenshots guardados en e2e/snapshots/
+  snapshotPathTemplate: '{testDir}/snapshots/{testFilePath}/{arg}{ext}',
+  expect: {
+    toHaveScreenshot: { threshold: 0.1 }, // 10% tolerancia para anti-aliasing cross-env
+  },
   use: {
     baseURL: 'http://localhost:5173/Am-List/',
     trace: 'on-first-retry',
@@ -24,3 +29,4 @@ export default defineConfig({
     timeout: 120 * 1000,
   },
 });
+

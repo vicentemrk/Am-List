@@ -1,0 +1,104 @@
+/* ── ScoreRangeSlider — Radix UI (v1.3) ─────────────────────────────────── */
+.score-slider {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--surface-container);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.3rem 0.6rem;
+  transition: border-color 0.15s, background 0.15s;
+  min-width: 155px;
+}
+
+.score-slider--active {
+  border-color: var(--accent-primary);
+  background: color-mix(in srgb, var(--accent-primary) 8%, var(--surface-container));
+}
+
+.score-slider__label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.score-slider--active .score-slider__label {
+  color: var(--accent-primary);
+}
+
+/* Radix Root Container */
+.score-slider__root {
+  position: relative;
+  display: flex;
+  align-items: center;
+  user-select: none;
+  touch-action: none;
+  flex: 1;
+  min-width: 65px;
+  height: 20px;
+  cursor: pointer;
+}
+
+/* Radix Track */
+.score-slider__track {
+  background-color: var(--border);
+  position: relative;
+  flex-grow: 1;
+  border-radius: 9999px;
+  height: 4px;
+}
+
+/* Radix Range (active fill) */
+.score-slider__range {
+  position: absolute;
+  background-color: var(--accent-primary);
+  border-radius: 9999px;
+  height: 100%;
+}
+
+/* Radix Thumb */
+.score-slider__thumb {
+  display: block;
+  width: 14px;
+  height: 14px;
+  background-color: var(--accent-primary);
+  border: 2px solid var(--surface);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  border-radius: 9999px;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  cursor: grab;
+}
+
+.score-slider__thumb:hover {
+  transform: scale(1.2);
+}
+
+.score-slider__thumb:active {
+  cursor: grabbing;
+  transform: scale(1.25);
+}
+
+.score-slider__thumb:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+/* Reset button */
+.score-slider__reset {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  cursor: pointer;
+  padding: 0 0.1rem;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+
+.score-slider__reset:hover {
+  color: var(--accent-danger);
+}
+
