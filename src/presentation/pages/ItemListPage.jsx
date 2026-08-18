@@ -22,8 +22,19 @@ const SORT_OPTIONS = [
   { value: 'progress', label: 'Progreso' },
 ];
 
-export function ItemListPage({ media = 'anime', onUpdate, onRemove, getFiltered, onOpenAdd }) {
-  const [activeSection, setActiveSection] = useState('all');
+export function ItemListPage({
+  media = 'anime',
+  onUpdate,
+  onRemove,
+  getFiltered,
+  onOpenAdd,
+  activeSection: controlledSection,
+  onSectionChange: setControlledSection,
+}) {
+  const [internalSection, setInternalSection] = useState('all');
+  const activeSection = controlledSection !== undefined ? controlledSection : internalSection;
+  const setActiveSection = setControlledSection ?? setInternalSection;
+
   const [sortBy, setSortBy] = useState(() => getSortPreference());
   const { density, toggleDensity } = useViewDensity();
   const [scoreRange, setScoreRange] = useState([1, 10]);

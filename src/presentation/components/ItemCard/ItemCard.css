@@ -139,6 +139,7 @@
 .item-card__badge--finalizado { --badge-color: var(--tab-finalizado); }
 .item-card__badge--pausado    { --badge-color: var(--tab-pausado);    }
 .item-card__badge--dropeado   { --badge-color: var(--tab-dropeado);   }
+.item-card__badge--favorito   { --badge-color: var(--tab-favorito);   }
 
 .item-card__type {
   color: var(--text-muted);

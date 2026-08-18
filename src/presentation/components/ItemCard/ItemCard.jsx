@@ -55,6 +55,8 @@ function ItemCardComponent({ item, onUpdate, onRemove, onEdit, onDetail, isDragg
   // ── display helpers ──────────────────────────────────────────────────────────
   const userStatusObj = ESTADOS_USUARIO.find((s) => s.value === item.estadoUsuario);
   const userStatusLabel = userStatusObj?.label ?? item.estadoUsuario;
+  const badgeLabel = item.favorito ? 'Favorito' : userStatusLabel;
+  const badgeClass = item.favorito ? 'item-card__badge--favorito' : `item-card__badge--${item.estadoUsuario}`;
 
   const progressMax = item.progreso.maximo != null ? item.progreso.maximo : '?';
   const rawGenres = Array.isArray(item.genres) ? item.genres : [];
@@ -110,8 +112,8 @@ function ItemCardComponent({ item, onUpdate, onRemove, onEdit, onDetail, isDragg
           >
             {highlightMatch(item.titulo, searchQuery)}
           </h3>
-          <span className={`item-card__badge item-card__badge--user item-card__badge--${item.estadoUsuario}`}>
-            {userStatusLabel}
+          <span className={`item-card__badge item-card__badge--user ${badgeClass}`}>
+            {badgeLabel}
           </span>
         </div>
 
@@ -209,8 +211,8 @@ function ItemCardComponent({ item, onUpdate, onRemove, onEdit, onDetail, isDragg
       {/* ── info section ──────────────────────────────────────────────────── */}
       <div className="item-card__info">
         <div className="item-card__meta">
-          <span className={`item-card__badge item-card__badge--user item-card__badge--${item.estadoUsuario}`}>
-            {userStatusLabel}
+          <span className={`item-card__badge item-card__badge--user ${badgeClass}`}>
+            {badgeLabel}
           </span>
           <span className="item-card__type">{item.mediaType === 'anime' ? 'Anime' : 'Manga'}</span>
           <div className="item-card__scores-wrap">

@@ -34,6 +34,11 @@
 | **Limpieza Total de Tailwind CSS** | **v1.3** | 🔧 **Técnico** | ✅ **Completado** |
 | **Correcciones de Seguridad OWASP** (CSP header, npm audit, `estadoUsuario` enum) | **v1.3** | 🛡️ **Seguridad** | ✅ **Completado** |
 |------------------------------------------------------------------------------------------------------------------|
+| **Estado e Insignia de Favorito + Control en EditModal** | **v1.4** | 🔥 **Alta** | ✅ **Completado** |
+| **Corrección de Ícono en Modo Oscuro (`ThemeToggle`)** | **v1.4** | ⚡ **Media** | ✅ **Completado** |
+| **Traducción Automática de Sinopsis (CSP + Service)** | **v1.4** | 🔥 **Alta** | ✅ **Completado** |
+| **Enrutamiento por Pestañas y Páginas (`useAppRouter` Hash)** | **v1.4** | 🔥 **Alta** | ✅ **Completado** |
+|------------------------------------------------------------------------------------------------------------------|
 | Cuentas de Usuario + Supabase Auth | v2.0 | 💡 Alta | 🎯 Arquitectura Lista |
 | Sincronización Multi-dispositivo en la Nube | v2.0 | 💡 Alta | 🎯 Arquitectura Lista |
 | Perfil Público Compartible (Read-Only Link) | v2.0 | 💡 Media | Planificado |
@@ -112,6 +117,25 @@
 
 ### 6. Descarte Formal de Edición en Lote
 * Edición en Lote (Multi-Select) descartada permanentemente y registrada en `20_ideas_implementacion.md` para preservar la agilidad de la interacción uno a uno por tarjeta.
+
+---
+
+## ✅ v1.4 — Completado (2026-08-17)
+
+### 1. Estado e Insignia de Favorito
+* El badge superior izquierdo en `ItemCard` (tanto en modo detallado como compacto) cambia dinámicamente a **"FAVORITO"** con el color dorado correspondiente (`--tab-favorito`) cuando el ítem tiene estrella activa (`favorito: true`).
+* Se añadió un control dedicado y destacado de Favorito en `EditModal` dentro del formulario de edición.
+
+### 2. Corrección de Ícono en Modo Oscuro
+* Corrección en `ThemeToggle.css` garantizando `color: #ffffff;` en tema oscuro (`[data-theme='dark'] .theme-toggle`), mejorando la visibilidad del ícono solar.
+
+### 3. Traducción Automática de Sinopsis
+* Actualización de `Content-Security-Policy` en `index.html` para permitir peticiones seguras a `https://translate.googleapis.com` en `connect-src`.
+* Traducción automática de sinopsis en segundo plano con persistencia local y decodificación de entidades HTML.
+
+### 4. Enrutamiento Hash Nativo (`useAppRouter`)
+* Implementación de enrutamiento por hash (`#/anime/favorito`, `#/manga/por-ver`, etc.) para todas las listas y secciones.
+* Soporte nativo de navegación histórica (atrás/adelante) y enlaces directos compatibles con GitHub Pages.
 
 ---
 

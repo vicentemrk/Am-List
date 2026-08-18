@@ -1,10 +1,10 @@
-﻿/**
+/**
  * presentation/hooks/useViewDensity.js
  * Hook que expone la densidad de vista activa y un toggle para alternarla.
  * Persiste en localStorage via viewRepository (capa data/).
  */
 import { useState, useCallback } from 'react';
-import { getDensity, setDensity, DENSITIES } from '../../data/viewRepository.js';
+import { getDensity, setDensity } from '../../data/viewRepository.js';
 
 /**
  * @returns {{ density: 'detailed'|'compact', toggleDensity: () => void }}

@@ -18,6 +18,7 @@ import { appendHistory } from '../../data/historyRepository.js';
 import { construirEntradaHistorial } from '../../domain/historial.js';
 import { filtrarPorSeccion } from '../../domain/validators.js';
 import { saveSnapshot } from '../../data/snapshotRepository.js';
+import { translateToSpanish } from '../../data/translationService.js';
 
 
 export function useItems() {
@@ -35,6 +36,21 @@ export function useItems() {
       const created = repo.create(itemData);
       setItems(repo.getAll());
       appendHistory(construirEntradaHistorial(created, 'agregado'));
+
+      // Disparar traducción de sinopsis al español en segundo plano si está disponible
+      if (created.sinopsis && typeof created.sinopsis === 'string' && created.sinopsis.trim()) {
+        translateToSpanish(created.sinopsis).then((translated) => {
+          if (translated && translated !== created.sinopsis) {
+            try {
+              repo.update(created.id, { sinopsis: translated });
+              setItems(repo.getAll());
+            } catch {
+              // Si el ítem ya fue removido, no pasa nada
+            }
+          }
+        });
+      }
+
       return { success: true, message: '', item: created };
     } catch (err) {
       return { success: false, message: err.message };

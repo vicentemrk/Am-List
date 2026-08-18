@@ -3,7 +3,7 @@
  * Root component — wires hooks, routing state, and the AppShell.
  * No business logic lives here; all state management is delegated to hooks.
  */
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { AppShell } from './components/Layout/AppShell.jsx';
 import { AnimeListPage } from './pages/AnimeListPage.jsx';
 import { MangaListPage } from './pages/MangaListPage.jsx';
@@ -13,6 +13,7 @@ import { useTheme } from './hooks/useTheme.js';
 import { useItems } from './hooks/useItems.js';
 import { useToast } from './hooks/useToast.js';
 import { useOnlineStatus } from './hooks/useOnlineStatus.js';
+import { useAppRouter } from './hooks/useAppRouter.js';
 import { restoreSnapshot } from '../data/snapshotRepository.js';
 
 export default function App() {
@@ -20,7 +21,7 @@ export default function App() {
   const { items, addItem, updateItem, removeItem, importItems, getFiltered } = useItems();
   const { toast, showToast, hideToast } = useToast();
   const isOnline = useOnlineStatus();
-  const [activePage, setActivePage] = useState('anime');
+  const { activePage, activeSection, setMedia, setSection } = useAppRouter();
 
   const handleAdd = (item) => {
     const res = addItem(item);
@@ -69,16 +70,8 @@ export default function App() {
             onClick: () => {
               const restoredItems = restoreSnapshot(res.snapshotId);
               if (restoredItems) {
-                // Reimportar el snapshot como batch (reemplaza los datos actuales)
-                // Usamos importBatch pero primero limpiamos — la restauración fuerza sobreescritura
-                import('../data/itemsRepository.js').then(({ default: repo, ...repoMod }) => {
-                  // Escribir directamente vía adaptador localStorage
-                  import('../data/adapters/localStorage/itemsLocalStorageAdapter.js').then(({ itemsLocalStorageAdapter }) => {
-                    // Guardamos todos los ítems restaurados sobreescribiendo
-                    localStorage.setItem('amlist_items', JSON.stringify(restoredItems));
-                    window.location.reload(); // Recarga limpia para reflejar el estado restaurado
-                  });
-                });
+                localStorage.setItem('amlist_items', JSON.stringify(restoredItems));
+                window.location.reload();
               }
               hideToast();
             },
@@ -99,7 +92,7 @@ export default function App() {
         onToggleTheme={toggleTheme}
         items={items}
         activePage={activePage}
-        onPageChange={setActivePage}
+        onPageChange={setMedia}
         onAdd={handleAdd}
         onRemove={handleRemove}
         onImport={handleImport}
@@ -109,12 +102,16 @@ export default function App() {
             onUpdate={handleUpdate}
             onRemove={handleRemove}
             getFiltered={getFiltered}
+            activeSection={activeSection}
+            onSectionChange={setSection}
           />
         ) : (
           <MangaListPage
             onUpdate={handleUpdate}
             onRemove={handleRemove}
             getFiltered={getFiltered}
+            activeSection={activeSection}
+            onSectionChange={setSection}
           />
         )}
       </AppShell>

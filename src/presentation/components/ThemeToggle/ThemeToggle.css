@@ -9,8 +9,13 @@
   align-items: center;
   justify-content: center;
   font-size: 1.1rem;
-  transition: border-color 0.2s, transform 0.2s, background 0.2s;
+  color: var(--text-primary);
+  transition: border-color 0.2s, transform 0.2s, background 0.2s, color 0.2s;
   flex-shrink: 0;
+}
+
+[data-theme='dark'] .theme-toggle {
+  color: #ffffff;
 }
 
 .theme-toggle:hover {

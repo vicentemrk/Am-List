@@ -59,6 +59,17 @@ function hashKey(str) {
   return `syn_${Math.abs(hash)}`;
 }
 
+function decodeHtmlEntities(str) {
+  if (!str || typeof str !== 'string') return str;
+  return str
+    .replace(/&quot;/g, '"')
+    .replace(/&#039;/g, "'")
+    .replace(/&apos;/g, "'")
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>');
+}
+
 /**
  * Traduce una sinopsis o texto en inglés al español.
  * 
@@ -105,7 +116,7 @@ export async function translateToSpanish(text) {
         .map((part) => (Array.isArray(part) && typeof part[0] === 'string' ? part[0] : ''))
         .filter(Boolean);
       
-      const resultText = translatedParts.join('').trim();
+      const resultText = decodeHtmlEntities(translatedParts.join('').trim());
       if (resultText) {
         memCache.set(key, resultText);
         setLsCache(key, resultText);

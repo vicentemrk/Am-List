@@ -206,6 +206,20 @@ export function EditModal({ item, onClose, onUpdate }) {
               </div>
 
               <div className="edit-modal__control-group">
+                <label className="edit-modal__label">Favorito</label>
+                <button
+                  type="button"
+                  className={`edit-modal__fav-toggle-btn${draft.favorito ? ' edit-modal__fav-toggle-btn--active' : ''}`}
+                  onClick={handleToggleFavorito}
+                  aria-pressed={draft.favorito}
+                  title={draft.favorito ? 'Quitar de favoritos' : 'Marcar como favorito'}
+                >
+                  <Star size={16} fill={draft.favorito ? 'currentColor' : 'none'} />
+                  <span>{draft.favorito ? 'En Favoritos' : 'No favorito'}</span>
+                </button>
+              </div>
+
+              <div className="edit-modal__control-group">
                 <label className="edit-modal__label" htmlFor={`modal-emission-${draft.id}`}>Estado de Emisión</label>
                 <CustomSelect
                   id={`modal-emission-${draft.id}`}
