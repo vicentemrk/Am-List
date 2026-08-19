@@ -86,26 +86,24 @@ export function filtrarPorSeccion(items, seccion, mediaType) {
       return result;
 
     case 'por_ver':
-
       return result.filter((item) => item.estadoUsuario === 'por_ver');
 
     case 'favorito':
-      return result.filter((item) => item.favorito === true);
+      // v1.3+: filtra por estadoUsuario='favorito' (ya no por el campo boolean item.favorito)
+      return result.filter((item) => item.estadoUsuario === 'favorito');
 
     case 'en_curso':
       return result.filter((item) => item.estadoUsuario === 'en_curso');
 
     case 'en_emision':
-      // EXCEPCIÓN Única a la Regla 6: filtra por estadoEmision (dato de la API).
-      // El usuario no elige este estado; refleja si la serie sigue en emisción en el mundo real.
-      return result.filter((item) => item.estadoEmision === 'airing');
+      // v1.3+: 'en_emision' es ahora un estadoUsuario elegido por el usuario.
+      // Se ignora por completo el campo estadoEmision de la API.
+      return result.filter((item) => item.estadoUsuario === 'en_emision');
 
     case 'pausado':
       return result.filter((item) => item.estadoUsuario === 'pausado');
 
     case 'finalizado':
-      // Regla 6 (v1.1): filtra por estadoUsuario='finalizado', NO por estadoEmision='complete'.
-      // 'Finalizado' = el usuario marcó este ítem como finalizado en su lista personal.
       return result.filter((item) => item.estadoUsuario === 'finalizado');
 
     case 'dropeado':
@@ -153,7 +151,7 @@ export function validarEstadoUsuario(estado) {
   if (!esEstadoUsuarioValido(estado)) {
     return {
       valid: false,
-      message: `Estado de usuario inválido: "${estado}". Los valores permitidos son: por_ver, en_curso, finalizado, pausado, dropeado.`,
+      message: `Estado de usuario inválido: "${estado}". Los valores permitidos son: por_ver, en_emision, en_curso, favorito, finalizado, pausado, dropeado.`,
     };
   }
   return { valid: true, message: '' };

@@ -85,13 +85,13 @@
 }
 
 .item-card__fav--active {
-  background: rgba(250, 204, 21, 0.9); /* yellow-400 */
-  color: #000;
-  border-color: rgba(250, 204, 21, 1);
+  background: var(--accent-primary);
+  color: #ffffff;
+  border-color: var(--accent-primary);
 }
 
 .item-card__fav--active:hover {
-  background: rgba(253, 224, 71, 0.9);
+  filter: brightness(1.1);
 }
 
 /* ── info area ────────────────────────────────────────────────────────────── */

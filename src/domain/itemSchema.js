@@ -38,6 +38,12 @@ export const SECCIONES = /** @type {const} */ ([
   'dropeado',
 ]);
 
+/**
+ * NOTA v1.3+: 'favorito' y 'en_emision' son ahora estadoUsuario válidos.
+ * - 'favorito': el tab Favoritos filtra por estadoUsuario='favorito'.
+ * - 'en_emision': el tab En emisión filtra por estadoUsuario='en_emision' (ya no por estadoEmision API).
+ */
+
 /** Nombres descriptivos completos para accesibilidad (aria-label) */
 export const SECCION_LABELS = {
   all: 'Lista completa',
@@ -77,6 +83,8 @@ export const DEFAULT_ITEM = {
   puntuacion: null,
   favorito: false,
   estadoUsuario: 'por_ver',
+  /** Guarda el estadoUsuario previo al marcar como favorito, para poder restaurarlo al desmarcar. */
+  estadoAnterior: '',
   estadoEmision: 'unknown',
   progreso: {
     actual: 0,
@@ -92,7 +100,9 @@ export const DEFAULT_ITEM = {
 /** Opciones válidas de estado elegidas por el usuario */
 export const ESTADOS_USUARIO = [
   { value: 'por_ver',    label: 'Por ver' },
+  { value: 'en_emision', label: 'En emisión' },
   { value: 'en_curso',   label: 'En curso' },
+  { value: 'favorito',   label: 'Favorito' },
   { value: 'finalizado', label: 'Finalizado' },
   { value: 'pausado',    label: 'Pausado' },
   { value: 'dropeado',   label: 'Dropeado' },
@@ -112,6 +122,15 @@ export const VALID_ESTADOS_USUARIO = new Set(ESTADOS_USUARIO.map((e) => e.value)
  */
 export function esEstadoUsuarioValido(estado) {
   return VALID_ESTADOS_USUARIO.has(estado);
+}
+
+/**
+ * Devuelve el label legible del estadoUsuario.
+ * @param {string} estado
+ * @returns {string}
+ */
+export function getEstadoUsuarioLabel(estado) {
+  return ESTADOS_USUARIO.find((e) => e.value === estado)?.label ?? estado;
 }
 
 

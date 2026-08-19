@@ -62,7 +62,7 @@
   --tab-finalizado: #176CB5;
   --tab-pausado:    #AC7600;
   --tab-dropeado:   #C72043;
-  --tab-favorito:   #BF7600;
+  --tab-favorito:   #5A35D4;  /* v1.4: morado idéntico a --accent-primary */
 
   /* MD3 State Layers */
   --state-hover-primary:     rgba(90, 53, 212, 0.08);
@@ -156,7 +156,7 @@
   --tab-finalizado: #4D9FE8;
   --tab-pausado:    #F5C542;
   --tab-dropeado:   #F06680;
-  --tab-favorito:   #F5B042;
+  --tab-favorito:   #9B7FFF;  /* v1.4: morado idéntico a --accent-primary dark */
 
   /* MD3 State Layers dark */
   --state-hover-primary:     rgba(155, 127, 255, 0.08);

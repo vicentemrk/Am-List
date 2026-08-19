@@ -8,14 +8,16 @@
  * Cómo funciona:
  *   - `Dialog.Root` controla open/close via prop `open` (controlado).
  *   - `Dialog.Portal` → `Dialog.Overlay` → `Dialog.Content` forman el stack.
- *   - Los efectos manuales de teclado y scroll se eliminaron (Radix los maneja).
+ *   - v1.3: 'favorito' y 'en_emision' son estadoUsuario válidos.
+ *     El campo estadoEmision de la API se conserva en el objeto pero NO se
+ *     muestra en UI — la app ignora completamente lo que diga la API de airing.
  * ============================================================================
  */
 import React, { useEffect, useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { validarProgreso } from '../../../domain/validators.js';
-import { ESTADOS_USUARIO, ESTADOS_EMISION, SCORE_RANGE } from '../../../domain/itemSchema.js';
+import { ESTADOS_USUARIO, SCORE_RANGE } from '../../../domain/itemSchema.js';
 import { CustomSelect } from '../Select/CustomSelect.jsx';
 import { X, Plus, Tv, BookOpen, Star } from 'lucide-react';
 import './EditModal.css';
@@ -55,10 +57,12 @@ export function EditModal({ item, onClose, onUpdate }) {
       setEditError(check.message);
       return;
     }
+    // Sincronizar favorito boolean con estadoUsuario al guardar
+    const isFavorito = draft.estadoUsuario === 'favorito';
     onUpdate(item.id, {
       estadoUsuario: draft.estadoUsuario,
-      estadoEmision: draft.estadoEmision,
-      favorito: draft.favorito,
+      estadoAnterior: draft.estadoAnterior ?? '',
+      favorito: isFavorito,
       puntuacion: draft.puntuacion,
       progreso: draft.progreso,
       descripcionPersonal: draft.descripcionPersonal,
@@ -80,21 +84,42 @@ export function EditModal({ item, onClose, onUpdate }) {
     setDraft((prev) => ({ ...prev, puntuacion: parsed }));
   };
 
+  /** Maneja el cambio de estado desde el select, sincronizando el boolean favorito */
   const handleStatus = (val) => {
-    setDraft((prev) => ({ ...prev, estadoUsuario: val }));
+    const isFavorito = val === 'favorito';
+    const prevEstado = draft.estadoUsuario;
+    setDraft((prev) => ({
+      ...prev,
+      estadoUsuario: val,
+      favorito: isFavorito,
+      estadoAnterior: isFavorito && prevEstado !== 'favorito'
+        ? prevEstado
+        : (isFavorito ? prev.estadoAnterior : ''),
+    }));
   };
 
-  const handleEmissionStatus = (val) => {
-    setDraft((prev) => ({ ...prev, estadoEmision: val }));
-  };
-
+  /** Toggle estrella en la portada — sincroniza estadoUsuario ↔ favorito */
   const handleToggleFavorito = () => {
-    setDraft((prev) => ({ ...prev, favorito: !prev.favorito }));
+    const isCurrentlyFav = draft.estadoUsuario === 'favorito';
+    if (isCurrentlyFav) {
+      setDraft((prev) => ({
+        ...prev,
+        estadoUsuario: prev.estadoAnterior || 'por_ver',
+        favorito: false,
+        estadoAnterior: '',
+      }));
+    } else {
+      setDraft((prev) => ({
+        ...prev,
+        estadoAnterior: prev.estadoUsuario,
+        estadoUsuario: 'favorito',
+        favorito: true,
+      }));
+    }
   };
 
   const handleDescriptionChange = (e) => {
-    const val = e.target.value;
-    setDraft((prev) => ({ ...prev, descripcionPersonal: val }));
+    setDraft((prev) => ({ ...prev, descripcionPersonal: e.target.value }));
   };
 
   const handleAddTag = () => {
@@ -125,7 +150,6 @@ export function EditModal({ item, onClose, onUpdate }) {
           onEscapeKeyDown={onClose}
           onPointerDownOutside={onClose}
         >
-          {/* Título oculto visualmente pero disponible para lectores de pantalla */}
           <Dialog.Title asChild>
             <VisuallyHidden>Editar {draft.titulo}</VisuallyHidden>
           </Dialog.Title>
@@ -193,7 +217,7 @@ export function EditModal({ item, onClose, onUpdate }) {
 
             <div className="edit-modal__divider" />
 
-            {/* Controls */}
+            {/* Controls — Tu Estado (Lista) + Puntuación */}
             <div className="edit-modal__controls">
               <div className="edit-modal__control-group">
                 <label className="edit-modal__label" htmlFor={`modal-status-${draft.id}`}>Tu Estado (Lista)</label>
@@ -202,30 +226,6 @@ export function EditModal({ item, onClose, onUpdate }) {
                   value={draft.estadoUsuario}
                   onValueChange={handleStatus}
                   options={ESTADOS_USUARIO}
-                />
-              </div>
-
-              <div className="edit-modal__control-group">
-                <label className="edit-modal__label">Favorito</label>
-                <button
-                  type="button"
-                  className={`edit-modal__fav-toggle-btn${draft.favorito ? ' edit-modal__fav-toggle-btn--active' : ''}`}
-                  onClick={handleToggleFavorito}
-                  aria-pressed={draft.favorito}
-                  title={draft.favorito ? 'Quitar de favoritos' : 'Marcar como favorito'}
-                >
-                  <Star size={16} fill={draft.favorito ? 'currentColor' : 'none'} />
-                  <span>{draft.favorito ? 'En Favoritos' : 'No favorito'}</span>
-                </button>
-              </div>
-
-              <div className="edit-modal__control-group">
-                <label className="edit-modal__label" htmlFor={`modal-emission-${draft.id}`}>Estado de Emisión</label>
-                <CustomSelect
-                  id={`modal-emission-${draft.id}`}
-                  value={draft.estadoEmision}
-                  onValueChange={handleEmissionStatus}
-                  options={ESTADOS_EMISION}
                 />
               </div>
 
@@ -240,6 +240,7 @@ export function EditModal({ item, onClose, onUpdate }) {
               </div>
             </div>
 
+            {/* Progreso */}
             <div className="edit-modal__control-group edit-modal__control-group--progress">
               <label className="edit-modal__label" htmlFor={`modal-prog-actual-${draft.id}`}>Progreso ({progressMax} totales)</label>
               <div className="edit-modal__progress-inputs">

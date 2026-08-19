@@ -1,10 +1,11 @@
-﻿import { describe, it, expect } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { filtrarPorSeccion, validarEstadoUsuario, filtrarPorRangoPuntuacion } from './validators.js';
 
 describe('filtrarPorSeccion', () => {
+  // v1.3: favorito y en_emision son estadoUsuario, no campos separados
   const sampleItems = [
     { id: '1', mediaType: 'anime', estadoUsuario: 'por_ver',    favorito: false, estadoEmision: 'unknown'  },
-    { id: '2', mediaType: 'anime', estadoUsuario: 'en_curso',   favorito: true,  estadoEmision: 'airing'   },
+    { id: '2', mediaType: 'anime', estadoUsuario: 'favorito',   favorito: true,  estadoEmision: 'airing'   },
     { id: '3', mediaType: 'anime', estadoUsuario: 'finalizado', favorito: false, estadoEmision: 'complete' },
     { id: '4', mediaType: 'anime', estadoUsuario: 'pausado',    favorito: false, estadoEmision: 'unknown'  },
     { id: '5', mediaType: 'anime', estadoUsuario: 'dropeado',   favorito: false, estadoEmision: 'unknown'  },
@@ -19,7 +20,7 @@ describe('filtrarPorSeccion', () => {
     expect(filtrarPorSeccion(sampleItems, 'por_ver', 'anime').map((i) => i.id)).toEqual(['1']);
   });
   it('filters en_curso items', () => {
-    expect(filtrarPorSeccion(sampleItems, 'en_curso', 'anime').map((i) => i.id)).toEqual(['2']);
+    expect(filtrarPorSeccion(sampleItems, 'en_curso', 'anime').map((i) => i.id)).toEqual([]);
   });
   it('completado section returns all — fallback a default case', () => {
     expect(filtrarPorSeccion(sampleItems, 'completado', 'anime')).toHaveLength(7);
@@ -27,11 +28,13 @@ describe('filtrarPorSeccion', () => {
   it('items migrados de completado aparecen en finalizado (Regla migracion v1.2)', () => {
     expect(filtrarPorSeccion(sampleItems, 'finalizado', 'anime').map((i) => i.id)).toEqual(['3', '7']);
   });
-  it('filters favorito items', () => {
+  // v1.3: favorito filtra por estadoUsuario='favorito'
+  it('filters favorito items by estadoUsuario (v1.3)', () => {
     expect(filtrarPorSeccion(sampleItems, 'favorito', 'anime').map((i) => i.id)).toEqual(['2']);
   });
-  it('filters en_emision items', () => {
-    expect(filtrarPorSeccion(sampleItems, 'en_emision', 'anime').map((i) => i.id)).toEqual(['2', '6']);
+  // v1.3: en_emision filtra por estadoUsuario='en_emision', NO por estadoEmision API
+  it('filters en_emision items by estadoUsuario (v1.3 — ignora API)', () => {
+    expect(filtrarPorSeccion(sampleItems, 'en_emision', 'anime').map((i) => i.id)).toEqual(['6']);
   });
   it('filters finalizado items by estadoUsuario (Regla 6 v1.1)', () => {
     expect(filtrarPorSeccion(sampleItems, 'finalizado', 'anime').map((i) => i.id)).toEqual(['3', '7']);
@@ -45,8 +48,8 @@ describe('filtrarPorSeccion', () => {
 });
 
 describe('validarEstadoUsuario', () => {
-  it('acepta todos los estados validos', () => {
-    for (const e of ['por_ver', 'en_curso', 'finalizado', 'pausado', 'dropeado']) {
+  it('acepta todos los estados validos (v1.3: incluye en_emision y favorito)', () => {
+    for (const e of ['por_ver', 'en_emision', 'en_curso', 'favorito', 'finalizado', 'pausado', 'dropeado']) {
       expect(validarEstadoUsuario(e).valid).toBe(true);
     }
   });

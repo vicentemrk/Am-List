@@ -43,10 +43,12 @@ function ItemCardComponent({ item, onUpdate, onRemove, onEdit, onDetail, isDragg
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [statusMenuOpen]);
 
-  /** Opciones del menú de estado (sin 'completado' — eliminado del tablist en v1.1) */
+  /** Opciones del menú de estado (v1.3: incluye en_emision y favorito como estados de usuario) */
   const STATUS_MENU_OPTIONS = [
     { value: 'por_ver',    label: 'Por ver' },
+    { value: 'en_emision', label: 'En emisión' },
     { value: 'en_curso',   label: 'En curso' },
+    { value: 'favorito',   label: 'Favorito ★' },
     { value: 'finalizado', label: 'Finalizado' },
     { value: 'pausado',    label: 'Pausado' },
     { value: 'dropeado',   label: 'Dropeado' },
@@ -341,21 +343,6 @@ function ItemCardComponent({ item, onUpdate, onRemove, onEdit, onDetail, isDragg
                       </button>
                     );
                   })}
-                  <div className="item-card__status-divider" />
-                  <button
-                    className={`item-card__status-option item-card__status-option--favorito${item.favorito ? ' item-card__status-option--active' : ''}`}
-                    role="option"
-                    aria-selected={item.favorito}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onUpdate(item.id, { favorito: !item.favorito });
-                      setStatusMenuOpen(false);
-                    }}
-                  >
-                    <Star size={14} fill={item.favorito ? 'currentColor' : 'none'} />
-                    <span className="item-card__status-option-label">Favorito</span>
-                    {item.favorito && <span className="item-card__status-check" aria-hidden="true">✓</span>}
-                  </button>
                 </div>
               )}
             </div>

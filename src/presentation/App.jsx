@@ -14,6 +14,7 @@ import { useItems } from './hooks/useItems.js';
 import { useToast } from './hooks/useToast.js';
 import { useOnlineStatus } from './hooks/useOnlineStatus.js';
 import { useAppRouter } from './hooks/useAppRouter.js';
+import { useTranslation } from './hooks/useTranslation.js';
 import { restoreSnapshot } from '../data/snapshotRepository.js';
 
 export default function App() {
@@ -22,6 +23,7 @@ export default function App() {
   const { toast, showToast, hideToast } = useToast();
   const isOnline = useOnlineStatus();
   const { activePage, activeSection, setMedia, setSection } = useAppRouter();
+  const { translationEnabled, toggleTranslation } = useTranslation();
 
   const handleAdd = (item) => {
     const res = addItem(item);
@@ -96,6 +98,8 @@ export default function App() {
         onAdd={handleAdd}
         onRemove={handleRemove}
         onImport={handleImport}
+        translationEnabled={translationEnabled}
+        onToggleTranslation={toggleTranslation}
       >
         {activePage === 'anime' ? (
           <AnimeListPage
@@ -104,6 +108,7 @@ export default function App() {
             getFiltered={getFiltered}
             activeSection={activeSection}
             onSectionChange={setSection}
+            translationEnabled={translationEnabled}
           />
         ) : (
           <MangaListPage
@@ -112,6 +117,7 @@ export default function App() {
             getFiltered={getFiltered}
             activeSection={activeSection}
             onSectionChange={setSection}
+            translationEnabled={translationEnabled}
           />
         )}
       </AppShell>

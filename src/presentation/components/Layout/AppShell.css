@@ -69,6 +69,61 @@
   gap: 0.5rem;
 }
 
+/* ── Toggle ES/EN de traducción ────────────────────────────────────────────── */
+.app-header__translation-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.12s, box-shadow 0.15s;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.app-header__translation-btn:hover {
+  background: var(--bg);
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+  transform: translateY(-1px);
+}
+
+/* ES activo: morado de la app */
+.app-header__translation-btn--active {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: #ffffff;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--accent-primary) 35%, transparent);
+}
+
+.app-header__translation-btn--active:hover {
+  background: var(--accent-primary);
+  filter: brightness(1.08);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.app-header__translation-btn:active {
+  transform: translateY(0);
+}
+
+.app-header__translation-btn:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+.app-header__translation-text {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+
 /* ── Sidebar overlay (mobile) ─────────────────────────────────────────────── */
 .sidebar-overlay {
   position: fixed;

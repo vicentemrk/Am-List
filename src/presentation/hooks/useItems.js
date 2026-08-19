@@ -67,17 +67,48 @@ export function useItems() {
   const updateItem = useCallback((id, patch) => {
     try {
       const prev = repo.getById(id);
-      const updated = repo.update(id, patch);
+
+      // ── Máquina de estados: favorito ↔ estadoUsuario ──────────────────────
+      let enrichedPatch = { ...patch };
+
+      // Caso 1: Botón estrella en ItemCard → solo viene patch.favorito (sin estadoUsuario)
+      if (patch.favorito !== undefined && patch.estadoUsuario === undefined) {
+        if (patch.favorito === true && prev && prev.estadoUsuario !== 'favorito') {
+          // Marcar favorito: mover a 'favorito' y guardar estado previo
+          enrichedPatch.estadoUsuario = 'favorito';
+          enrichedPatch.estadoAnterior = prev.estadoUsuario;
+        } else if (patch.favorito === false && prev && prev.estadoUsuario === 'favorito') {
+          // Desmarcar favorito: restaurar a 'por_ver' (Regla acordada A1b)
+          enrichedPatch.estadoUsuario = prev.estadoAnterior || 'por_ver';
+          enrichedPatch.estadoAnterior = '';
+        }
+      }
+
+      // Caso 2: Cambio de estadoUsuario desde modal → sincronizar favorito boolean
+      if (patch.estadoUsuario !== undefined && patch.favorito === undefined) {
+        if (patch.estadoUsuario === 'favorito' && prev && prev.estadoUsuario !== 'favorito') {
+          enrichedPatch.favorito = true;
+          enrichedPatch.estadoAnterior = prev.estadoUsuario;
+        } else if (patch.estadoUsuario !== 'favorito' && prev && prev.estadoUsuario === 'favorito') {
+          enrichedPatch.favorito = false;
+          enrichedPatch.estadoAnterior = '';
+        } else if (patch.estadoUsuario !== 'favorito') {
+          enrichedPatch.favorito = false;
+        }
+      }
+      // ─────────────────────────────────────────────────────────────────────
+
+      const updated = repo.update(id, enrichedPatch);
       setItems(repo.getAll());
 
       if (prev) {
         let eventsLogged = 0;
 
         // 1. Cambio de Estado Personal
-        if (patch.estadoUsuario !== undefined && prev.estadoUsuario !== updated.estadoUsuario) {
+        if (enrichedPatch.estadoUsuario !== undefined && prev.estadoUsuario !== updated.estadoUsuario) {
           const labelMap = {
-            por_ver: 'Por ver', en_curso: 'En curso',
-            finalizado: 'Finalizado', pausado: 'Pausado', dropeado: 'Dropeado'
+            por_ver: 'Por ver', en_emision: 'En emisión', en_curso: 'En curso',
+            favorito: 'Favorito', finalizado: 'Finalizado', pausado: 'Pausado', dropeado: 'Dropeado'
           };
           const newLabel = labelMap[updated.estadoUsuario] ?? updated.estadoUsuario;
           appendHistory(construirEntradaHistorial(updated, 'estado_cambiado', `Cambió estado a "${newLabel}"`));
@@ -102,8 +133,8 @@ export function useItems() {
           eventsLogged++;
         }
 
-        // 4. Cambio de Favorito
-        if (patch.favorito !== undefined && prev.favorito !== updated.favorito) {
+        // 4. Cambio de Favorito (registrado solo si cambia visualmente)
+        if (enrichedPatch.favorito !== undefined && prev.favorito !== updated.favorito) {
           const favText = updated.favorito ? 'Marcado como favorito' : 'Quitado de favoritos';
           appendHistory(construirEntradaHistorial(updated, 'favorito', favText));
           eventsLogged++;
@@ -133,6 +164,7 @@ export function useItems() {
       return { success: false, message: err.message };
     }
   }, []);
+
 
   // ── Operación: Eliminar ──────────────────────────────────────────────────────
   /**

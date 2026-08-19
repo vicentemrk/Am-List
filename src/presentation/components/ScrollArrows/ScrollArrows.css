@@ -1,0 +1,58 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   MÓDULO: ScrollArrows.css — Botones flotantes de navegación rápida
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.scroll-arrows {
+  position: fixed;
+  bottom: 7rem;   /* Encima del FAB (bottom: 2rem + alto FAB ~3.5rem + margen) */
+  right: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  z-index: 90;    /* Por debajo del FAB (z-index: 100) */
+  animation: scrollArrowsFadeIn 0.25s ease;
+}
+
+.scroll-arrows__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  border: 1px solid var(--outline-variant, var(--border));
+  background: var(--surface-container-high, var(--surface));
+  color: var(--text-muted);
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition: background 0.18s ease, color 0.18s ease, transform 0.15s ease, border-color 0.18s ease;
+}
+
+.scroll-arrows__btn:hover {
+  background: var(--accent-primary);
+  color: #ffffff;
+  border-color: var(--accent-primary);
+  transform: scale(1.08);
+}
+
+.scroll-arrows__btn:active {
+  transform: scale(0.94);
+}
+
+.scroll-arrows__btn:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+@keyframes scrollArrowsFadeIn {
+  from { opacity: 0; transform: translateX(8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ── Mobile: ajuste de posición cuando el FAB está más cerca del borde ────── */
+@media (max-width: 768px) {
+  .scroll-arrows {
+    bottom: 6rem;
+    right: 1.25rem;
+  }
+}

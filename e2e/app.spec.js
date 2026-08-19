@@ -46,18 +46,19 @@ test.describe('AMlist E2E Suite', () => {
     await expect(finalizadoTab).toHaveAttribute('aria-selected', 'true');
   });
 
-  test('muestra el boton de campana de novedades (Changelog v1.2)', async ({ page }) => {
-    const bellBtn = page.getByRole('button', { name: 'Novedades de versión' });
-    await expect(bellBtn).toBeVisible();
+  test('muestra el boton de toggle ES/EN de traduccion y cambia estado', async ({ page }) => {
+    // El botón debe mostrar 'ES' (traducción activa por defecto)
+    const esBtn = page.getByRole('button', { name: /Traducción activa/i });
+    await expect(esBtn).toBeVisible();
 
-    await bellBtn.click();
-    // Modal de novedades abre
-    const modalHeading = page.getByRole('heading', { name: 'Novedades', exact: true });
-    await expect(modalHeading).toBeVisible();
+    // Después de un click, debe cambiar a EN (sin traducción)
+    await esBtn.click();
+    const enBtn = page.getByRole('button', { name: /Sinopsis en inglés/i });
+    await expect(enBtn).toBeVisible();
 
-    // Boton Entendido para cerrar
-    await page.getByRole('button', { name: 'Entendido' }).click();
-    await expect(modalHeading).not.toBeVisible();
+    // Un click adicional vuelve a ES
+    await enBtn.click();
+    await expect(page.getByRole('button', { name: /Traducción activa/i })).toBeVisible();
   });
 
   test('funcionalidad de busqueda local en el toolbar', async ({ page }) => {

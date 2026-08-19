@@ -9,7 +9,8 @@ import { ImportButton } from '../ImportButton/ImportButton.jsx';
 import { HistorialModal } from '../HistorialModal/HistorialModal.jsx';
 import { AddModal } from '../AddModal/AddModal.jsx';
 import { FloatingActionButton } from '../FloatingActionButton/FloatingActionButton.jsx';
-import { Menu, History, Code } from 'lucide-react';
+import { ScrollArrows } from '../ScrollArrows/ScrollArrows.jsx';
+import { Menu, History, Code, Languages } from 'lucide-react';
 import faviconUrl from '/favicon.svg';
 import './AppShell.css';
 
@@ -20,7 +21,7 @@ const NAV_ITEMS = [
   { id: 'manga', label: 'Lista de Mangas' },
 ];
 
-export function AppShell({ theme, onToggleTheme, items, children, activePage, onPageChange, onAdd, onRemove, onImport }) {
+export function AppShell({ theme, onToggleTheme, items, children, activePage, onPageChange, onAdd, onRemove, onImport, translationEnabled, onToggleTranslation }) {
   const [historialOpen, setHistorialOpen] = useState(false);
   const [sidebarOpen,   setSidebarOpen]   = useState(false);
   const [addModalOpen,  setAddModalOpen]  = useState(false);
@@ -28,10 +29,10 @@ export function AppShell({ theme, onToggleTheme, items, children, activePage, on
 
   const handleOpenAdd = () => setAddModalOpen(true);
 
-  // Clone children and inject onOpenAdd so the list page header can open the modal
+  // Clone children and inject onOpenAdd + translationEnabled so child pages receive them
   const childrenWithProps = React.Children.map(children, (child) =>
     React.isValidElement(child)
-      ? React.cloneElement(child, { onOpenAdd: handleOpenAdd })
+      ? React.cloneElement(child, { onOpenAdd: handleOpenAdd, translationEnabled })
       : child
   );
 
@@ -54,6 +55,16 @@ export function AppShell({ theme, onToggleTheme, items, children, activePage, on
         </div>
 
         <div className="app-header__actions">
+          {/* ── Botón toggle de traducción ES/EN (a la izquierda de Importar) ── */}
+          <button
+            className={`app-header__translation-btn${translationEnabled ? ' app-header__translation-btn--active' : ''}`}
+            onClick={onToggleTranslation}
+            aria-label={translationEnabled ? 'Traducción activa (ES) — click para ver en inglés' : 'Sinopsis en inglés (EN) — click para traducir al español'}
+            title={translationEnabled ? 'Cambiar a inglés (EN)' : 'Traducir al español (ES)'}
+          >
+            <Languages size={18} />
+            <span className="app-header__translation-text">{translationEnabled ? 'ES' : 'EN'}</span>
+          </button>
           <ImportButton onImport={onImport} />
           <ExportButton items={items} />
           <ThemeToggle theme={theme} onToggle={onToggleTheme} />
@@ -151,6 +162,9 @@ export function AppShell({ theme, onToggleTheme, items, children, activePage, on
           ariaLabel={`Agregar ${activePage}`}
         />
       </div>
+
+      {/* ── Flechas de scroll rápido (siempre visibles si hay contenido) ─────── */}
+      <ScrollArrows />
 
       <AddModal
         isOpen={addModalOpen}

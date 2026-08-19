@@ -8,18 +8,26 @@ import { CustomSelect } from '../components/Select/CustomSelect.jsx';
 import { ScoreRangeSlider } from '../components/ScoreRangeSlider/ScoreRangeSlider.jsx';
 import { SECCIONES } from '../../domain/itemSchema.js';
 import { filtrarPorRangoPuntuacion } from '../../domain/validators.js';
-import { getSortPreference, setSortPreference } from '../../data/sortRepository.js';
+import { getSortPreference, setSortPreference, getSortDirection, setSortDirection } from '../../data/sortRepository.js';
 import { useViewDensity } from '../hooks/useViewDensity.js';
 import './ListPage.css';
 
 
 
+/**
+ * Opciones de ordenamiento con separador + opciones de dirección ASC/DESC.
+ * Las opciones dir_asc y dir_desc son interceptadas en handleSortChange
+ * y no modifican sortBy sino sortDir.
+ */
 const SORT_OPTIONS = [
   { value: 'recent', label: 'Agregado recientemente' },
   { value: 'manual', label: 'Orden personalizado' },
   { value: 'title', label: 'Título (A-Z)' },
   { value: 'score', label: 'Puntuación' },
   { value: 'progress', label: 'Progreso' },
+  { type: 'separator' },
+  { value: 'dir_asc', label: '↑ Ascendente' },
+  { value: 'dir_desc', label: '↓ Descendente' },
 ];
 
 export function ItemListPage({
@@ -30,24 +38,38 @@ export function ItemListPage({
   onOpenAdd,
   activeSection: controlledSection,
   onSectionChange: setControlledSection,
+  translationEnabled = true,
 }) {
   const [internalSection, setInternalSection] = useState('all');
   const activeSection = controlledSection !== undefined ? controlledSection : internalSection;
   const setActiveSection = setControlledSection ?? setInternalSection;
 
   const [sortBy, setSortBy] = useState(() => getSortPreference());
+  const [sortDir, setSortDir] = useState(() => getSortDirection());
   const { density, toggleDensity } = useViewDensity();
   const [scoreRange, setScoreRange] = useState([1, 10]);
-
 
   const [editingItem, setEditingItem] = useState(null);
   const [detailItem, setDetailItem] = useState(null);
   const [localSearch, setLocalSearch] = useState('');
   const [selectedTags, setSelectedTags] = useState([]);
 
+  /**
+   * Maneja cambios del select de ordenamiento.
+   * Si el valor es 'dir_asc' o 'dir_desc', actualiza la dirección (sortDir).
+   * De lo contrario, actualiza el criterio de ordenamiento (sortBy).
+   */
   const handleSortChange = (value) => {
-    setSortBy(value);
-    setSortPreference(value);
+    if (value === 'dir_asc') {
+      setSortDir('asc');
+      setSortDirection('asc');
+    } else if (value === 'dir_desc') {
+      setSortDir('desc');
+      setSortDirection('desc');
+    } else {
+      setSortBy(value);
+      setSortPreference(value);
+    }
   };
 
 
@@ -107,24 +129,28 @@ export function ItemListPage({
       });
     }
 
+    // Dirección: 1 = descending (default), -1 = ascending
+    const dirMultiplier = sortDir === 'asc' ? -1 : 1;
+
     return [...items].sort((a, b) => {
       if (sortBy === 'manual') {
-        return (a.ordenManual || 0) - (b.ordenManual || 0);
+        return dirMultiplier * ((a.ordenManual || 0) - (b.ordenManual || 0));
       }
       if (sortBy === 'title') {
-        return a.titulo.localeCompare(b.titulo);
+        return dirMultiplier * a.titulo.localeCompare(b.titulo);
       }
       if (sortBy === 'score') {
-        return (b.puntuacion || 0) - (a.puntuacion || 0);
+        return dirMultiplier * ((b.puntuacion || 0) - (a.puntuacion || 0));
       }
       if (sortBy === 'progress') {
         const progA = a.progreso?.maximo ? a.progreso.actual / a.progreso.maximo : a.progreso?.actual || 0;
         const progB = b.progreso?.maximo ? b.progreso.actual / b.progreso.maximo : b.progreso?.actual || 0;
-        return progB - progA;
+        return dirMultiplier * (progB - progA);
       }
-      return new Date(b.creadoEn || 0).getTime() - new Date(a.creadoEn || 0).getTime();
+      // recent: más nuevo primero (desc) → b - a, con dirMultiplier invierte
+      return dirMultiplier * (new Date(b.creadoEn || 0).getTime() - new Date(a.creadoEn || 0).getTime());
     });
-  }, [getFiltered, activeSection, media, sortBy, localSearch, selectedTags, scoreRange]);
+  }, [getFiltered, activeSection, media, sortBy, sortDir, localSearch, selectedTags, scoreRange]);
 
 
   const handleDragStart = (e, id) => {
@@ -177,6 +203,7 @@ export function ItemListPage({
             </p>
           </div>
 
+          {/* Botón Agregar — visible en desktop y en móvil (con icono siempre) */}
           <button
             className="list-page__add-btn list-page__add-btn--expanded"
             onClick={onOpenAdd}
@@ -200,13 +227,14 @@ export function ItemListPage({
               aria-label="Buscar por título, etiqueta o descripción"
             />
           </div>
-          {/* Selector de ordenamiento */}
+          {/* Selector de ordenamiento — incluye ASC/DESC con separador */}
           <div className="list-page__sort-wrap">
             <span className="list-page__sort-label">Ordenar por:</span>
             <CustomSelect
               value={sortBy}
               onValueChange={handleSortChange}
               options={SORT_OPTIONS}
+              checkedValues={[sortDir === 'asc' ? 'dir_asc' : 'dir_desc']}
             />
           </div>
           {/* Filtro de puntuación personal (Fase 3) */}
@@ -294,7 +322,7 @@ export function ItemListPage({
 
       <EditModal item={editingItem} onClose={() => setEditingItem(null)} onUpdate={handleUpdate} />
 
-      <DetailModal item={detailItem} isOpen={Boolean(detailItem)} onClose={() => setDetailItem(null)} onUpdate={handleUpdate} onEdit={setEditingItem} />
+      <DetailModal item={detailItem} isOpen={Boolean(detailItem)} onClose={() => setDetailItem(null)} onUpdate={handleUpdate} onEdit={setEditingItem} translationEnabled={translationEnabled} />
     </div>
   );
 }

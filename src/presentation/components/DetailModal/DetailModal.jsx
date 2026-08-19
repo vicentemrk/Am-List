@@ -10,16 +10,20 @@
  *   - Migrado a Radix UI Dialog: focus trap, Escape, aria-modal y body scroll
  *     lock son manejados automáticamente por @radix-ui/react-dialog.
  *   - `framer-motion` sigue animando el contenido interno (scale + opacity).
- *   - AnimatePresence ya no es necesario — Radix controla el ciclo de vida.
+ *   - v1.3: Se eliminó el badge de estadoEmision. Solo se muestra estadoUsuario.
+ *   - v1.3: La traducción de sinopsis es completamente diferida (setTimeout)
+ *     para no bloquear la animación de apertura en móvil.
+ *   - v1.3: history.pushState al abrir para que el botón Atrás en móvil
+ *     cierre el modal en lugar de salir de la app.
  * ============================================================================
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import * as Dialog from '@radix-ui/react-dialog';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { X, Star, Plus, Tag, Pencil } from 'lucide-react';
-import { ESTADOS_USUARIO, ESTADOS_EMISION } from '../../../domain/itemSchema.js';
+import { ESTADOS_USUARIO } from '../../../domain/itemSchema.js';
 import { translateGenres } from '../../../domain/genreTranslator.js';
 import { translateToSpanish } from '../../../data/translationService.js';
 import './DetailModal.css';
@@ -32,35 +36,69 @@ import './DetailModal.css';
  * @param {Function}     props.onUpdate - Actualiza el ítem (id, patch).
  * @param {Function}    [props.onEdit]   - Abre el modal de edición para este ítem.
  */
-export function DetailModal({ item, isOpen, onClose, onUpdate, onEdit }) {
+export function DetailModal({ item, isOpen, onClose, onUpdate, onEdit, translationEnabled = true }) {
   const [synopsis, setSynopsis] = useState(item?.sinopsis || '');
+  // Ref para evitar actualizaciones tras desmontaje
+  const mountedRef = useRef(true);
 
-  // Efecto de traducción automática de la sinopsis en segundo plano
+  // ── history.pushState para que el botón Atrás en móvil cierre el modal ──────
+  const historyPushedRef = useRef(false);
+
+  useEffect(() => {
+    if (isOpen && !historyPushedRef.current) {
+      history.pushState({ detailModal: true }, '');
+      historyPushedRef.current = true;
+
+      const handlePopState = (e) => {
+        // El usuario presionó Atrás: cerramos el modal en lugar de salir
+        if (e.state?.detailModal !== true) {
+          onClose();
+          historyPushedRef.current = false;
+        }
+      };
+      window.addEventListener('popstate', handlePopState);
+      return () => window.removeEventListener('popstate', handlePopState);
+    }
+
+    if (!isOpen && historyPushedRef.current) {
+      historyPushedRef.current = false;
+    }
+  }, [isOpen, onClose]);
+
+  // ── Traducción diferida — NO bloquea la animación de apertura ─────────────────
   useEffect(() => {
     if (!isOpen || !item?.sinopsis) return;
-    let isSubscribed = true;
+
+    mountedRef.current = true;
+    // Establecer sinopsis original INMEDIATAMENTE (apertura rápida)
     setSynopsis(item.sinopsis);
 
-    translateToSpanish(item.sinopsis).then((translated) => {
-      if (isSubscribed && translated && translated !== item.sinopsis) {
-        setSynopsis(translated);
-        if (onUpdate && item.id) {
-          onUpdate(item.id, { sinopsis: translated });
+    // Si la traducción está desactivada (EN), no traducir
+    if (!translationEnabled) return;
+
+    // Diferir la traducción para que no bloquee el render inicial
+    const translationTimer = setTimeout(() => {
+      translateToSpanish(item.sinopsis).then((translated) => {
+        if (mountedRef.current && translated && translated !== item.sinopsis) {
+          setSynopsis(translated);
+          if (onUpdate && item.id) {
+            onUpdate(item.id, { sinopsis: translated });
+          }
         }
-      }
-    });
+      });
+    }, 300); // 300ms de delay: la animación ya terminó
 
     return () => {
-      isSubscribed = false;
+      mountedRef.current = false;
+      clearTimeout(translationTimer);
     };
-  }, [isOpen, item?.id, item?.sinopsis, onUpdate]);
+  }, [isOpen, item?.id, item?.sinopsis, onUpdate, translationEnabled]);
 
   if (!item) return null;
 
-  /** Etiquetas amigables de estado */
-  const estadoLabel  = ESTADOS_USUARIO.find((e) => e.value === item.estadoUsuario)?.label ?? item.estadoUsuario;
-  const emisionLabel = ESTADOS_EMISION.find((e) => e.value === item.estadoEmision)?.label  ?? item.estadoEmision;
-  const genres       = translateGenres(item.genres || []);
+  /** Label del estado del usuario */
+  const estadoLabel = ESTADOS_USUARIO.find((e) => e.value === item.estadoUsuario)?.label ?? item.estadoUsuario;
+  const genres = translateGenres(item.genres || []);
 
   /** Operación rápida +1 episodio/capítulo */
   const handlePlusOne = () => {
@@ -88,10 +126,10 @@ export function DetailModal({ item, isOpen, onClose, onUpdate, onEdit }) {
           <Dialog.Content asChild onEscapeKeyDown={onClose} onPointerDownOutside={onClose}>
             <motion.div
               className="detail-modal-card"
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ duration: 0.22, ease: 'easeOut' }}
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.96 }}
+              transition={{ duration: 0.18, ease: 'easeOut' }}
             >
               {/* Títulos ocultos para lectores de pantalla */}
               <Dialog.Title asChild>
@@ -107,9 +145,9 @@ export function DetailModal({ item, isOpen, onClose, onUpdate, onEdit }) {
               <div className="detail-modal-header">
                 <div>
                   <h2 className="detail-modal-title">{item.titulo}</h2>
+                  {/* v1.3: Solo se muestra el estado del usuario, sin badge de emisión API */}
                   <div className="detail-modal-meta-row" style={{ marginTop: '0.5rem' }}>
                     <span className="detail-badge detail-badge--purple">{estadoLabel}</span>
-                    <span className="detail-badge detail-badge--gold">{emisionLabel}</span>
                   </div>
                 </div>
                 <div className="detail-modal-header-actions">

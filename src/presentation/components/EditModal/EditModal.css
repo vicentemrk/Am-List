@@ -116,9 +116,9 @@
 }
 
 .edit-modal__fav-btn--active {
-  background: rgba(250, 204, 21, 0.9);
-  color: #000;
-  border-color: rgba(250, 204, 21, 1);
+  background: rgba(90, 53, 212, 0.85);  /* --accent-primary purple */
+  color: #ffffff;
+  border-color: rgba(90, 53, 212, 1);
 }
 
 .edit-modal__thumb--placeholder {
