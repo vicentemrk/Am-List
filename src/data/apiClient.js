@@ -5,6 +5,7 @@
  */
 
 import { translateGenres } from '../domain/genreTranslator.js';
+import { inferItemType } from '../domain/itemSchema.js';
 
 const ANILIST_BASE_URL = 'https://graphql.anilist.co';
 const KITSU_BASE_URL = 'https://kitsu.io/api/edge';
@@ -85,15 +86,39 @@ function mapAniListStatus(status) {
   return 'unknown';
 }
 
+function mapAniListTipo(raw, mediaType) {
+  const format = (raw.format || '').toUpperCase();
+  const country = (raw.countryOfOrigin || '').toUpperCase();
+
+  if (mediaType === 'manga') {
+    if (country === 'KR') return 'Manhwa';
+    if (country === 'CN' || country === 'TW' || country === 'HK') return 'Manhua';
+    if (format === 'NOVEL') return 'Novela';
+    if (format === 'ONE_SHOT') return 'One-shot';
+    return 'Manga';
+  } else {
+    if (format === 'MOVIE') return 'Película';
+    if (format === 'OVA') return 'OVA';
+    if (format === 'ONA') return 'ONA';
+    if (format === 'SPECIAL') return 'Especial';
+    if (format === 'MUSIC') return 'Music';
+    if (format === 'TV' || format === 'TV_SHORT') return 'TV';
+    return 'Anime';
+  }
+}
+
 function normalizeAniList(raw, mediaType) {
   // Use idMal if available, otherwise fallback to 'al' prefix so we don't conflict.
   // The app uses `malId` to construct `${mediaType}_${malId}`.
   const malId = raw.idMal ? raw.idMal : `al${raw.id}`;
-  
+  const titulo = raw.title?.english || raw.title?.romaji || raw.title?.native || '';
+  const detectedTipo = mapAniListTipo(raw, mediaType) || inferItemType({ titulo, mediaType });
+
   return {
     malId:         malId,
     mediaType:     mediaType,
-    titulo:        raw.title?.english || raw.title?.romaji || raw.title?.native || '',
+    tipo:          detectedTipo,
+    titulo:        titulo,
     imagen:        raw.coverImage?.large || raw.coverImage?.medium || '',
     estadoEmision: mapAniListStatus(raw.status),
     progreso: {
@@ -147,6 +172,7 @@ async function searchAniList(q, type, signal) {
           title { romaji english native userPreferred }
           coverImage { large medium }
           countryOfOrigin
+          format
           status
           episodes
           chapters
@@ -194,12 +220,33 @@ function mapKitsuStatus(status) {
   return 'unknown';
 }
 
+function mapKitsuTipo(raw, mediaType) {
+  const attrs = raw.attributes || {};
+  const subtype = (attrs.subtype || attrs.mangaType || attrs.showType || '').toLowerCase();
+  if (subtype === 'manhwa') return 'Manhwa';
+  if (subtype === 'manhua') return 'Manhua';
+  if (subtype === 'novel') return 'Novela';
+  if (subtype === 'oneshot') return 'One-shot';
+  if (subtype === 'doujin') return 'Doujinshi';
+  if (subtype === 'manga') return 'Manga';
+  if (subtype === 'movie') return 'Película';
+  if (subtype === 'special') return 'Especial';
+  if (subtype === 'ova') return 'OVA';
+  if (subtype === 'ona') return 'ONA';
+  if (subtype === 'tv') return 'TV';
+  return mediaType === 'anime' ? 'Anime' : 'Manga';
+}
+
 function normalizeKitsu(raw, mediaType) {
   const attrs = raw.attributes || {};
+  const titulo = attrs.canonicalTitle || attrs.en || attrs.en_jp || '';
+  const detectedTipo = mapKitsuTipo(raw, mediaType) || inferItemType({ titulo, mediaType });
+
   return {
     malId:         `kitsu_${raw.id}`,
     mediaType:     mediaType,
-    titulo:        attrs.canonicalTitle || attrs.en || attrs.en_jp || '',
+    tipo:          detectedTipo,
+    titulo:        titulo,
     imagen:        attrs.posterImage?.large || attrs.posterImage?.small || '',
     estadoEmision: mapKitsuStatus(attrs.status),
     progreso: {
@@ -242,6 +289,16 @@ function mapMangaDexStatus(status) {
   return 'unknown';
 }
 
+function mapMangaDexTipo(raw) {
+  const attrs = raw.attributes || {};
+  const lang = (attrs.originalLanguage || '').toLowerCase();
+  if (lang === 'ko') return 'Manhwa';
+  if (lang === 'zh' || lang === 'zh-hk' || lang === 'zh-ro') return 'Manhua';
+  if (lang === 'ja') return 'Manga';
+  if (lang === 'en') return 'Cómic';
+  return 'Manga';
+}
+
 function normalizeMangaDex(raw) {
   const attrs = raw.attributes || {};
   const coverRel = (raw.relationships || []).find(r => r.type === 'cover_art');
@@ -253,10 +310,12 @@ function normalizeMangaDex(raw) {
 
   // Extraer el mejor título disponible (en, romaji o el primero disponible)
   const mainTitle = attrs.title?.en || attrs.title?.['ja-ro'] || attrs.title?.['ko-ro'] || attrs.title?.['zh-ro'] || Object.values(attrs.title || {})[0] || '';
+  const detectedTipo = mapMangaDexTipo(raw) || inferItemType({ titulo: mainTitle, mediaType: 'manga', tags: rawTags });
 
   return {
     malId:         `md_${raw.id}`,
     mediaType:     'manga',
+    tipo:          detectedTipo,
     titulo:        mainTitle,
     imagen:        imagen,
     estadoEmision: mapMangaDexStatus(attrs.status),

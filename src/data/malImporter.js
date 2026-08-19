@@ -3,7 +3,7 @@
  * Lógica para leer y parsear un archivo XML exportado desde MyAnimeList con sanitización.
  */
 
-import { DEFAULT_ITEM } from '../domain/itemSchema.js';
+import { DEFAULT_ITEM, inferItemType } from '../domain/itemSchema.js';
 import { sanitizeText } from '../domain/sanitizer.js';
 
 /**
@@ -15,10 +15,30 @@ function mapMalStatus(malStatus) {
   if (s === 'watching' || s === 'reading') return 'en_curso';
   if (s === 'completed') return 'finalizado';
 
-  if (s === 'on-hold') return 'pausado';
+  if (s === 'on-hold' || s === 'on hold') return 'pausado';
   if (s === 'dropped') return 'dropeado';
   if (s === 'plan to watch' || s === 'plan to read') return 'por_ver';
   return 'por_ver';
+}
+
+/**
+ * Mapea el tipo de serie de MyAnimeList.
+ */
+function mapMalSeriesType(typeStr) {
+  if (!typeStr) return '';
+  const s = typeStr.trim().toLowerCase();
+  if (s === 'tv') return 'TV';
+  if (s === 'movie') return 'Película';
+  if (s === 'ova') return 'OVA';
+  if (s === 'ona') return 'ONA';
+  if (s === 'special') return 'Especial';
+  if (s === 'manga') return 'Manga';
+  if (s === 'manhwa') return 'Manhwa';
+  if (s === 'manhua') return 'Manhua';
+  if (s === 'novel' || s === 'light novel') return 'Novela';
+  if (s === 'one-shot' || s === 'oneshot') return 'One-shot';
+  if (s === 'doujinshi') return 'Doujinshi';
+  return '';
 }
 
 /**
@@ -51,6 +71,7 @@ export async function parseMalXml(file) {
           const node = animeNodes[i];
           const rawMalId = node.querySelector('series_animedb_id')?.textContent;
           const rawTitle = node.querySelector('series_title')?.textContent;
+          const rawType = node.querySelector('series_type')?.textContent;
 
           const malId = sanitizeText(rawMalId, { maxLength: 20 });
           const titulo = sanitizeText(rawTitle, { maxLength: 200 });
@@ -62,6 +83,7 @@ export async function parseMalXml(file) {
           const total = parseInt(node.querySelector('series_episodes')?.textContent || '0', 10);
           const score = parseInt(node.querySelector('my_score')?.textContent || '0', 10);
           const status = sanitizeText(node.querySelector('my_status')?.textContent, { maxLength: 50 });
+          const tipo = mapMalSeriesType(rawType) || inferItemType({ titulo, mediaType: 'anime' });
 
 
           items.push({
@@ -69,6 +91,7 @@ export async function parseMalXml(file) {
             id: `anime_${malId}`,
             malId: Number(malId) || 0,
             mediaType: 'anime',
+            tipo: tipo,
             titulo: titulo,
             puntuacion: score > 0 && score <= 10 ? score : null,
             estadoUsuario: mapMalStatus(status),

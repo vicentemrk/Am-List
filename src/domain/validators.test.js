@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { filtrarPorSeccion, validarEstadoUsuario, filtrarPorRangoPuntuacion } from './validators.js';
+import { getItemType } from './itemSchema.js';
 
 describe('filtrarPorSeccion', () => {
   // v1.3: favorito y en_emision son estadoUsuario, no campos separados
@@ -93,5 +94,34 @@ describe('filtrarPorRangoPuntuacion', () => {
   });
   it('devuelve array vacio si ningun item esta en el rango', () => {
     expect(filtrarPorRangoPuntuacion(items, 8, 9)).toHaveLength(0);
+  });
+});
+
+describe('inferItemType y getItemType', () => {
+  it('infiere Manhwa para Solo Leveling', () => {
+    expect(getItemType({ titulo: 'Solo Leveling', mediaType: 'manga' })).toBe('Manhwa');
+  });
+
+  it('infiere Manhua para Kaiju Qian Dao Huanggu Shengti', () => {
+    expect(getItemType({ titulo: 'Kaiju Qian Dao Huanggu Shengti', mediaType: 'manga' })).toBe('Manhua');
+  });
+
+  it('infiere Manga para Innocents Shounen Juujigun', () => {
+    expect(getItemType({ titulo: 'Innocents Shounen Juujigun', mediaType: 'manga' })).toBe('Manga');
+  });
+
+  it('respeta tipo si ya esta explícitamente seteado', () => {
+    expect(getItemType({ titulo: 'Cualquier Cosa', mediaType: 'manga', tipo: 'Novela' })).toBe('Novela');
+  });
+
+  it('usa countryOfOrigin para determinar Manhwa y Manhua', () => {
+    expect(getItemType({ titulo: 'Obra Coreana', mediaType: 'manga', countryOfOrigin: 'KR' })).toBe('Manhwa');
+    expect(getItemType({ titulo: 'Obra China', mediaType: 'manga', countryOfOrigin: 'CN' })).toBe('Manhua');
+  });
+
+  it('usa format/subType para animes', () => {
+    expect(getItemType({ titulo: 'Película Anime', mediaType: 'anime', format: 'MOVIE' })).toBe('Película');
+    expect(getItemType({ titulo: 'Serie Anime', mediaType: 'anime', format: 'TV' })).toBe('TV');
+    expect(getItemType({ titulo: 'OVA Anime', mediaType: 'anime', format: 'OVA' })).toBe('OVA');
   });
 });

@@ -5,6 +5,7 @@
  */
 import React, { useState } from 'react';
 import { useSearch } from '../../hooks/useSearch.js';
+import { getItemType } from '../../../domain/itemSchema.js';
 import { Star, Plus, Check } from 'lucide-react';
 import './SearchPanel.css';
 
@@ -32,6 +33,7 @@ export function SearchPanel({ mediaType, onAdd, onRemove, existingIds }) {
         id,
         malId:         result.malId,
         mediaType:     result.mediaType,
+        tipo:          result.tipo || getItemType(result),
         titulo:        result.titulo,
         imagen:        result.imagen,
         estadoEmision: result.estadoEmision,
@@ -96,6 +98,7 @@ export function SearchPanel({ mediaType, onAdd, onRemove, existingIds }) {
           {results.map((r) => {
             const id = `${r.mediaType}_${r.malId}`;
             const isAdded = existingIds?.has(id) || addedIds.has(id);
+            const itemTipo = r.tipo || getItemType(r);
 
             return (
               <li key={id} className="search-panel__result">
@@ -110,9 +113,9 @@ export function SearchPanel({ mediaType, onAdd, onRemove, existingIds }) {
                 <div className="search-panel__result-info">
                   <span className="search-panel__result-title">{r.titulo}</span>
                   <div className="search-panel__result-meta">
-
+                    <span className="search-panel__result-type">{itemTipo}</span>
                     {r.score && (
-                      <span className="search-panel__result-score" aria-label={`Puntuación MAL: ${r.score}`}>
+                      <span className="search-panel__result-score" aria-label={`Puntuación: ${r.score}`}>
                         <Star size={12} fill="currentColor" /> {r.score}
                       </span>
                     )}

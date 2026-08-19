@@ -5,7 +5,7 @@
  */
 import React, { useState, useRef, useEffect, memo } from 'react';
 import { Tv, BookOpen, Star, Trash2, Pencil, GripVertical, ClipboardList } from 'lucide-react';
-import { ESTADOS_USUARIO } from '../../../domain/itemSchema.js';
+import { ESTADOS_USUARIO, getItemType } from '../../../domain/itemSchema.js';
 
 
 import { translateGenres } from '../../../domain/genreTranslator.js';
@@ -43,12 +43,11 @@ function ItemCardComponent({ item, onUpdate, onRemove, onEdit, onDetail, isDragg
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [statusMenuOpen]);
 
-  /** Opciones del menú de estado (v1.3: incluye en_emision y favorito como estados de usuario) */
+  /** Opciones del menú de estado */
   const STATUS_MENU_OPTIONS = [
     { value: 'por_ver',    label: 'Por ver' },
     { value: 'en_emision', label: 'En emisión' },
     { value: 'en_curso',   label: 'En curso' },
-    { value: 'favorito',   label: 'Favorito ★' },
     { value: 'finalizado', label: 'Finalizado' },
     { value: 'pausado',    label: 'Pausado' },
     { value: 'dropeado',   label: 'Dropeado' },
@@ -231,7 +230,7 @@ function ItemCardComponent({ item, onUpdate, onRemove, onEdit, onDetail, isDragg
           <span className={`item-card__badge item-card__badge--user ${badgeClass}`}>
             {badgeLabel}
           </span>
-          <span className="item-card__type">{item.mediaType === 'anime' ? 'Anime' : 'Manga'}</span>
+          <span className="item-card__type">{getItemType(item)}</span>
           <div className="item-card__scores-wrap">
             {item.scoreApi && (
               <span className="item-card__score" title="Nota de la comunidad">

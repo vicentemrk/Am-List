@@ -17,7 +17,7 @@ import React, { useEffect, useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { validarProgreso } from '../../../domain/validators.js';
-import { ESTADOS_USUARIO, SCORE_RANGE } from '../../../domain/itemSchema.js';
+import { ESTADOS_USUARIO, SCORE_RANGE, TIPOS_MANGA, TIPOS_ANIME, getItemType } from '../../../domain/itemSchema.js';
 import { CustomSelect } from '../Select/CustomSelect.jsx';
 import { X, Plus, Tv, BookOpen, Star } from 'lucide-react';
 import './EditModal.css';
@@ -49,6 +49,8 @@ export function EditModal({ item, onClose, onUpdate }) {
   const tags = Array.isArray(draft.tags) ? draft.tags : [];
   const genres = Array.isArray(draft.genres) ? draft.genres : [];
   const progressMax = draft.progreso?.maximo != null ? draft.progreso.maximo : '?';
+  const tipoOptions = draft.mediaType === 'manga' ? TIPOS_MANGA : TIPOS_ANIME;
+  const currentTipo = draft.tipo || getItemType(draft);
 
   // ── Handlers ────────────────────────────────────────────────────────────────
   const handleSave = () => {
@@ -60,6 +62,7 @@ export function EditModal({ item, onClose, onUpdate }) {
     // Sincronizar favorito boolean con estadoUsuario al guardar
     const isFavorito = draft.estadoUsuario === 'favorito';
     onUpdate(item.id, {
+      tipo: draft.tipo || currentTipo,
       estadoUsuario: draft.estadoUsuario,
       estadoAnterior: draft.estadoAnterior ?? '',
       favorito: isFavorito,
@@ -73,72 +76,69 @@ export function EditModal({ item, onClose, onUpdate }) {
 
   const handleProgressChange = (field, rawValue) => {
     const value = rawValue === '' ? 0 : Number(rawValue);
-    const newProgreso = { ...draft.progreso, [field]: isNaN(value) ? draft.progreso[field] : value };
-    const check = validarProgreso(newProgreso.actual, newProgreso.maximo);
-    if (!check.valid) { setEditError(check.message); } else { setEditError(''); }
-    setDraft((prev) => ({ ...prev, progreso: newProgreso }));
-  };
-
-  const handleScore = (val) => {
-    const parsed = val === '' ? null : Number(val);
-    setDraft((prev) => ({ ...prev, puntuacion: parsed }));
-  };
-
-  /** Maneja el cambio de estado desde el select, sincronizando el boolean favorito */
-  const handleStatus = (val) => {
-    const isFavorito = val === 'favorito';
-    const prevEstado = draft.estadoUsuario;
     setDraft((prev) => ({
       ...prev,
-      estadoUsuario: val,
-      favorito: isFavorito,
-      estadoAnterior: isFavorito && prevEstado !== 'favorito'
-        ? prevEstado
-        : (isFavorito ? prev.estadoAnterior : ''),
+      progreso: {
+        ...prev.progreso,
+        [field]: field === 'maximo' && rawValue === '' ? null : (isNaN(value) ? 0 : value),
+      },
     }));
   };
 
-  /** Toggle estrella en la portada — sincroniza estadoUsuario ↔ favorito */
+  const handleStatus = (newStatus) => {
+    setDraft((prev) => ({
+      ...prev,
+      estadoUsuario: newStatus,
+      // Si el usuario elige 'favorito', marcar favorito boolean también
+      favorito: newStatus === 'favorito' ? true : prev.favorito,
+    }));
+  };
+
+  const handleTipo = (newTipo) => {
+    setDraft((prev) => ({
+      ...prev,
+      tipo: newTipo,
+    }));
+  };
+
+  const handleScore = (val) => {
+    const num = val === '' ? null : Number(val);
+    setDraft((prev) => ({ ...prev, puntuacion: num }));
+  };
+
   const handleToggleFavorito = () => {
-    const isCurrentlyFav = draft.estadoUsuario === 'favorito';
-    if (isCurrentlyFav) {
-      setDraft((prev) => ({
+    setDraft((prev) => {
+      const nextFav = !prev.favorito;
+      return {
         ...prev,
-        estadoUsuario: prev.estadoAnterior || 'por_ver',
-        favorito: false,
-        estadoAnterior: '',
-      }));
-    } else {
-      setDraft((prev) => ({
-        ...prev,
-        estadoAnterior: prev.estadoUsuario,
-        estadoUsuario: 'favorito',
-        favorito: true,
-      }));
-    }
+        favorito: nextFav,
+        estadoUsuario: nextFav ? 'favorito' : (prev.estadoUsuario === 'favorito' ? 'por_ver' : prev.estadoUsuario),
+        estadoAnterior: nextFav ? (prev.estadoUsuario !== 'favorito' ? prev.estadoUsuario : prev.estadoAnterior) : '',
+      };
+    });
+  };
+
+  const handleAddTag = (e) => {
+    e.preventDefault();
+    const clean = newTag.trim();
+    if (!clean) return;
+    if (tags.length >= MAX_TAGS) return;
+    if (tags.includes(clean)) return;
+
+    setDraft((prev) => ({ ...prev, tags: [...tags, clean] }));
+    setNewTag('');
+  };
+
+  const handleRemoveTag = (tagToRemove) => {
+    setDraft((prev) => ({ ...prev, tags: tags.filter((t) => t !== tagToRemove) }));
   };
 
   const handleDescriptionChange = (e) => {
     setDraft((prev) => ({ ...prev, descripcionPersonal: e.target.value }));
   };
 
-  const handleAddTag = () => {
-    const trimmed = newTag.trim();
-    if (!trimmed || tags.length >= MAX_TAGS || tags.includes(trimmed)) return;
-    setDraft((prev) => ({ ...prev, tags: [...tags, trimmed] }));
-    setNewTag('');
-  };
-
-  const handleRemoveTag = (tag) => {
-    setDraft((prev) => ({ ...prev, tags: tags.filter((t) => t !== tag) }));
-  };
-
-  const handleTagKeyDown = (e) => {
-    if (e.key === 'Enter') { e.preventDefault(); handleAddTag(); }
-  };
-
   return (
-    <Dialog.Root open={!!item} onOpenChange={(open) => { if (!open) onClose(); }}>
+    <Dialog.Root open={Boolean(item)} onOpenChange={(open) => { if (!open) onClose(); }}>
       <Dialog.Portal>
         {/* ── Overlay (backdrop) ── */}
         <Dialog.Overlay className="edit-modal-overlay" />
@@ -160,7 +160,7 @@ export function EditModal({ item, onClose, onUpdate }) {
           </Dialog.Description>
 
           <header className="edit-modal__header">
-            <h2 className="edit-modal__title">Detalles de {draft.mediaType === 'anime' ? 'Anime' : 'Manga'}</h2>
+            <h2 className="edit-modal__title">Detalles de {currentTipo}</h2>
             <Dialog.Close asChild>
               <button
                 className="edit-modal__close"
@@ -217,7 +217,7 @@ export function EditModal({ item, onClose, onUpdate }) {
 
             <div className="edit-modal__divider" />
 
-            {/* Controls — Tu Estado (Lista) + Favorito */}
+            {/* Row 1: Tu Estado (Lista) + Tipo / Formato */}
             <div className="edit-modal__controls">
               <div className="edit-modal__control-group">
                 <label className="edit-modal__label" htmlFor={`modal-status-${draft.id}`}>Tu Estado (Lista)</label>
@@ -226,6 +226,29 @@ export function EditModal({ item, onClose, onUpdate }) {
                   value={draft.estadoUsuario}
                   onValueChange={handleStatus}
                   options={ESTADOS_USUARIO}
+                />
+              </div>
+
+              <div className="edit-modal__control-group">
+                <label className="edit-modal__label" htmlFor={`modal-tipo-${draft.id}`}>Tipo / Formato</label>
+                <CustomSelect
+                  id={`modal-tipo-${draft.id}`}
+                  value={currentTipo}
+                  onValueChange={handleTipo}
+                  options={tipoOptions}
+                />
+              </div>
+            </div>
+
+            {/* Row 2: Puntuación + Favorito */}
+            <div className="edit-modal__controls" style={{ marginTop: '0.75rem' }}>
+              <div className="edit-modal__control-group">
+                <label className="edit-modal__label" htmlFor={`modal-score-${draft.id}`}>Puntuación</label>
+                <CustomSelect
+                  id={`modal-score-${draft.id}`}
+                  value={draft.puntuacion != null ? String(draft.puntuacion) : ''}
+                  onValueChange={handleScore}
+                  options={SCORE_OPTIONS}
                 />
               </div>
 
@@ -244,19 +267,9 @@ export function EditModal({ item, onClose, onUpdate }) {
               </div>
             </div>
 
-            {/* Row 2: Puntuación + Progreso */}
+            {/* Row 3: Progreso */}
             <div className="edit-modal__controls" style={{ marginTop: '0.75rem' }}>
-              <div className="edit-modal__control-group">
-                <label className="edit-modal__label" htmlFor={`modal-score-${draft.id}`}>Puntuación</label>
-                <CustomSelect
-                  id={`modal-score-${draft.id}`}
-                  value={draft.puntuacion != null ? String(draft.puntuacion) : ''}
-                  onValueChange={handleScore}
-                  options={SCORE_OPTIONS}
-                />
-              </div>
-
-              <div className="edit-modal__control-group edit-modal__control-group--progress">
+              <div className="edit-modal__control-group edit-modal__control-group--progress" style={{ gridColumn: '1 / -1' }}>
                 <label className="edit-modal__label" htmlFor={`modal-prog-actual-${draft.id}`}>Progreso ({progressMax} totales)</label>
                 <div className="edit-modal__progress-inputs">
                   <input
@@ -275,7 +288,7 @@ export function EditModal({ item, onClose, onUpdate }) {
                     type="number" min="0" max="9999"
                     value={draft.progreso.maximo ?? ''}
                     placeholder="?"
-                    onChange={(e) => handleProgressChange('maximo', e.target.value === '' ? null : e.target.value)}
+                    onChange={(e) => handleProgressChange('maximo', e.target.value)}
                     title="Total (editar si es incorrecto)"
                   />
                 </div>

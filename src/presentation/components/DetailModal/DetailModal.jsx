@@ -23,7 +23,7 @@ import { motion } from 'framer-motion';
 import * as Dialog from '@radix-ui/react-dialog';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { X, Star, Plus, Tag, Pencil } from 'lucide-react';
-import { ESTADOS_USUARIO } from '../../../domain/itemSchema.js';
+import { ESTADOS_USUARIO, getItemType } from '../../../domain/itemSchema.js';
 import { translateGenres } from '../../../domain/genreTranslator.js';
 import { translateToSpanish } from '../../../data/translationService.js';
 import './DetailModal.css';
@@ -148,6 +148,7 @@ export function DetailModal({ item, isOpen, onClose, onUpdate, onEdit, translati
                   {/* v1.3: Solo se muestra el estado del usuario, sin badge de emisión API */}
                   <div className="detail-modal-meta-row" style={{ marginTop: '0.5rem' }}>
                     <span className="detail-badge detail-badge--purple">{estadoLabel}</span>
+                    <span className="detail-badge detail-badge--type">{getItemType(item)}</span>
                   </div>
                 </div>
                 <div className="detail-modal-header-actions">

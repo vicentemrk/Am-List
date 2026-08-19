@@ -188,6 +188,7 @@ describe('searchManga', () => {
     expect(results[0]).toMatchObject({
       malId: 'md_1',
       mediaType: 'manga',
+      tipo: 'Manga',
       titulo: 'Naruto',
       estadoEmision: 'complete',
       progreso: { actual: 0, maximo: 700 },
@@ -202,6 +203,7 @@ describe('searchManga', () => {
         return okFetch(makeMangaDexResponse({
           attributes: {
             title: { en: 'Solo Leveling' },
+            originalLanguage: 'ko',
             status: 'completed',
             lastChapter: '179',
             description: { en: 'Hunter Sung Jin-woo story.' },
@@ -218,6 +220,7 @@ describe('searchManga', () => {
                 idMal: 121496,
                 title: { english: 'Solo Leveling', romaji: 'Na Honjaman Level Up' },
                 coverImage: { large: 'https://example.com/sl.jpg' },
+                countryOfOrigin: 'KR',
                 status: 'FINISHED',
                 chapters: 179,
                 genres: ['Action', 'Fantasy']
@@ -227,6 +230,7 @@ describe('searchManga', () => {
                 idMal: 132214,
                 title: { english: 'Omniscient Reader', romaji: 'Jeonjijeok Dokja Sijeom' },
                 coverImage: { large: 'https://example.com/orv.jpg' },
+                countryOfOrigin: 'KR',
                 status: 'RELEASING',
                 chapters: 200,
                 genres: ['Action']
@@ -241,8 +245,10 @@ describe('searchManga', () => {
 
     expect(results).toHaveLength(2);
     expect(results[0].titulo).toBe('Solo Leveling');
+    expect(results[0].tipo).toBe('Manhwa');
     expect(results[0].source).toBe('MangaDex');
     expect(results[1].titulo).toBe('Omniscient Reader');
+    expect(results[1].tipo).toBe('Manhwa');
     expect(results[1].source).toBe('AniList');
   });
 

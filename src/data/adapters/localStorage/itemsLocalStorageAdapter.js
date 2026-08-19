@@ -15,7 +15,7 @@
  * ============================================================================
  */
 
-import { DEFAULT_ITEM } from '../../../domain/itemSchema.js';
+import { DEFAULT_ITEM, inferItemType } from '../../../domain/itemSchema.js';
 import { validarProgreso, validarPuntuacion, validarEstadoUsuario } from '../../../domain/validators.js';
 
 
@@ -44,6 +44,7 @@ function readAll() {
         ...item,
         // v1.2: Migración automática — 'completado' fue eliminado, se mapea a 'finalizado'
         estadoUsuario: item.estadoUsuario === 'completado' ? 'finalizado' : item.estadoUsuario,
+        tipo: item.tipo || inferItemType(item),
         tags: Array.isArray(item.tags) ? item.tags : [],
         tag: undefined,
         genres:   Array.isArray(item.genres) ? item.genres : [],
@@ -120,6 +121,7 @@ export const itemsLocalStorageAdapter = {
     const full = {
       ...DEFAULT_ITEM,
       ...item,
+      tipo: item.tipo || inferItemType(item),
       progreso: { ...DEFAULT_ITEM.progreso, ...(item.progreso ?? {}) },
       creadoEn:      now,
       actualizadoEn: now,

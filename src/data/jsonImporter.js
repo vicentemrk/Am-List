@@ -2,7 +2,7 @@
  * data/jsonImporter.js
  * Parses and validates AMlist JSON exports with security sanitization.
  */
-import { DEFAULT_ITEM } from '../domain/itemSchema.js';
+import { DEFAULT_ITEM, inferItemType } from '../domain/itemSchema.js';
 import { sanitizeText } from '../domain/sanitizer.js';
 
 /**
@@ -23,6 +23,7 @@ export async function parseAmListJson(input) {
 
   let parsed;
   try {
+    jsonText = jsonText.trim();
     parsed = JSON.parse(jsonText);
   } catch {
     throw new Error('El archivo no contiene un formato JSON válido.');
@@ -44,6 +45,8 @@ export async function parseAmListJson(input) {
       const mediaType = item.mediaType === 'manga' ? 'manga' : 'anime';
       const malId = Number(item.malId) || 0;
       const id = item.id || `${mediaType}_${malId}`;
+      const titulo = sanitizeText(item.titulo, { maxLength: 200 }) || 'Sin título';
+      const tipo = item.tipo || inferItemType({ titulo, mediaType, tags: item.tags, genres: item.genres, sinopsis: item.sinopsis });
 
       return {
         ...DEFAULT_ITEM,
@@ -51,7 +54,8 @@ export async function parseAmListJson(input) {
         id,
         malId,
         mediaType,
-        titulo: sanitizeText(item.titulo, { maxLength: 200 }) || 'Sin título',
+        tipo,
+        titulo,
         descripcionPersonal: sanitizeText(item.descripcionPersonal || '', { maxLength: 1000 }),
         sinopsis: sanitizeText(item.sinopsis || '', { maxLength: 2000 }),
         progreso: {

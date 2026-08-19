@@ -2,7 +2,7 @@
  * data/anilistImporter.js
  * Parses AniList JSON export files into AMlist items schema.
  */
-import { DEFAULT_ITEM } from '../domain/itemSchema.js';
+import { DEFAULT_ITEM, inferItemType } from '../domain/itemSchema.js';
 import { sanitizeText } from '../domain/sanitizer.js';
 
 function mapAniListStatus(status) {
@@ -61,6 +61,24 @@ export async function parseAniListJson(content) {
       const isManga = format.includes('MANGA') || format.includes('NOVEL') || format.includes('ONE_SHOT');
       const mediaType = isManga ? 'manga' : 'anime';
 
+      const country = (media.countryOfOrigin || '').toUpperCase();
+      let tipo = '';
+      if (isManga) {
+        if (country === 'KR') tipo = 'Manhwa';
+        else if (country === 'CN' || country === 'TW' || country === 'HK') tipo = 'Manhua';
+        else if (format.includes('NOVEL')) tipo = 'Novela';
+        else if (format.includes('ONE_SHOT')) tipo = 'One-shot';
+        else tipo = 'Manga';
+      } else {
+        if (format.includes('MOVIE')) tipo = 'Película';
+        else if (format.includes('OVA')) tipo = 'OVA';
+        else if (format.includes('ONA')) tipo = 'ONA';
+        else if (format.includes('SPECIAL')) tipo = 'Especial';
+        else if (format.includes('TV')) tipo = 'TV';
+        else tipo = 'Anime';
+      }
+      tipo = tipo || inferItemType({ titulo, mediaType });
+
       const totalProgress = isManga
         ? media.chapters || media.volumes || null
         : media.episodes || null;
@@ -75,6 +93,7 @@ export async function parseAniListJson(content) {
         id: `${mediaType}_anilist_${media.id || Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
         malId: media.idMal ? String(media.idMal) : null,
         mediaType,
+        tipo,
         titulo: titulo || 'Sin título',
         imagen: media.coverImage?.medium || media.coverImage?.large || null,
         sinopsis: sanitizeText((media.description || '').replace(/<[^>]+>/g, ''), { maxLength: 2000 }),

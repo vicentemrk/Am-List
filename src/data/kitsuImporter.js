@@ -2,7 +2,7 @@
  * data/kitsuImporter.js
  * Parses Kitsu JSON export files into AMlist items schema.
  */
-import { DEFAULT_ITEM } from '../domain/itemSchema.js';
+import { DEFAULT_ITEM, inferItemType } from '../domain/itemSchema.js';
 import { sanitizeText } from '../domain/sanitizer.js';
 
 function mapKitsuStatus(status) {
@@ -38,22 +38,23 @@ export async function parseKitsuJson(content) {
     throw new Error('Formato JSON inválido.');
   }
 
-  const entries = json?.data;
-  if (!Array.isArray(entries)) {
+  if (!json || !Array.isArray(json.data)) {
     throw new Error('El archivo no tiene el formato de exportación de Kitsu.');
   }
 
-  // Index included media objects by ID
+  // Pre-index included resources for fast O(1) lookup
   const includedMap = new Map();
   if (Array.isArray(json.included)) {
-    for (const inc of json.included) {
-      includedMap.set(`${inc.type}_${inc.id}`, inc);
+    for (const item of json.included) {
+      if (item.type && item.id) {
+        includedMap.set(`${item.type}_${item.id}`, item);
+      }
     }
   }
 
   const items = [];
 
-  for (const entry of entries) {
+  for (const entry of json.data) {
     if (entry.type !== 'libraryEntries') continue;
 
     const attrs = entry.attributes || {};
@@ -72,6 +73,21 @@ export async function parseKitsuJson(content) {
     const rawTitle = mediaAttrs.canonicalTitle || mediaAttrs.titles?.en || mediaAttrs.titles?.en_jp || 'Sin título';
     const titulo = sanitizeText(rawTitle, { maxLength: 200 });
 
+    const subtype = (mediaAttrs.subtype || mediaAttrs.mangaType || mediaAttrs.showType || '').toLowerCase();
+    let tipo = '';
+    if (subtype === 'manhwa') tipo = 'Manhwa';
+    else if (subtype === 'manhua') tipo = 'Manhua';
+    else if (subtype === 'novel') tipo = 'Novela';
+    else if (subtype === 'oneshot') tipo = 'One-shot';
+    else if (subtype === 'doujin') tipo = 'Doujinshi';
+    else if (subtype === 'manga') tipo = 'Manga';
+    else if (subtype === 'movie') tipo = 'Película';
+    else if (subtype === 'special') tipo = 'Especial';
+    else if (subtype === 'ova') tipo = 'OVA';
+    else if (subtype === 'ona') tipo = 'ONA';
+    else if (subtype === 'tv') tipo = 'TV';
+    tipo = tipo || inferItemType({ titulo, mediaType });
+
     const totalProgress = mediaType === 'manga'
       ? mediaAttrs.chapterCount || mediaAttrs.volumeCount || null
       : mediaAttrs.episodeCount || null;
@@ -84,6 +100,7 @@ export async function parseKitsuJson(content) {
       ...DEFAULT_ITEM,
       id: `${mediaType}_kitsu_${entry.id}_${Math.random().toString(36).slice(2, 6)}`,
       mediaType,
+      tipo,
       titulo: titulo || 'Sin título',
       imagen: mediaAttrs.posterImage?.medium || mediaAttrs.posterImage?.original || null,
       sinopsis: sanitizeText(mediaAttrs.synopsis || '', { maxLength: 2000 }),
