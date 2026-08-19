@@ -140,12 +140,13 @@ async function fetchWithTimeout(url, options, externalSignal) {
 async function searchAniList(q, type, signal) {
   const query = `
     query ($search: String, $type: MediaType) {
-      Page(page: 1, perPage: 10) {
+      Page(page: 1, perPage: 20) {
         media(search: $search, type: $type, sort: POPULARITY_DESC) {
           id
           idMal
-          title { romaji english native }
+          title { romaji english native userPreferred }
           coverImage { large medium }
+          countryOfOrigin
           status
           episodes
           chapters
@@ -213,7 +214,7 @@ function normalizeKitsu(raw, mediaType) {
 }
 
 async function searchKitsu(q, type, signal) {
-  const url = `${KITSU_BASE_URL}/${type}?filter[text]=${encodeURIComponent(q)}&page[limit]=10`;
+  const url = `${KITSU_BASE_URL}/${type}?filter[text]=${encodeURIComponent(q)}&page[limit]=20`;
   const response = await fetchWithTimeout(url, {
     headers: {
       'Accept': 'application/vnd.api+json',
@@ -237,6 +238,7 @@ function mapMangaDexStatus(status) {
   if (!status) return 'unknown';
   if (status === 'ongoing') return 'airing';
   if (status === 'completed') return 'complete';
+  if (status === 'hiatus') return 'pausado';
   return 'unknown';
 }
 
@@ -249,10 +251,13 @@ function normalizeMangaDex(raw) {
   const rawTags = (attrs.tags || []).map(t => t.attributes?.name?.en).filter(Boolean);
   const sinopsisEsp = attrs.description?.['es-la'] || attrs.description?.es || attrs.description?.en || Object.values(attrs.description || {})[0] || '';
 
+  // Extraer el mejor título disponible (en, romaji o el primero disponible)
+  const mainTitle = attrs.title?.en || attrs.title?.['ja-ro'] || attrs.title?.['ko-ro'] || attrs.title?.['zh-ro'] || Object.values(attrs.title || {})[0] || '';
+
   return {
     malId:         `md_${raw.id}`,
     mediaType:     'manga',
-    titulo:        attrs.title?.en || attrs.title?.['ja-ro'] || Object.values(attrs.title || {})[0] || '',
+    titulo:        mainTitle,
     imagen:        imagen,
     estadoEmision: mapMangaDexStatus(attrs.status),
     progreso: {
@@ -267,7 +272,8 @@ function normalizeMangaDex(raw) {
 }
 
 async function searchMangaDex(q, signal) {
-  const url = `https://api.mangadex.org/manga?title=${encodeURIComponent(q)}&limit=10&includes[]=cover_art`;
+  // Incluir todas las clasificaciones de contenido para no excluir manhwas maduros/acción (safe, suggestive, erotica)
+  const url = `https://api.mangadex.org/manga?title=${encodeURIComponent(q)}&limit=20&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&includes[]=cover_art&order[relevance]=desc`;
   const response = await fetchWithTimeout(url, {}, signal);
 
   if (!response.ok) {
@@ -278,6 +284,30 @@ async function searchMangaDex(q, signal) {
   if (!json || !Array.isArray(json.data)) return [];
 
   return json.data.map(normalizeMangaDex);
+}
+
+// ─── Deduplicación y fusión de resultados Manga/Manhwa ─────────────────────────
+
+function normalizeTitleForDeduplication(title) {
+  return (title || '')
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}]/gu, '')
+    .trim();
+}
+
+function mergeMangaResults(mdResults, alResults) {
+  const merged = [...mdResults];
+  const existingTitles = new Set(mdResults.map(r => normalizeTitleForDeduplication(r.titulo)).filter(Boolean));
+
+  for (const alItem of alResults) {
+    const norm = normalizeTitleForDeduplication(alItem.titulo);
+    if (!norm || !existingTitles.has(norm)) {
+      merged.push(alItem);
+      if (norm) existingTitles.add(norm);
+    }
+  }
+
+  return merged;
 }
 
 // ─── Multi-API Orchestrator ───────────────────────────────────────────────────
@@ -292,14 +322,18 @@ async function searchWithFallback(q, type, signal) {
   let results = [];
 
   if (type === 'manga') {
-    try {
-      results = await searchMangaDex(q, signal);
-    } catch (err) {
-      if (err instanceof ApiError && err.code === 'CANCELLED') throw err;
-    }
-  }
+    // Búsqueda paralela unificada: MangaDex + AniList simultáneos para maximizar manhwas, mangas y manhuas
+    const [mdRes, alRes] = await Promise.allSettled([
+      searchMangaDex(q, signal),
+      searchAniList(q, 'manga', signal)
+    ]);
 
-  if (results.length === 0 && !signal?.aborted) {
+    const mdList = mdRes.status === 'fulfilled' ? mdRes.value : [];
+    const alList = alRes.status === 'fulfilled' ? alRes.value : [];
+
+    results = mergeMangaResults(mdList, alList);
+  } else {
+    // Anime: AniList primario
     try {
       results = await searchAniList(q, type, signal);
     } catch (err) {
@@ -307,6 +341,7 @@ async function searchWithFallback(q, type, signal) {
     }
   }
 
+  // Si no hubo resultados o fallaron las principales, fallback a Kitsu
   if (results.length === 0 && !signal?.aborted) {
     try {
       results = await searchKitsu(q, type, signal);

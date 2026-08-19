@@ -194,4 +194,57 @@ describe('searchManga', () => {
       source: 'MangaDex',
     });
   });
+
+  it('combina resultados de MangaDex y AniList deduplicando títulos', async () => {
+    // Simulamos respuesta de MangaDex con "Solo Leveling" y AniList con "Solo Leveling" (duplicado) y "Omniscient Reader" (nuevo)
+    vi.stubGlobal('fetch', (url) => {
+      if (typeof url === 'string' && url.includes('mangadex.org')) {
+        return okFetch(makeMangaDexResponse({
+          attributes: {
+            title: { en: 'Solo Leveling' },
+            status: 'completed',
+            lastChapter: '179',
+            description: { en: 'Hunter Sung Jin-woo story.' },
+            tags: []
+          }
+        }));
+      }
+      return okFetch({
+        data: {
+          Page: {
+            media: [
+              {
+                id: 105398,
+                idMal: 121496,
+                title: { english: 'Solo Leveling', romaji: 'Na Honjaman Level Up' },
+                coverImage: { large: 'https://example.com/sl.jpg' },
+                status: 'FINISHED',
+                chapters: 179,
+                genres: ['Action', 'Fantasy']
+              },
+              {
+                id: 119257,
+                idMal: 132214,
+                title: { english: 'Omniscient Reader', romaji: 'Jeonjijeok Dokja Sijeom' },
+                coverImage: { large: 'https://example.com/orv.jpg' },
+                status: 'RELEASING',
+                chapters: 200,
+                genres: ['Action']
+              }
+            ]
+          }
+        }
+      });
+    });
+
+    const results = await searchManga('solo-leveling-merge-test');
+
+    expect(results).toHaveLength(2);
+    expect(results[0].titulo).toBe('Solo Leveling');
+    expect(results[0].source).toBe('MangaDex');
+    expect(results[1].titulo).toBe('Omniscient Reader');
+    expect(results[1].source).toBe('AniList');
+  });
+
 });
+
