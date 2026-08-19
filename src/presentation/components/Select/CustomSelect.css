@@ -113,9 +113,16 @@
 
 /* ── Separator ────────────────────────────────────────────────────────────── */
 .custom-select-separator {
-  height: 1px;
-  background: var(--outline-variant, var(--border));
-  margin: 0.35rem 0.5rem;
+  height: 1.5px;
+  background: var(--outline, #787B91);
+  opacity: 0.5;
+  margin: 0.45rem 0.25rem;
+  border-radius: 1px;
+}
+
+[data-theme='dark'] .custom-select-separator {
+  background: var(--outline, #888ba8);
+  opacity: 0.65;
 }
 
 /* ── Secondary checked (ej: dirección ASC/DESC activa) ───────────────────── */
