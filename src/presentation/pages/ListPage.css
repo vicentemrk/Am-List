@@ -83,6 +83,13 @@
   width: 100%;
 }
 
+.list-page__toolbar-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-shrink: 0;
+}
+
 .list-page__sort-wrap {
   display: flex;
   align-items: center;
@@ -252,14 +259,21 @@
     width: 100%;
   }
 
-  .list-page__sort-wrap {
+  .list-page__toolbar-controls {
     width: 100%;
-    justify-content: flex-end;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
   }
 
-  .list-page__toolbar .score-slider {
-    width: 100%;
-    max-width: none;
+  .list-page__sort-wrap {
+    flex: 1;
+    justify-content: flex-start;
+  }
+
+  .list-page__toolbar-controls .score-slider {
+    flex-shrink: 0;
   }
 
   .list-page__add-btn {
@@ -274,6 +288,7 @@
     padding: 0.35rem 0.75rem;
   }
 }
+
 
 
 

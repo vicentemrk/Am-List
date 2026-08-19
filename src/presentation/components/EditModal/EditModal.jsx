@@ -217,7 +217,7 @@ export function EditModal({ item, onClose, onUpdate }) {
 
             <div className="edit-modal__divider" />
 
-            {/* Controls — Tu Estado (Lista) + Puntuación */}
+            {/* Controls — Tu Estado (Lista) + Favorito */}
             <div className="edit-modal__controls">
               <div className="edit-modal__control-group">
                 <label className="edit-modal__label" htmlFor={`modal-status-${draft.id}`}>Tu Estado (Lista)</label>
@@ -230,6 +230,23 @@ export function EditModal({ item, onClose, onUpdate }) {
               </div>
 
               <div className="edit-modal__control-group">
+                <label className="edit-modal__label">Favorito</label>
+                <button
+                  type="button"
+                  className={`edit-modal__fav-toggle-btn${draft.favorito ? ' edit-modal__fav-toggle-btn--active' : ''}`}
+                  onClick={handleToggleFavorito}
+                  aria-pressed={draft.favorito}
+                  title={draft.favorito ? 'Quitar de favoritos' : 'Marcar como favorito'}
+                >
+                  <Star size={16} fill={draft.favorito ? 'currentColor' : 'none'} />
+                  <span>{draft.favorito ? 'Favorito' : 'No favorito'}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Row 2: Puntuación + Progreso */}
+            <div className="edit-modal__controls" style={{ marginTop: '0.75rem' }}>
+              <div className="edit-modal__control-group">
                 <label className="edit-modal__label" htmlFor={`modal-score-${draft.id}`}>Puntuación</label>
                 <CustomSelect
                   id={`modal-score-${draft.id}`}
@@ -238,31 +255,30 @@ export function EditModal({ item, onClose, onUpdate }) {
                   options={SCORE_OPTIONS}
                 />
               </div>
-            </div>
 
-            {/* Progreso */}
-            <div className="edit-modal__control-group edit-modal__control-group--progress">
-              <label className="edit-modal__label" htmlFor={`modal-prog-actual-${draft.id}`}>Progreso ({progressMax} totales)</label>
-              <div className="edit-modal__progress-inputs">
-                <input
-                  id={`modal-prog-actual-${draft.id}`}
-                  className="edit-modal__input edit-modal__input--small"
-                  type="number" min="0"
-                  max={draft.progreso.maximo ?? 9999}
-                  value={draft.progreso.actual}
-                  onChange={(e) => handleProgressChange('actual', e.target.value)}
-                  title="Vistos/Leídos"
-                />
-                <span className="edit-modal__progress-sep">/</span>
-                <input
-                  id={`modal-prog-max-${draft.id}`}
-                  className="edit-modal__input edit-modal__input--small"
-                  type="number" min="0" max="9999"
-                  value={draft.progreso.maximo ?? ''}
-                  placeholder="?"
-                  onChange={(e) => handleProgressChange('maximo', e.target.value === '' ? null : e.target.value)}
-                  title="Total (editar si es incorrecto)"
-                />
+              <div className="edit-modal__control-group edit-modal__control-group--progress">
+                <label className="edit-modal__label" htmlFor={`modal-prog-actual-${draft.id}`}>Progreso ({progressMax} totales)</label>
+                <div className="edit-modal__progress-inputs">
+                  <input
+                    id={`modal-prog-actual-${draft.id}`}
+                    className="edit-modal__input edit-modal__input--small"
+                    type="number" min="0"
+                    max={draft.progreso.maximo ?? 9999}
+                    value={draft.progreso.actual}
+                    onChange={(e) => handleProgressChange('actual', e.target.value)}
+                    title="Vistos/Leídos"
+                  />
+                  <span className="edit-modal__progress-sep">/</span>
+                  <input
+                    id={`modal-prog-max-${draft.id}`}
+                    className="edit-modal__input edit-modal__input--small"
+                    type="number" min="0" max="9999"
+                    value={draft.progreso.maximo ?? ''}
+                    placeholder="?"
+                    onChange={(e) => handleProgressChange('maximo', e.target.value === '' ? null : e.target.value)}
+                    title="Total (editar si es incorrecto)"
+                  />
+                </div>
               </div>
             </div>
 

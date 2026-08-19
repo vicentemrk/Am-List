@@ -227,31 +227,34 @@ export function ItemListPage({
               aria-label="Buscar por título, etiqueta o descripción"
             />
           </div>
-          {/* Selector de ordenamiento — incluye ASC/DESC con separador */}
-          <div className="list-page__sort-wrap">
-            <span className="list-page__sort-label">Ordenar por:</span>
-            <CustomSelect
-              value={sortBy}
-              onValueChange={handleSortChange}
-              options={SORT_OPTIONS}
-              checkedValues={[sortDir === 'asc' ? 'dir_asc' : 'dir_desc']}
+          {/* Controles de barra: Ordenar por, Slider de Puntuación y Densidad */}
+          <div className="list-page__toolbar-controls">
+            {/* Selector de ordenamiento — incluye ASC/DESC con separador */}
+            <div className="list-page__sort-wrap">
+              <span className="list-page__sort-label">Ordenar por:</span>
+              <CustomSelect
+                value={sortBy}
+                onValueChange={handleSortChange}
+                options={SORT_OPTIONS}
+                checkedValues={[sortDir === 'asc' ? 'dir_asc' : 'dir_desc']}
+              />
+            </div>
+            {/* Filtro de puntuación personal (Fase 3) */}
+            <ScoreRangeSlider
+              min={scoreRange[0]}
+              max={scoreRange[1]}
+              onChange={(min, max) => setScoreRange([min, max])}
             />
+            {/* Toggle densidad de vista (Fase 2) */}
+            <button
+              className="list-page__density-btn"
+              onClick={toggleDensity}
+              aria-label={density === 'detailed' ? 'Cambiar a vista compacta' : 'Cambiar a vista detallada'}
+              title={density === 'detailed' ? 'Vista compacta' : 'Vista detallada'}
+            >
+              {density === 'detailed' ? <LayoutGrid size={18} /> : <LayoutList size={18} />}
+            </button>
           </div>
-          {/* Filtro de puntuación personal (Fase 3) */}
-          <ScoreRangeSlider
-            min={scoreRange[0]}
-            max={scoreRange[1]}
-            onChange={(min, max) => setScoreRange([min, max])}
-          />
-          {/* Toggle densidad de vista (Fase 2) */}
-          <button
-            className="list-page__density-btn"
-            onClick={toggleDensity}
-            aria-label={density === 'detailed' ? 'Cambiar a vista compacta' : 'Cambiar a vista detallada'}
-            title={density === 'detailed' ? 'Vista compacta' : 'Vista detallada'}
-          >
-            {density === 'detailed' ? <LayoutGrid size={18} /> : <LayoutList size={18} />}
-          </button>
         </div>
 
         {availableTags.length > 0 && (

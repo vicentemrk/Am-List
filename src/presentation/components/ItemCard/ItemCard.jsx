@@ -149,6 +149,21 @@ function ItemCardComponent({ item, onUpdate, onRemove, onEdit, onDetail, isDragg
                     </button>
                   );
                 })}
+                <div className="item-card__status-divider" />
+                <button
+                  className={`item-card__status-option item-card__status-option--favorito${item.favorito ? ' item-card__status-option--active' : ''}`}
+                  role="option"
+                  aria-selected={item.favorito}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onUpdate(item.id, { favorito: !item.favorito });
+                    setStatusMenuOpen(false);
+                  }}
+                >
+                  <Star size={14} fill={item.favorito ? 'currentColor' : 'none'} />
+                  <span className="item-card__status-option-label">Favorito</span>
+                  {item.favorito && <span className="item-card__status-check" aria-hidden="true">✓</span>}
+                </button>
               </div>
             )}
           </div>
@@ -343,6 +358,21 @@ function ItemCardComponent({ item, onUpdate, onRemove, onEdit, onDetail, isDragg
                       </button>
                     );
                   })}
+                  <div className="item-card__status-divider" />
+                  <button
+                    className={`item-card__status-option item-card__status-option--favorito${item.favorito ? ' item-card__status-option--active' : ''}`}
+                    role="option"
+                    aria-selected={item.favorito}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onUpdate(item.id, { favorito: !item.favorito });
+                      setStatusMenuOpen(false);
+                    }}
+                  >
+                    <Star size={14} fill={item.favorito ? 'currentColor' : 'none'} />
+                    <span className="item-card__status-option-label">Favorito</span>
+                    {item.favorito && <span className="item-card__status-check" aria-hidden="true">✓</span>}
+                  </button>
                 </div>
               )}
             </div>

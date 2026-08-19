@@ -211,28 +211,29 @@
   align-items: center;
   justify-content: center;
   gap: 0.45rem;
-  padding: 0.45rem 0.75rem;
-  border-radius: var(--radius-md);
-  border: 1.5px solid var(--border);
-  background: var(--surface);
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--outline-variant, var(--border));
+  background: var(--surface-container, var(--surface));
   color: var(--text-muted);
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
-  height: 40px;
-  transition: all 0.2s ease;
+  box-sizing: border-box;
+  transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
 }
 
 .edit-modal__fav-toggle-btn:hover {
+  background: var(--surface-variant, var(--surface));
   border-color: var(--tab-favorito);
   color: var(--tab-favorito);
 }
 
 .edit-modal__fav-toggle-btn--active {
-  background: color-mix(in srgb, var(--tab-favorito) 15%, transparent);
+  background: color-mix(in srgb, var(--tab-favorito) 15%, var(--surface-container, var(--surface)));
   border-color: var(--tab-favorito);
   color: var(--tab-favorito);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .edit-modal__label {
