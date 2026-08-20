@@ -129,6 +129,13 @@ export function EditModal({ item, onClose, onUpdate }) {
     setNewTag('');
   };
 
+  const handleTagKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAddTag(e);
+    }
+  };
+
   const handleRemoveTag = (tagToRemove) => {
     setDraft((prev) => ({ ...prev, tags: tags.filter((t) => t !== tagToRemove) }));
   };
